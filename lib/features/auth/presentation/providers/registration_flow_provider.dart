@@ -25,7 +25,11 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
   void setStep(AuthStep step) => state = state.copyWith(step: step);
 
   void setPhoneInput(String value) =>
-      state = state.copyWith(phoneInput: value, registerOtpMisses: 0);
+      state = state.copyWith(
+        phoneInput: value,
+        registerOtpMisses: 0,
+        otpLocked: state.isRegister ? false : state.otpLocked,
+      );
 
   void setName({String? first, String? last}) =>
       state = state.copyWith(firstName: first, lastName: last);
@@ -56,6 +60,14 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
   /// Register has no user yet, so the code is checked here with the same
   /// limits and verified for real once the account exists.
   Future<Failure?> verifyOtp(String code) async {
+    final failure = await _check(code);
+    if (failure is OtpLocked && !state.otpLocked) {
+      state = state.copyWith(otpLocked: true);
+    }
+    return failure;
+  }
+
+  Future<Failure?> _check(String code) async {
     if (!state.isRegister) return _verifyLogin(code);
     final shape = validateOtp(code);
     if (shape case FailureResult(:final failure)) return failure;
@@ -82,10 +94,12 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
   /// Sends a new code and clears the wrong-attempt counter and lock.
   Future<Failure?> resendOtp() async {
     if (state.isRegister) {
-      state = state.copyWith(registerOtpMisses: 0);
+      state = state.copyWith(registerOtpMisses: 0, otpLocked: false);
       return null;
     }
-    return (await _repo.resendOtp(state.phone!)).failureOrNull;
+    final failure = (await _repo.resendOtp(state.phone!)).failureOrNull;
+    if (failure == null) state = state.copyWith(otpLocked: false);
+    return failure;
   }
 
   /// DOB step: create the account, then verify the earlier code, which

@@ -25,7 +25,9 @@ class OtpScreen extends ConsumerStatefulWidget {
 
 class _OtpScreenState extends ConsumerState<OtpScreen> {
   final _boxes = GlobalKey<OtpBoxesState>();
-  Failure? _failure;
+  late Failure? _failure = ref.read(registrationFlowProvider).otpLocked
+      ? const OtpLocked()
+      : null;
   bool _verifying = false;
   int _shakes = 0;
 
