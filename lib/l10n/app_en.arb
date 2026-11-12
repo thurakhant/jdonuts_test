@@ -1,0 +1,50 @@
+{
+  "@@locale": "en",
+  "appTitle": "J'Donuts",
+  "onboardingTitle": "Round food for\nevery mood",
+  "letsGetStarted": "LET'S GET STARTED",
+  "alreadyHaveAccount": "Already have an account?",
+  "logIn": "Log In",
+  "legalNotice": "By continuing, you acknowledge that you have read and agree to our {termsOfUse} and {privacyPolicy}.",
+  "@legalNotice": {
+    "placeholders": {
+      "termsOfUse": {"type": "String"},
+      "privacyPolicy": {"type": "String"}
+    }
+  },
+  "termsOfUse": "Terms of Use",
+  "privacyPolicy": "Privacy Policy",
+  "enterYourPhoneNumber": "Enter your phone number",
+  "phonePrefixMm": "+95",
+  "continueLabel": "CONTINUE",
+  "verifyYourNumber": "Verify your number",
+  "otpSentTo": "We've sent 6 digit OTP to {phone}",
+  "@otpSentTo": {
+    "placeholders": {
+      "phone": {"type": "String"}
+    }
+  },
+  "didntReceiveCode": "Didn't receive the code?",
+  "resendIn": "resend in {time} min",
+  "@resendIn": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "resendNow": "Resend now",
+  "whatsYourName": "What's your name?",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "whatsYourDateOfBirth": "What's your date of birth?",
+  "month": "Month",
+  "day": "Day",
+  "year": "Year",
+  "welcomeTitle": "Welcome to the\nworld of J'donuts",
+  "letsExplore": "LET'S EXPLORE",
+  "homeTab": "Home",
+  "rewardTab": "Reward",
+  "settingsTab": "Settings",
+  "logOut": "Log out",
+  "comingSoon": "Coming soon",
+  "placeholderSheetBody": "This is a placeholder. No real integration in this demo."
+}
