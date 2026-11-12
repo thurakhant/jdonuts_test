@@ -197,7 +197,8 @@ named after the behaviour they check:
 - **Integration:**
   - `integration_test/register_to_product_test.dart` runs Register → Home →
     Product detail on a device or emulator with the real secure storage,
-    database file and ~1 s fake delays (passes on an Android 14 emulator).
+    database file and ~1 s fake delays (passes on an Android 14 emulator and
+    an iPhone 16 Pro / iOS 18.1 simulator).
   - `test/integration/register_to_product_test.dart` runs the same journey
     in memory with `flutter test`, and also checks the Hero flight.
 
