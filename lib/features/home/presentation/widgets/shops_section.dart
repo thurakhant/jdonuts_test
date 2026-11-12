@@ -123,17 +123,23 @@ class _ShopsPanel extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            SizedBox(
-              height: 272,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.screenEdge,
+            // Only four shops, so a plain scroll row is fine; it takes the
+            // tallest card's height, so larger text never overflows.
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenEdge,
+              ),
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final (i, shop) in shops.indexed) ...[
+                      if (i > 0) const SizedBox(width: AppSpacing.md),
+                      _ShopCard(shop),
+                    ],
+                  ],
                 ),
-                itemCount: shops.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(width: AppSpacing.md),
-                itemBuilder: (_, i) => _ShopCard(shops[i]),
               ),
             ),
             // Keeps the meadow visible under the nav bar the shell draws
@@ -157,7 +163,7 @@ class _ShopCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return SizedBox(
-      width: 280,
+      width: AppSpacing.shopCardWidth,
       child: DecoratedBox(
         decoration: const BoxDecoration(
           color: AppColors.surface,
@@ -172,7 +178,7 @@ class _ShopCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadius.md),
                 child: JdImage(
                   shop.imageUrl,
-                  height: 150,
+                  height: AppSpacing.shopImageHeight,
                   width: double.infinity,
                 ),
               ),

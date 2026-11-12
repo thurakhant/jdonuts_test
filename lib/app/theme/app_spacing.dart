@@ -44,6 +44,10 @@ abstract final class AppSpacing {
   static const double tierBadgeSize = 40;
   static const double tierLineStroke = 4;
   static const double tabBarHeight = 48;
+
+  /// Home shop cards.
+  static const double shopCardWidth = 280;
+  static const double shopImageHeight = 150;
   static const double challengeArtSize = 88;
   static const double challengeStroke = 6;
   static const double ringSprinkleLength = 13;
