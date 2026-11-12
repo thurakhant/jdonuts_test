@@ -12,9 +12,18 @@ import '../../../../l10n/app_localizations.dart';
 /// Donut-frosting ring: the pink glaze sweeps from 0 to the member's tier
 /// progress while the total counts up in the white centre.
 class PointsRing extends StatelessWidget {
-  const PointsRing({required this.points, required this.progress, super.key});
+  const PointsRing({
+    required this.points,
+    required this.progress,
+    this.offscreenRight = 0,
+    super.key,
+  });
 
   final int points;
+
+  /// How much of the ring's right side is cut off by the screen edge. The
+  /// label is fitted into the part of the hole that stays visible.
+  final double offscreenRight;
 
   /// Share of the way to the next tier, 0 to 1.
   final double progress;
@@ -42,31 +51,46 @@ class PointsRing extends StatelessWidget {
                 painter: PointsRingPainter(fraction: value),
               ),
             ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.totalPoints,
-                  style: AppTypography.caption.copyWith(
-                    color: AppColors.accent,
-                  ),
-                ),
-                TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0, end: points.toDouble()),
-                  duration: count,
-                  curve: AppMotion.standard,
-                  builder: (_, value, _) => Text(
-                    formatMmk(value.round()),
-                    style: pink.copyWith(
-                      fontSize: AppTypography.display.fontSize,
-                      fontWeight: FontWeight.w800,
+            _label(
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.totalPoints,
+                    style: AppTypography.caption.copyWith(
+                      color: AppColors.accent,
                     ),
                   ),
-                ),
-              ],
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0, end: points.toDouble()),
+                    duration: count,
+                    curve: AppMotion.standard,
+                    builder: (_, value, _) => Text(
+                      formatMmk(value.round()),
+                      style: pink.copyWith(
+                        fontSize: AppTypography.display.fontSize,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Shrinks the label to the visible part of the hole and centres it there.
+  Widget _label(Widget child) {
+    const hole = AppSpacing.pointsRingSize - 2 * AppSpacing.pointsRingStroke;
+    final hidden = math.max(0.0, offscreenRight - AppSpacing.pointsRingStroke);
+    return Padding(
+      padding: EdgeInsets.only(right: hidden),
+      child: SizedBox(
+        width: hole - hidden - AppSpacing.sm,
+        child: FittedBox(fit: BoxFit.scaleDown, child: child),
       ),
     );
   }
