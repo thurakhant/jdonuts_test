@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/failure.dart';
 import '../../../../core/result.dart';
 import '../../application/auth_providers.dart';
-import '../../data/fake_auth_repository.dart' show kFakeOtp;
 import '../../domain/auth_repository.dart';
 import '../../domain/validators/date_of_birth_validator.dart';
 import '../../domain/validators/otp_validator.dart';
@@ -71,7 +70,7 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
     final shape = validateOtp(code);
     if (shape case FailureResult(:final failure)) return failure;
     if (state.registerOtpMisses >= kMaxOtpAttempts) return const OtpLocked();
-    if (code == kFakeOtp) {
+    if (_repo.acceptsSignUpCode(code)) {
       state = state.copyWith(otpCode: code);
       return null;
     }
@@ -118,10 +117,9 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
       dateOfBirth: dob.valueOrNull!,
     );
     if (registered.failureOrNull case final failure?) return failure;
-    final signedIn = await _repo.verifyOtp(
-      phone: state.phone!,
-      code: state.otpCode ?? kFakeOtp,
-    );
+    final code = state.otpCode;
+    if (code == null) return const InvalidOtp();
+    final signedIn = await _repo.verifyOtp(phone: state.phone!, code: code);
     return signedIn.failureOrNull;
   }
 

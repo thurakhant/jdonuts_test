@@ -17,6 +17,10 @@ abstract interface class AuthRepository {
   /// Sends an OTP for login. Fails with `UnknownNumber` if not registered.
   Future<Result<void>> requestOtp(String phone);
 
+  /// Sign-up only: whether [code] is the code that was sent. There is no
+  /// account yet, so this neither signs in nor counts attempts.
+  bool acceptsSignUpCode(String code);
+
   /// Sends a new OTP and clears the wrong-attempt counter and lock.
   Future<Result<void>> resendOtp(String phone);
 

@@ -131,4 +131,11 @@ void main() {
     final repo = FakeAuthRepository(sessionStore: sessions, userStore: users);
     expect(repo.delay, const Duration(seconds: 1));
   });
+
+  test('sign-up accepts only the fake code, without signing in', () async {
+    final repo = make();
+    expect(repo.acceptsSignUpCode('123456'), isTrue);
+    expect(repo.acceptsSignUpCode('000000'), isFalse);
+    expect(await sessions.read(), isNull);
+  });
 }
