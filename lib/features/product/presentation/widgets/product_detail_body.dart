@@ -246,7 +246,10 @@ class _AddToCartBar extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.md),
                   AnimatedSwitcher(
-                    duration: AppMotion.quantityTick,
+                    duration: AppMotion.effective(
+                      context,
+                      AppMotion.quantityTick,
+                    ),
                     child: Text(
                       l10n.mmkAmount(total),
                       key: ValueKey(total),

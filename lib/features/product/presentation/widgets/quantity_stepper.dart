@@ -43,7 +43,7 @@ class QuantityStepper extends StatelessWidget {
             SizedBox(
               width: 48,
               child: AnimatedSwitcher(
-                duration: AppMotion.quantityTick,
+                duration: AppMotion.effective(context, AppMotion.quantityTick),
                 child: Text(
                   '$quantity',
                   key: ValueKey(quantity),

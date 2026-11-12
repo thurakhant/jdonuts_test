@@ -283,7 +283,7 @@ class _PageIndicators extends StatelessWidget {
       children: [
         for (var i = 0; i < count; i++)
           AnimatedContainer(
-            duration: AppMotion.base,
+            duration: AppMotion.effective(context, AppMotion.base),
             margin: const EdgeInsets.symmetric(horizontal: AppSpacing.dotGap),
             width: i == active ? AppSpacing.dotActiveWidth : AppSpacing.dotSize,
             height: AppSpacing.dotSize,
