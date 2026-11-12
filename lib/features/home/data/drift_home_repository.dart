@@ -4,6 +4,7 @@ import '../../../core/db/app_database.dart';
 import '../domain/home_repository.dart';
 import '../domain/promo_banner.dart';
 import '../domain/shop.dart';
+import '../../../core/db/storage_errors.dart';
 
 class DriftHomeRepository implements HomeRepository {
   DriftHomeRepository(this._db);
@@ -14,7 +15,7 @@ class DriftHomeRepository implements HomeRepository {
   Stream<List<PromoBanner>> watchBanners() {
     final query = _db.select(_db.banners)
       ..orderBy([(t) => OrderingTerm.asc(t.sortOrder)]);
-    return query.watch().map(
+    return query.watch().withStorageFailures().map(
       (rows) => [
         for (final r in rows)
           PromoBanner(
@@ -31,7 +32,7 @@ class DriftHomeRepository implements HomeRepository {
   Stream<List<Shop>> watchShops() {
     final query = _db.select(_db.shops)
       ..orderBy([(t) => OrderingTerm.asc(t.sortOrder)]);
-    return query.watch().map(
+    return query.watch().withStorageFailures().map(
       (rows) => [
         for (final r in rows)
           Shop(

@@ -1,6 +1,7 @@
 import '../../../core/db/app_database.dart';
 import '../domain/member.dart';
 import '../domain/member_repository.dart';
+import '../../../core/db/storage_errors.dart';
 
 class DriftMemberRepository implements MemberRepository {
   DriftMemberRepository(this._db);
@@ -9,7 +10,9 @@ class DriftMemberRepository implements MemberRepository {
 
   @override
   Stream<Member?> watchMember() {
-    return (_db.select(_db.members)..limit(1)).watchSingleOrNull().map(
+    return (_db.select(
+      _db.members,
+    )..limit(1)).watchSingleOrNull().withStorageFailures().map(
       (row) => row == null
           ? null
           : Member(
