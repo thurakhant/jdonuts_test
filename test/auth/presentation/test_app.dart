@@ -7,6 +7,8 @@ import 'package:jdonuts_test/features/auth/data/fake_auth_repository.dart';
 import 'package:jdonuts_test/features/auth/data/in_memory_stores.dart';
 import 'package:jdonuts_test/features/auth/domain/auth_user.dart';
 
+import '../../support/data_overrides.dart';
+
 final testUser = AuthUser(
   id: 'user-959254135592',
   phone: '+959254135592',
@@ -33,6 +35,7 @@ Future<InMemorySessionStore> pumpApp(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
+        ...dataOverrides(),
         sessionStoreProvider.overrideWithValue(sessions),
         userStoreProvider.overrideWithValue(users),
         authRepositoryProvider.overrideWith(
