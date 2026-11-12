@@ -7,6 +7,7 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/format/mmk.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/reward_tier.dart';
+import '../reward_tier_style.dart';
 
 /// Silver -> Gold -> Platinum, top to bottom, joined by a line. Rows appear
 /// one after another, then the line to the next tier fills to [progress].
