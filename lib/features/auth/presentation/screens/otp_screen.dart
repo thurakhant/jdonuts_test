@@ -31,8 +31,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   bool _verifying = false;
   int _shakes = 0;
 
-  bool get _locked => _failure is OtpLocked;
-
   Future<void> _verify(String code) async {
     if (_verifying) return;
     setState(() => _verifying = true);
@@ -77,7 +75,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final phone = ref.watch(registrationFlowProvider).phone ?? '';
+    final flow = ref.watch(registrationFlowProvider);
+    final phone = flow.phone ?? '';
     return AuthScaffold(
       step: AuthStep.otp,
       title: l10n.verifyYourNumber,
@@ -91,7 +90,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             trigger: _shakes,
             child: OtpBoxes(
               key: _boxes,
-              enabled: !_locked && !_verifying,
+              enabled: !flow.otpLocked && !_verifying,
               hasError: _failure != null,
               onCompleted: _verify,
             ),

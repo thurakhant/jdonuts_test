@@ -171,15 +171,23 @@ void main() {
       await pumpApp(tester, repository: repo);
       await startFlow(tester, login: true);
       await tapButton(tester, 'CONTINUE');
+      final box = find.byKey(const ValueKey('otp-box-0'));
+      for (var attempt = 0; attempt < 3; attempt++) {
+        await tester.enterText(box, '111111');
+        await tester.pumpAndSettle();
+      }
+      expect(tester.widget<TextField>(box).enabled, isFalse);
       await tester.pump(const Duration(minutes: 5));
       await tester.tap(find.text('Resend'));
       await tester.pumpAndSettle();
       expect(find.text('Resend'), findsOneWidget);
       expect(find.text('resend in 5:00 min'), findsNothing);
+      expect(tester.widget<TextField>(box).enabled, isFalse);
       repo.failResend = false;
       await tester.tap(find.text('Resend'));
       await tester.pumpAndSettle();
       expect(find.text('resend in 5:00 min'), findsOneWidget);
+      expect(tester.widget<TextField>(box).enabled, isTrue);
     },
   );
 }
