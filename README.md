@@ -22,6 +22,11 @@ fvm flutter pub get
 fvm flutter run        # on an iOS Simulator or Android emulator
 ```
 
+Without fvm, plain `flutter pub get` / `flutter run` on Flutter 3.50.0 works
+the same. No code generation step is needed — the Drift and l10n outputs are
+committed. First launch imports `assets/seed/catalog.json` into the local
+database; clear the app's data (or reinstall) to reset it.
+
 Tests and analysis:
 
 ```bash
@@ -79,7 +84,9 @@ truth. The bundled seed (`assets/seed/catalog.json`, a versioned
    `CatalogSource` — nothing above the data layer changes.
 3. **Connectivity** = `connectivity_plus` *and* a real reachability probe
    (socket to 1.1.1.1:53, 3 s timeout) behind an interface; Home shows an
-   offline banner while offline.
+   offline banner while offline. To try it: turn on airplane mode, relaunch
+   the app — everything still renders from the database — then turn it off
+   and watch the banner clear and a background refresh run.
 4. **Images** are bundled as assets for all seed data (shown instantly in
    airplane mode); network URLs go through `cached_network_image` with a disk
    cache, placeholder and error state.
