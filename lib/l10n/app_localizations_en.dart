@@ -108,4 +108,113 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get placeholderSheetBody =>
       'This is a placeholder. No real integration in this demo.';
+
+  @override
+  String get placeholderSheetTitle => 'Coming soon';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
+  String get continueWithApple => 'Continue with Apple';
+
+  @override
+  String get continueWithFacebook => 'Continue with Facebook';
+
+  @override
+  String get registerLink => 'register';
+
+  @override
+  String get logInLink => 'log in';
+
+  @override
+  String get errorPhoneInvalid => 'Enter a valid Myanmar mobile number.';
+
+  @override
+  String errorPhoneUnknown(String register) {
+    return 'This number hasn\'t registered yet. Want to $register?';
+  }
+
+  @override
+  String errorPhoneTaken(String logIn) {
+    return 'This number is already registered. Want to $logIn?';
+  }
+
+  @override
+  String errorOtpWrong(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tries left',
+      one: '1 try left',
+    );
+    return 'That code is wrong. $_temp0.';
+  }
+
+  @override
+  String get errorOtpLocked =>
+      'Too many wrong codes. Tap Resend to get a new one.';
+
+  @override
+  String get errorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get resendActive => 'Resend';
+
+  @override
+  String get errorNameRequired => 'Please enter your name.';
+
+  @override
+  String get errorNameTooLong => 'That name is too long (50 characters max).';
+
+  @override
+  String get errorNameChars => 'Names can only contain letters and spaces.';
+
+  @override
+  String get errorDobInvalid => 'That isn\'t a real date.';
+
+  @override
+  String get errorDobFuture => 'Date of birth can\'t be in the future.';
+
+  @override
+  String get errorDobTooYoung => 'You must be at least 13 to sign up.';
+
+  @override
+  String get monthPickerTitle => 'Choose a month';
+
+  @override
+  String get month1 => 'January';
+
+  @override
+  String get month2 => 'February';
+
+  @override
+  String get month3 => 'March';
+
+  @override
+  String get month4 => 'April';
+
+  @override
+  String get month5 => 'May';
+
+  @override
+  String get month6 => 'June';
+
+  @override
+  String get month7 => 'July';
+
+  @override
+  String get month8 => 'August';
+
+  @override
+  String get month9 => 'September';
+
+  @override
+  String get month10 => 'October';
+
+  @override
+  String get month11 => 'November';
+
+  @override
+  String get month12 => 'December';
 }

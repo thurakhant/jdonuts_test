@@ -1,5 +1,6 @@
 /// Route path constants. One place to change, no string literals in widgets.
 abstract final class AppRoutes {
+  static const String splash = '/splash';
   static const String onboarding = '/onboarding';
   static const String phone = '/phone';
   static const String otp = '/otp';
@@ -17,6 +18,14 @@ abstract final class AppRoutes {
 
   static String productDetail(String id) => '/product/$id';
 
-  /// Screens a signed-out user may visit.
-  static const Set<String> authFlow = {onboarding, phone, otp, name, dob};
+  /// Screens a signed-out user may visit. `welcome` is included because the
+  /// session is only published when the user taps LET'S EXPLORE.
+  static const Set<String> authFlow = {
+    onboarding,
+    phone,
+    otp,
+    name,
+    dob,
+    welcome,
+  };
 }

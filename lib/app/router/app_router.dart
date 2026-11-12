@@ -1,82 +1,76 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../features/auth/presentation/providers/auth_state_provider.dart';
+import '../../features/auth/presentation/screens/dob_screen.dart';
+import '../../features/auth/presentation/screens/name_screen.dart';
+import '../../features/auth/presentation/screens/onboarding_screen.dart';
+import '../../features/auth/presentation/screens/otp_screen.dart';
+import '../../features/auth/presentation/screens/phone_screen.dart';
+import '../../features/auth/presentation/screens/splash_screen.dart';
+import '../../features/auth/presentation/screens/welcome_screen.dart';
+import '../../features/settings/presentation/settings_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/placeholder_screen.dart';
 import 'app_routes.dart';
+import 'auth_redirect.dart';
 
-/// Builds the app router with the auth redirect guard.
+/// The app router, created once. Auth changes reach it through a listenable
+/// so redirects re-run without rebuilding the router or losing navigation
+/// state.
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authStatus = ref.watch(authStatusProvider);
+  final status = ValueNotifier<AuthStatus>(ref.read(authStatusProvider));
+  ref.listen(authStatusProvider, (_, next) => status.value = next);
 
-  return GoRouter(
-    initialLocation: AppRoutes.onboarding,
-    redirect: (context, state) => _redirect(authStatus, state.matchedLocation),
-    routes: [
-      GoRoute(
-        path: AppRoutes.onboarding,
-        builder: (_, _) => const PlaceholderScreen(title: 'Onboarding'),
-      ),
-      GoRoute(
-        path: AppRoutes.phone,
-        builder: (_, _) => const PlaceholderScreen(title: 'Phone number'),
-      ),
-      GoRoute(
-        path: AppRoutes.otp,
-        builder: (_, _) => const PlaceholderScreen(title: 'Verify number'),
-      ),
-      GoRoute(
-        path: AppRoutes.name,
-        builder: (_, _) => const PlaceholderScreen(title: 'Name'),
-      ),
-      GoRoute(
-        path: AppRoutes.dob,
-        builder: (_, _) => const PlaceholderScreen(title: 'Date of birth'),
-      ),
-      GoRoute(
-        path: AppRoutes.welcome,
-        builder: (_, _) => const PlaceholderScreen(title: 'Welcome'),
-      ),
-      GoRoute(
-        path: AppRoutes.productDetailPattern,
-        builder: (_, state) =>
-            PlaceholderScreen(title: 'Product ${state.pathParameters['id']}'),
-      ),
-      StatefulShellRoute.indexedStack(
-        builder: (_, _, shell) => AppShell(navigationShell: shell),
-        branches: [
-          _branch(AppRoutes.home, 'Home'),
-          _branch(AppRoutes.rewards, 'Rewards'),
-          _branch(AppRoutes.scan, 'Scan'),
-          _branch(AppRoutes.orders, 'Orders'),
-          _branch(AppRoutes.settings, 'Settings'),
-        ],
-      ),
-    ],
+  final router = GoRouter(
+    initialLocation: AppRoutes.splash,
+    refreshListenable: status,
+    redirect: (context, state) =>
+        authRedirect(status.value, state.matchedLocation),
+    routes: _routes,
   );
+  ref.onDispose(() {
+    router.dispose();
+    status.dispose();
+  });
+  return router;
 });
 
-StatefulShellBranch _branch(String path, String title) {
-  return StatefulShellBranch(
-    routes: [
-      GoRoute(
-        path: path,
-        builder: (_, _) => PlaceholderScreen(title: title),
+final List<RouteBase> _routes = [
+  _page(AppRoutes.splash, (_) => const SplashScreen()),
+  _page(AppRoutes.onboarding, (_) => const OnboardingScreen()),
+  _page(AppRoutes.phone, (_) => const PhoneScreen()),
+  _page(AppRoutes.otp, (_) => const OtpScreen()),
+  _page(AppRoutes.name, (_) => const NameScreen()),
+  _page(AppRoutes.dob, (_) => const DobScreen()),
+  _page(AppRoutes.welcome, (_) => const WelcomeScreen()),
+  GoRoute(
+    path: AppRoutes.productDetailPattern,
+    builder: (_, state) =>
+        PlaceholderScreen(title: 'Product ${state.pathParameters['id']}'),
+  ),
+  StatefulShellRoute.indexedStack(
+    builder: (_, _, shell) => AppShell(navigationShell: shell),
+    branches: [
+      _branch(AppRoutes.home, (_) => const PlaceholderScreen(title: 'Home')),
+      _branch(
+        AppRoutes.rewards,
+        (_) => const PlaceholderScreen(title: 'Rewards'),
       ),
+      _branch(AppRoutes.scan, (_) => const PlaceholderScreen(title: 'Scan')),
+      _branch(
+        AppRoutes.orders,
+        (_) => const PlaceholderScreen(title: 'Orders'),
+      ),
+      _branch(AppRoutes.settings, (_) => const SettingsScreen()),
     ],
-  );
-}
+  ),
+];
 
-/// Signed-out users stay in the auth flow; signed-in users skip it.
-String? _redirect(AuthStatus status, String location) {
-  final inAuthFlow = AppRoutes.authFlow.contains(location);
-  switch (status) {
-    case AuthStatus.unknown:
-      return null;
-    case AuthStatus.signedOut:
-      return inAuthFlow ? null : AppRoutes.onboarding;
-    case AuthStatus.signedIn:
-      return inAuthFlow ? AppRoutes.home : null;
-  }
+GoRoute _page(String path, WidgetBuilder builder) =>
+    GoRoute(path: path, builder: (context, _) => builder(context));
+
+StatefulShellBranch _branch(String path, WidgetBuilder builder) {
+  return StatefulShellBranch(routes: [_page(path, builder)]);
 }

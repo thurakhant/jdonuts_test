@@ -8,8 +8,12 @@
   "legalNotice": "By continuing, you acknowledge that you have read and agree to our {termsOfUse} and {privacyPolicy}.",
   "@legalNotice": {
     "placeholders": {
-      "termsOfUse": {"type": "String"},
-      "privacyPolicy": {"type": "String"}
+      "termsOfUse": {
+        "type": "String"
+      },
+      "privacyPolicy": {
+        "type": "String"
+      }
     }
   },
   "termsOfUse": "Terms of Use",
@@ -21,14 +25,18 @@
   "otpSentTo": "We've sent 6 digit OTP to {phone}",
   "@otpSentTo": {
     "placeholders": {
-      "phone": {"type": "String"}
+      "phone": {
+        "type": "String"
+      }
     }
   },
   "didntReceiveCode": "Didn't receive the code?",
   "resendIn": "resend in {time} min",
   "@resendIn": {
     "placeholders": {
-      "time": {"type": "String"}
+      "time": {
+        "type": "String"
+      }
     }
   },
   "resendNow": "Resend now",
@@ -46,5 +54,58 @@
   "settingsTab": "Settings",
   "logOut": "Log out",
   "comingSoon": "Coming soon",
-  "placeholderSheetBody": "This is a placeholder. No real integration in this demo."
+  "placeholderSheetBody": "This is a placeholder. No real integration in this demo.",
+  "placeholderSheetTitle": "Coming soon",
+  "continueWithGoogle": "Continue with Google",
+  "continueWithApple": "Continue with Apple",
+  "continueWithFacebook": "Continue with Facebook",
+  "registerLink": "register",
+  "logInLink": "log in",
+  "errorPhoneInvalid": "Enter a valid Myanmar mobile number.",
+  "errorPhoneUnknown": "This number hasn't registered yet. Want to {register}?",
+  "@errorPhoneUnknown": {
+    "placeholders": {
+      "register": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPhoneTaken": "This number is already registered. Want to {logIn}?",
+  "@errorPhoneTaken": {
+    "placeholders": {
+      "logIn": {
+        "type": "String"
+      }
+    }
+  },
+  "errorOtpWrong": "That code is wrong. {count, plural, =1{1 try left} other{{count} tries left}}.",
+  "@errorOtpWrong": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorOtpLocked": "Too many wrong codes. Tap Resend to get a new one.",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "resendActive": "Resend",
+  "errorNameRequired": "Please enter your name.",
+  "errorNameTooLong": "That name is too long (50 characters max).",
+  "errorNameChars": "Names can only contain letters and spaces.",
+  "errorDobInvalid": "That isn't a real date.",
+  "errorDobFuture": "Date of birth can't be in the future.",
+  "errorDobTooYoung": "You must be at least 13 to sign up.",
+  "monthPickerTitle": "Choose a month",
+  "month1": "January",
+  "month2": "February",
+  "month3": "March",
+  "month4": "April",
+  "month5": "May",
+  "month6": "June",
+  "month7": "July",
+  "month8": "August",
+  "month9": "September",
+  "month10": "October",
+  "month11": "November",
+  "month12": "December"
 }

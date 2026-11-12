@@ -279,6 +279,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This is a placeholder. No real integration in this demo.'**
   String get placeholderSheetBody;
+
+  /// No description provided for @placeholderSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get placeholderSheetTitle;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get continueWithGoogle;
+
+  /// No description provided for @continueWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get continueWithApple;
+
+  /// No description provided for @continueWithFacebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Facebook'**
+  String get continueWithFacebook;
+
+  /// No description provided for @registerLink.
+  ///
+  /// In en, this message translates to:
+  /// **'register'**
+  String get registerLink;
+
+  /// No description provided for @logInLink.
+  ///
+  /// In en, this message translates to:
+  /// **'log in'**
+  String get logInLink;
+
+  /// No description provided for @errorPhoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid Myanmar mobile number.'**
+  String get errorPhoneInvalid;
+
+  /// No description provided for @errorPhoneUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'This number hasn\'t registered yet. Want to {register}?'**
+  String errorPhoneUnknown(String register);
+
+  /// No description provided for @errorPhoneTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This number is already registered. Want to {logIn}?'**
+  String errorPhoneTaken(String logIn);
+
+  /// No description provided for @errorOtpWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'That code is wrong. {count, plural, =1{1 try left} other{{count} tries left}}.'**
+  String errorOtpWrong(int count);
+
+  /// No description provided for @errorOtpLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong codes. Tap Resend to get a new one.'**
+  String get errorOtpLocked;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get errorGeneric;
+
+  /// No description provided for @resendActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get resendActive;
+
+  /// No description provided for @errorNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name.'**
+  String get errorNameRequired;
+
+  /// No description provided for @errorNameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'That name is too long (50 characters max).'**
+  String get errorNameTooLong;
+
+  /// No description provided for @errorNameChars.
+  ///
+  /// In en, this message translates to:
+  /// **'Names can only contain letters and spaces.'**
+  String get errorNameChars;
+
+  /// No description provided for @errorDobInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That isn\'t a real date.'**
+  String get errorDobInvalid;
+
+  /// No description provided for @errorDobFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth can\'t be in the future.'**
+  String get errorDobFuture;
+
+  /// No description provided for @errorDobTooYoung.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be at least 13 to sign up.'**
+  String get errorDobTooYoung;
+
+  /// No description provided for @monthPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a month'**
+  String get monthPickerTitle;
+
+  /// No description provided for @month1.
+  ///
+  /// In en, this message translates to:
+  /// **'January'**
+  String get month1;
+
+  /// No description provided for @month2.
+  ///
+  /// In en, this message translates to:
+  /// **'February'**
+  String get month2;
+
+  /// No description provided for @month3.
+  ///
+  /// In en, this message translates to:
+  /// **'March'**
+  String get month3;
+
+  /// No description provided for @month4.
+  ///
+  /// In en, this message translates to:
+  /// **'April'**
+  String get month4;
+
+  /// No description provided for @month5.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get month5;
+
+  /// No description provided for @month6.
+  ///
+  /// In en, this message translates to:
+  /// **'June'**
+  String get month6;
+
+  /// No description provided for @month7.
+  ///
+  /// In en, this message translates to:
+  /// **'July'**
+  String get month7;
+
+  /// No description provided for @month8.
+  ///
+  /// In en, this message translates to:
+  /// **'August'**
+  String get month8;
+
+  /// No description provided for @month9.
+  ///
+  /// In en, this message translates to:
+  /// **'September'**
+  String get month9;
+
+  /// No description provided for @month10.
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get month10;
+
+  /// No description provided for @month11.
+  ///
+  /// In en, this message translates to:
+  /// **'November'**
+  String get month11;
+
+  /// No description provided for @month12.
+  ///
+  /// In en, this message translates to:
+  /// **'December'**
+  String get month12;
 }
 
 class _AppLocalizationsDelegate
