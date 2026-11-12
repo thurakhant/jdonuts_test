@@ -6,6 +6,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../app/widgets/jd_image.dart';
+import '../../../../app/widgets/notification_bell.dart';
 import '../../../../app/widgets/skeleton.dart';
 import '../../../../core/format/mmk.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -62,7 +63,7 @@ class _Header extends StatelessWidget {
                   ],
                 ),
               ),
-              _Bell(count: member.notificationCount),
+              NotificationBell(count: member.notificationCount),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
@@ -128,27 +129,6 @@ class _TierChip extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// Display-only bell with an unread-count badge.
-class _Bell extends StatelessWidget {
-  const _Bell({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = AppLocalizations.of(context)!.notificationsLabel;
-    return Semantics(
-      label: label,
-      child: Badge(
-        isLabelVisible: count > 0,
-        label: Text('$count'),
-        backgroundColor: AppColors.accent,
-        child: const Icon(Icons.notifications_none, size: 28),
       ),
     );
   }
