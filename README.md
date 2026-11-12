@@ -181,10 +181,10 @@ motion throughout.
 
 ## Tests
 
-129 tests in 25 files, all passing, named after the behaviour they check:
+134 tests in 26 files, all passing, named after the behaviour they check:
 
 - **Unit:** every validator rule, the fake auth repository (lockout, resend,
-  sessions), catalog import/refresh, the v3 → v4 migration, connectivity,
+  sessions, storage failures), catalog import/refresh, the v3 → v4 migration, connectivity,
   MMK formatting, and the domain-purity check.
 - **Widget:** login and registration validation and flow, OTP boxes, session
   routing, Home states, Product detail, Rewards motion and states, including
@@ -220,6 +220,16 @@ motion throughout.
   (`/home/product/:id`) so the Hero flight stays inside one navigator; the
   PDF's `/product/:id` forwards there, and signed-out users still go to
   Onboarding.
+- **Auth rules in two places:** the fake backend can only check an OTP for an
+  existing account, so sign-up attempts are counted in the registration flow
+  and login attempts in the repository. With a real backend both would move
+  behind `AuthRepository`.
+- **Catalog repair check:** startup re-reads the seed when the challenges
+  table is empty (to repair installs from before challenges existed). A
+  catalog with truly zero challenges would re-read it on every start; a
+  stored "repaired" flag would fix that with one more migration.
+- **Catalog values:** imported JSON is checked for shape and types, not
+  ranges (e.g. a negative price would be accepted).
 - **Reachability:** the probe proves a socket to a public DNS server opens,
   not that a full HTTP request would succeed (e.g. behind a captive portal).
 - **Screen sizes:** a widget test checks Rewards at 360×640 logical pixels
