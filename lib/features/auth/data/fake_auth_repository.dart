@@ -132,11 +132,15 @@ class FakeAuthRepository implements AuthRepository {
   bool acceptsSignUpCode(String code) => code == kFakeOtp;
 
   @override
-  Future<void> signOut() async {
+  Future<Result<void>> signOut() async {
     await _latency();
-    await _sessionStore.clear();
+    return _guarded(() async {
+      await _sessionStore.clear();
+      return const Success(null);
+    });
   }
 
   @override
-  Future<AuthSession?> currentSession() => _sessionStore.read();
+  Future<Result<AuthSession?>> currentSession() =>
+      _guarded(() async => Success(await _sessionStore.read()));
 }

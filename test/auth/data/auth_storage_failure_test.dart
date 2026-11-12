@@ -25,8 +25,20 @@ class _BrokenUserStore extends InMemoryUserStore {
       failWrite ? Future.error(Exception('disk full')) : super.writeAll(users);
 }
 
-FakeAuthRepository _repo(InMemoryUserStore users) => FakeAuthRepository(
-  sessionStore: InMemorySessionStore(),
+/// A session store whose keychain calls fail.
+class _BrokenSessionStore extends InMemorySessionStore {
+  @override
+  Future<AuthSession?> read() => Future.error(Exception('keychain locked'));
+
+  @override
+  Future<void> clear() => Future.error(Exception('keychain locked'));
+}
+
+FakeAuthRepository _repo(
+  InMemoryUserStore users, {
+  InMemorySessionStore? sessions,
+}) => FakeAuthRepository(
+  sessionStore: sessions ?? InMemorySessionStore(),
   userStore: users,
   delay: Duration.zero,
 );
@@ -66,6 +78,29 @@ void main() {
         expect(await _register(repo), isA<StorageFailure>());
       },
     );
+  });
+
+  group('FakeAuthRepository session failures', () {
+    test(
+      'sign out returns StorageFailure when the session cannot be cleared',
+      () async {
+        final repo = _repo(
+          InMemoryUserStore(),
+          sessions: _BrokenSessionStore(),
+        );
+
+        expect((await repo.signOut()).failureOrNull, isA<StorageFailure>());
+      },
+    );
+
+    test('an unreadable session returns StorageFailure', () async {
+      final repo = _repo(InMemoryUserStore(), sessions: _BrokenSessionStore());
+
+      expect(
+        (await repo.currentSession()).failureOrNull,
+        isA<StorageFailure>(),
+      );
+    });
   });
 
   group('Secure stores with damaged data', () {

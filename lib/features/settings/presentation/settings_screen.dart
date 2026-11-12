@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../app/widgets/failure_text.dart';
-import '../../../core/failure.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../auth/application/auth_providers.dart';
 
@@ -19,23 +18,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _signOut() async {
     setState(() => _signingOut = true);
-    try {
-      await ref.read(currentSessionProvider.notifier).signOut();
-    } on Exception {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            dataErrorMessage(
-              AppLocalizations.of(context)!,
-              const StorageFailure(),
-            ),
-          ),
-        ),
-      );
-    } finally {
-      if (mounted) setState(() => _signingOut = false);
-    }
+    final failure = await ref.read(currentSessionProvider.notifier).signOut();
+    if (!mounted) return;
+    setState(() => _signingOut = false);
+    if (failure == null) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(dataErrorMessage(AppLocalizations.of(context)!, failure)),
+      ),
+    );
   }
 
   @override

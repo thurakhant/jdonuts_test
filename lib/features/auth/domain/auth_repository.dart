@@ -31,8 +31,10 @@ abstract interface class AuthRepository {
     required String code,
   });
 
-  Future<void> signOut();
+  /// Forgets the session. Fails with `StorageFailure` if it can't be removed.
+  Future<Result<void>> signOut();
 
-  /// The remembered session, or null when signed out.
-  Future<AuthSession?> currentSession();
+  /// The remembered session, or null when signed out. Fails with
+  /// `StorageFailure` if secure storage can't be read.
+  Future<Result<AuthSession?>> currentSession();
 }

@@ -36,7 +36,7 @@ void main() {
     expect((await repo.requestOtp(phone)).isSuccess, isTrue);
     final result = await repo.verifyOtp(phone: phone, code: '123456');
     expect(result.valueOrNull?.firstName, 'Aung');
-    expect((await repo.currentSession())?.phone, phone);
+    expect(((await repo.currentSession()).valueOrNull)?.phone, phone);
   });
 
   test('registering the same number twice fails', () async {
@@ -83,7 +83,7 @@ void main() {
     expect(third.failureOrNull, isA<OtpLocked>());
     final right = await repo.verifyOtp(phone: phone, code: '123456');
     expect(right.failureOrNull, isA<OtpLocked>());
-    expect(await repo.currentSession(), isNull);
+    expect((await repo.currentSession()).valueOrNull, isNull);
   });
 
   test('resending the code unlocks and resets the attempts', () async {
@@ -107,7 +107,7 @@ void main() {
   test('session persists through the store across a new repository', () async {
     final repo = await registered();
     await repo.verifyOtp(phone: phone, code: '123456');
-    final session = await make().currentSession();
+    final session = (await make().currentSession()).valueOrNull;
     expect(session?.userId, 'user-959254135592');
     expect(session?.firstName, 'Aung');
   });
@@ -124,7 +124,7 @@ void main() {
     final repo = await registered();
     await repo.verifyOtp(phone: phone, code: '123456');
     await repo.signOut();
-    expect(await repo.currentSession(), isNull);
+    expect((await repo.currentSession()).valueOrNull, isNull);
   });
 
   test('default delay is about one second', () {
