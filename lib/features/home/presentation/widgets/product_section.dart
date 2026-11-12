@@ -24,29 +24,30 @@ class ProductSectionView extends ConsumerWidget {
 
   /// Card width, panel height and framing per section, as in the design
   /// screens: Seasonal wide landscape, Popular portrait, Order again square.
-  (double, double, bool) get _dims => switch (section) {
-    ProductSection.seasonal => (
-      AppSpacing.productTileSize,
-      AppSpacing.productImageHeight,
-      false,
-    ),
-    ProductSection.popular => (
-      AppSpacing.productCardNarrow,
-      AppSpacing.productImagePortrait,
-      true,
-    ),
-    ProductSection.orderAgain => (
-      AppSpacing.productCardNarrow,
-      AppSpacing.productImageSquare,
-      true,
-    ),
-  };
+  ({double width, double imageHeight, bool framed}) get _cardLayout =>
+      switch (section) {
+        ProductSection.seasonal => (
+          width: AppSpacing.productTileSize,
+          imageHeight: AppSpacing.productImageHeight,
+          framed: false,
+        ),
+        ProductSection.popular => (
+          width: AppSpacing.productCardNarrow,
+          imageHeight: AppSpacing.productImagePortrait,
+          framed: true,
+        ),
+        ProductSection.orderAgain => (
+          width: AppSpacing.productCardNarrow,
+          imageHeight: AppSpacing.productImageSquare,
+          framed: true,
+        ),
+      };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final products = ref.watch(productsBySectionProvider(section));
-    final (width, imageHeight, framed) = _dims;
+    final (:width, :imageHeight, :framed) = _cardLayout;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -63,7 +64,7 @@ class ProductSectionView extends ConsumerWidget {
           ),
           data: (items) => items.isEmpty
               ? SectionMessage(message: l10n.sectionEmpty)
-              : _Row(
+              : _HorizontalProductList(
                   items,
                   width: width,
                   imageHeight: imageHeight,
@@ -75,8 +76,8 @@ class ProductSectionView extends ConsumerWidget {
   }
 }
 
-class _Row extends StatelessWidget {
-  const _Row(
+class _HorizontalProductList extends StatelessWidget {
+  const _HorizontalProductList(
     this.items, {
     required this.width,
     required this.imageHeight,

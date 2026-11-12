@@ -12,8 +12,8 @@ Paint _stroke(Color color) => Paint()
   ..color = color;
 
 /// An orange arc over the top of a coffee cup that fills left to right.
-class CoffeeCupPainter extends CustomPainter {
-  const CoffeeCupPainter({required this.progress});
+class CoffeeProgressArcPainter extends CustomPainter {
+  const CoffeeProgressArcPainter({required this.progress});
 
   final double progress;
 
@@ -37,28 +37,29 @@ class CoffeeCupPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CoffeeCupPainter old) => old.progress != progress;
+  bool shouldRepaint(CoffeeProgressArcPainter old) => old.progress != progress;
 }
 
 /// Clips to a pie slice starting at 12 o'clock and running clockwise.
 class SectorClipper extends CustomClipper<Path> {
-  const SectorClipper(this.sweep);
+  const SectorClipper(this.sweepRadians);
 
-  final double sweep;
+  /// Clockwise angle of the slice, in radians.
+  final double sweepRadians;
 
   @override
   Path getClip(Size size) {
     // arcTo collapses a full 360° sweep to nothing, so a finished circle
     // is an oval rather than a pie slice.
-    if (sweep >= 2 * math.pi) return Path()..addOval(Offset.zero & size);
+    if (sweepRadians >= 2 * math.pi) return Path()..addOval(Offset.zero & size);
     return Path()
       ..moveTo(size.width / 2, size.height / 2)
-      ..arcTo(Offset.zero & size, -math.pi / 2, sweep, false)
+      ..arcTo(Offset.zero & size, -math.pi / 2, sweepRadians, false)
       ..close();
   }
 
   @override
-  bool shouldReclip(SectorClipper old) => old.sweep != sweep;
+  bool shouldReclip(SectorClipper old) => old.sweepRadians != sweepRadians;
 }
 
 /// Luminance matrix that turns a picture grey.

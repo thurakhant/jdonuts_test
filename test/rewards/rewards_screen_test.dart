@@ -118,7 +118,7 @@ void main() {
     final painters = tester
         .widgetList<CustomPaint>(find.byType(CustomPaint))
         .map((p) => p.painter.runtimeType);
-    expect(painters, contains(CoffeeCupPainter));
+    expect(painters, contains(CoffeeProgressArcPainter));
   });
 
   testWidgets('only the finished challenge has an active EARN button', (
@@ -204,7 +204,7 @@ void main() {
         .widgetList<ClipPath>(find.byType(ClipPath))
         .map((c) => c.clipper)
         .whereType<SectorClipper>()
-        .map((c) => c.sweep)
+        .map((c) => c.sweepRadians)
         .toList();
     // 4/4 is a full circle at once; 1/4 still animates in from empty.
     expect(sweeps.first, closeTo(2 * 3.141592653589793, 0.0001));

@@ -31,8 +31,7 @@ class ChallengeCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final c = challenge;
-    final claimed = ref.watch(claimedChallengesProvider).contains(c.id);
+    final claimed = ref.watch(claimedChallengesProvider).contains(challenge.id);
     return StaggeredEntrance(
       index: index,
       step: AppMotion.cardStagger,
@@ -44,15 +43,15 @@ class ChallengeCard extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            _Art(challenge: c),
+            _ChallengeArtwork(challenge: challenge),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(c.title, style: AppTypography.title),
+                  Text(challenge.title, style: AppTypography.title),
                   Text(
-                    l10n.challengeProgress(c.progress, c.goal),
+                    l10n.challengeProgress(challenge.progress, challenge.goal),
                     style: AppTypography.body,
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -63,14 +62,14 @@ class ChallengeCard extends ConsumerWidget {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       EarnButton(
-                        enabled: c.isComplete && !claimed,
+                        enabled: challenge.isComplete && !claimed,
                         claimed: claimed,
                         onPressed: () => ref
                             .read(claimedChallengesProvider.notifier)
-                            .claim(c.id),
+                            .claim(challenge.id),
                       ),
                       Text(
-                        l10n.pointsShort(formatMmk(c.rewardPoints)),
+                        l10n.pointsShort(formatMmk(challenge.rewardPoints)),
                         style: AppTypography.body,
                       ),
                     ],
@@ -86,26 +85,28 @@ class ChallengeCard extends ConsumerWidget {
 }
 
 /// Picture plus progress painter, animated from empty to the current value.
-class _Art extends StatelessWidget {
-  const _Art({required this.challenge});
+class _ChallengeArtwork extends StatelessWidget {
+  const _ChallengeArtwork({required this.challenge});
 
   final Challenge challenge;
 
   @override
   Widget build(BuildContext context) {
-    final c = challenge;
     const size = AppSpacing.challengeArtSize;
     // A finished challenge starts fully coloured, so it never flashes grey
     // when the list is rebuilt (for example after switching tabs).
     return TweenAnimationBuilder<double>(
-      tween: Tween(begin: c.isComplete ? c.fraction : 0, end: c.fraction),
+      tween: Tween(
+        begin: challenge.isComplete ? challenge.fraction : 0,
+        end: challenge.fraction,
+      ),
       duration: AppMotion.effective(context, AppMotion.progressRing),
       curve: AppMotion.standard,
       builder: (_, value, _) => SizedBox.square(
         dimension: size,
-        child: switch (c.style) {
-          ChallengeStyle.quarterDonut => _donut(c, value),
-          ChallengeStyle.coffeeCup => _coffee(c, value),
+        child: switch (challenge.style) {
+          ChallengeStyle.quarterDonut => _donut(value),
+          ChallengeStyle.coffeeCup => _coffee(value),
         },
       ),
     );
@@ -113,8 +114,10 @@ class _Art extends StatelessWidget {
 
   /// Greyscale picture with the finished quarters coloured in on top; the
   /// progress lives on the doughnut itself, with no ring around it.
-  Widget _donut(Challenge c, double progress) {
-    final image = ClipOval(child: Image.asset(c.imageAsset, fit: BoxFit.cover));
+  Widget _donut(double progress) {
+    final image = ClipOval(
+      child: Image.asset(challenge.imageAsset, fit: BoxFit.cover),
+    );
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -128,15 +131,15 @@ class _Art extends StatelessWidget {
   }
 
   /// The cup with an arc over it that fills toward the goal.
-  Widget _coffee(Challenge c, double progress) {
+  Widget _coffee(double progress) {
     return Stack(
       fit: StackFit.expand,
       children: [
         Padding(
           padding: const EdgeInsets.only(top: AppSpacing.lg),
-          child: Image.asset(c.imageAsset, fit: BoxFit.contain),
+          child: Image.asset(challenge.imageAsset, fit: BoxFit.contain),
         ),
-        CustomPaint(painter: CoffeeCupPainter(progress: progress)),
+        CustomPaint(painter: CoffeeProgressArcPainter(progress: progress)),
       ],
     );
   }

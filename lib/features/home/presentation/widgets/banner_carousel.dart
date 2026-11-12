@@ -41,21 +41,21 @@ class BannerCarousel extends ConsumerWidget {
           ),
           data: (banners) => banners.isEmpty
               ? SectionMessage(message: l10n.sectionEmpty)
-              : _Pager(banners),
+              : _BannerPager(banners),
         );
   }
 }
 
-class _Pager extends StatefulWidget {
-  const _Pager(this.banners);
+class _BannerPager extends StatefulWidget {
+  const _BannerPager(this.banners);
 
   final List<PromoBanner> banners;
 
   @override
-  State<_Pager> createState() => _PagerState();
+  State<_BannerPager> createState() => _BannerPagerState();
 }
 
-class _PagerState extends State<_Pager> {
+class _BannerPagerState extends State<_BannerPager> {
   // Narrow enough that a slice of the next card shows, as in the design.
   final _controller = PageController(viewportFraction: 0.78);
   Timer? _timer;
@@ -99,7 +99,7 @@ class _PagerState extends State<_Pager> {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        _Dots(count: widget.banners.length, active: _page),
+        _PageIndicators(count: widget.banners.length, active: _page),
       ],
     );
   }
@@ -261,8 +261,8 @@ class _DoodlePainter extends CustomPainter {
   bool shouldRepaint(_DoodlePainter oldDelegate) => oldDelegate.seed != seed;
 }
 
-class _Dots extends StatelessWidget {
-  const _Dots({required this.count, required this.active});
+class _PageIndicators extends StatelessWidget {
+  const _PageIndicators({required this.count, required this.active});
 
   final int count;
   final int active;
