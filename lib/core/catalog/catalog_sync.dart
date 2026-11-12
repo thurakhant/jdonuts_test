@@ -3,6 +3,10 @@ import 'package:drift/drift.dart';
 import '../db/app_database.dart';
 import '../failure.dart';
 import '../result.dart';
+import '../../features/home/domain/promo_banner.dart';
+import '../../features/home/domain/shop.dart';
+import '../../features/member/domain/member.dart';
+import '../../features/product/domain/product.dart';
 import '../../features/rewards/domain/challenge.dart';
 import 'catalog_snapshot.dart';
 import 'catalog_source.dart';
@@ -57,100 +61,109 @@ class CatalogSync {
     return int.tryParse(row?.value ?? '');
   }
 
-  Future<void> _write(CatalogSnapshot s) async {
-    final challenges = s.challenges ?? const <Challenge>[];
-    await _db.batch((b) {
-      b.insertAllOnConflictUpdate(_db.products, [
-        for (final p in s.products)
-          ProductsCompanion.insert(
-            id: p.id,
-            code: p.code,
-            name: p.name,
-            priceMmk: p.priceMmk,
-            isNew: Value(p.isNew),
-            discountPercent: Value(p.discountPercent),
-            imageUrl: p.imageUrl,
-            description: p.description,
-            section: p.section.name,
-            sortOrder: Value(p.sortOrder),
+  /// Upserts every table and the version, then removes dropped rows. Runs
+  /// inside one transaction (see [_pull]).
+  Future<void> _write(CatalogSnapshot snapshot) async {
+    await _db.batch((batch) {
+      batch
+        ..insertAllOnConflictUpdate(_db.products, [
+          for (final product in snapshot.products) _productRow(product),
+        ])
+        ..insertAllOnConflictUpdate(_db.banners, [
+          for (final (i, banner) in snapshot.banners.indexed)
+            _bannerRow(banner, i),
+        ])
+        ..insertAllOnConflictUpdate(_db.shops, [
+          for (final (i, shop) in snapshot.shops.indexed) _shopRow(shop, i),
+        ])
+        ..insertAllOnConflictUpdate(_db.members, [_memberRow(snapshot.member)])
+        ..insertAllOnConflictUpdate(_db.challenges, [
+          for (final (i, challenge) in (snapshot.challenges ?? []).indexed)
+            _challengeRow(challenge, i),
+        ])
+        ..insertAllOnConflictUpdate(_db.keyValues, [
+          KeyValuesCompanion.insert(
+            key: kCatalogVersionKey,
+            value: '${snapshot.version}',
           ),
-      ]);
-      b.insertAllOnConflictUpdate(_db.banners, [
-        for (var i = 0; i < s.banners.length; i++)
-          BannersCompanion.insert(
-            id: s.banners[i].id,
-            title: s.banners[i].title,
-            imageUrl: s.banners[i].imageUrl,
-            badge: Value(s.banners[i].badge),
-            sortOrder: Value(i),
-          ),
-      ]);
-      b.insertAllOnConflictUpdate(_db.shops, [
-        for (var i = 0; i < s.shops.length; i++)
-          ShopsCompanion.insert(
-            id: s.shops[i].id,
-            name: s.shops[i].name,
-            address: s.shops[i].address,
-            imageUrl: s.shops[i].imageUrl,
-            sortOrder: Value(i),
-          ),
-      ]);
-      final m = s.member;
-      b.insertAllOnConflictUpdate(_db.members, [
-        MembersCompanion.insert(
-          id: m.id,
-          name: m.name,
-          avatarAsset: m.avatarAsset,
-          tier: m.tier,
-          totalPoints: m.totalPoints,
-          pointsToNextTier: m.pointsToNextTier,
-          nextTier: m.nextTier,
-          notificationCount: Value(m.notificationCount),
-          tierProgress: Value(m.tierProgress),
-        ),
-      ]);
-      b.insertAllOnConflictUpdate(_db.challenges, [
-        for (var i = 0; i < challenges.length; i++)
-          ChallengesCompanion.insert(
-            id: challenges[i].id,
-            title: challenges[i].title,
-            imageAsset: challenges[i].imageAsset,
-            style: challenges[i].style.name,
-            goal: challenges[i].goal,
-            progress: challenges[i].progress,
-            rewardPoints: challenges[i].rewardPoints,
-            sortOrder: Value(i),
-          ),
-      ]);
-      b.insertAllOnConflictUpdate(_db.keyValues, [
-        KeyValuesCompanion.insert(
-          key: kCatalogVersionKey,
-          value: '${s.version}',
-        ),
-      ]);
+        ]);
     });
-    await _deleteMissing(s);
+    await _deleteMissing(snapshot);
   }
 
   /// Rows the source no longer lists are removed so the DB mirrors it.
-  Future<void> _deleteMissing(CatalogSnapshot s) async {
+  Future<void> _deleteMissing(CatalogSnapshot snapshot) async {
     await (_db.delete(
       _db.products,
-    )..where((t) => t.id.isNotIn(s.products.map((p) => p.id)))).go();
+    )..where((t) => t.id.isNotIn(snapshot.products.map((p) => p.id)))).go();
     await (_db.delete(
       _db.banners,
-    )..where((t) => t.id.isNotIn(s.banners.map((b) => b.id)))).go();
+    )..where((t) => t.id.isNotIn(snapshot.banners.map((b) => b.id)))).go();
     await (_db.delete(
       _db.shops,
-    )..where((t) => t.id.isNotIn(s.shops.map((x) => x.id)))).go();
+    )..where((t) => t.id.isNotIn(snapshot.shops.map((x) => x.id)))).go();
     // No challenges section (older payload): keep the saved rows.
-    if (s.challenges case final challenges?) {
+    if (snapshot.challenges case final challenges?) {
       await (_db.delete(
         _db.challenges,
       )..where((t) => t.id.isNotIn(challenges.map((x) => x.id)))).go();
     }
     await (_db.delete(
       _db.members,
-    )..where((t) => t.id.equals(s.member.id).not())).go();
+    )..where((t) => t.id.equals(snapshot.member.id).not())).go();
   }
 }
+
+ProductsCompanion _productRow(Product product) => ProductsCompanion.insert(
+  id: product.id,
+  code: product.code,
+  name: product.name,
+  priceMmk: product.priceMmk,
+  isNew: Value(product.isNew),
+  discountPercent: Value(product.discountPercent),
+  imageUrl: product.imageUrl,
+  description: product.description,
+  section: product.section.name,
+  sortOrder: Value(product.sortOrder),
+);
+
+BannersCompanion _bannerRow(PromoBanner banner, int order) =>
+    BannersCompanion.insert(
+      id: banner.id,
+      title: banner.title,
+      imageUrl: banner.imageUrl,
+      badge: Value(banner.badge),
+      sortOrder: Value(order),
+    );
+
+ShopsCompanion _shopRow(Shop shop, int order) => ShopsCompanion.insert(
+  id: shop.id,
+  name: shop.name,
+  address: shop.address,
+  imageUrl: shop.imageUrl,
+  sortOrder: Value(order),
+);
+
+MembersCompanion _memberRow(Member member) => MembersCompanion.insert(
+  id: member.id,
+  name: member.name,
+  avatarAsset: member.avatarAsset,
+  tier: member.tier,
+  totalPoints: member.totalPoints,
+  pointsToNextTier: member.pointsToNextTier,
+  nextTier: member.nextTier,
+  notificationCount: Value(member.notificationCount),
+  tierProgress: Value(member.tierProgress),
+);
+
+ChallengesCompanion _challengeRow(Challenge challenge, int order) =>
+    ChallengesCompanion.insert(
+      id: challenge.id,
+      title: challenge.title,
+      imageAsset: challenge.imageAsset,
+      style: challenge.style.name,
+      goal: challenge.goal,
+      progress: challenge.progress,
+      rewardPoints: challenge.rewardPoints,
+      sortOrder: Value(order),
+    );
