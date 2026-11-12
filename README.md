@@ -6,11 +6,13 @@ screen.
 
 ## Deliverables
 
-| Item | Where |
-| ---- | ----- |
-| Android release build | `app-release.apk` (attached to the submission email) |
-| iOS Simulator build | `Runner.app.zip` (attached to the submission email) |
-| Screen recording | Linked in the submission email: register, log out, log in, Home, Product detail, Rewards, then the same flow in airplane mode |
+Sent with the submission email:
+
+| Item | File |
+| ---- | ---- |
+| Android release build | `app-release.apk` |
+| iOS Simulator build | `Runner.app.zip` |
+| Screen recording | Video link: register, log out, log in, Home, Product detail, Rewards, then the same flow in airplane mode |
 
 ## Versions
 
@@ -33,7 +35,8 @@ fvm flutter run        # on an iOS Simulator or Android emulator
 Without fvm, plain `flutter pub get` / `flutter run` on Flutter 3.50.0 works
 the same. No code generation step is needed — the Drift and l10n outputs are
 committed. First launch imports `assets/seed/catalog.json` into the local
-database; clear the app's data (or reinstall) to reset it.
+database. Clearing the app's data on Android resets both the catalog and the
+session; on iOS the session lives in the Keychain, so log out to reset it.
 
 Analysis and tests:
 
@@ -68,8 +71,8 @@ Feature-first clean architecture, three layers per feature:
 lib/
   app/                    # composition root
     router/               # go_router, auth redirect guard, /product/:id
-    theme/                # ALL design tokens (colors, spacing, type)
-    motion/app_motion.dart # ALL durations & curves as named constants
+    theme/                # design tokens: colors, spacing, radius, type
+    motion/app_motion.dart # named animation durations and curves
     widgets/              # shared widgets (LoadingButton, JdImage, skeletons…)
   core/                   # cross-feature plumbing
     result.dart, failure.dart   # typed Result / sealed Failures
@@ -80,11 +83,13 @@ lib/
   features/
     auth | home | product | member | rewards | settings
       presentation/       # screens, widgets, Riverpod notifiers
+      application/        # providers that wire repositories to the UI
       domain/             # pure Dart: entities, validators, repo interfaces
       data/               # repo implementations (fake auth, drift, storage)
   l10n/                   # ARB strings via gen-l10n
 ```
 
+- Each feature has the folders it needs (Settings is presentation only).
 - **Presentation** depends on **domain**; **data** implements domain
   interfaces. The domain layer has no Flutter imports, and a test
   (`test/architecture/domain_purity_test.dart`) keeps it that way.
@@ -95,16 +100,16 @@ lib/
 
 ## State management: Riverpod
 
-Riverpod alone covers both state and dependency injection. Provider overrides
-make the fake `AuthRepository` and an in-memory database trivial to swap in
-tests; `StreamProvider` watches Drift queries naturally for an offline-first
-UI; wiring is compile-time with no context lookups. BLoC remains a fine choice
-where event traceability matters — not needed at this size.
+Riverpod provides both state and dependency injection. Tests override the
+repositories and storage with fakes and an in-memory database;
+`StreamProvider` exposes Drift query streams, so screens update when the
+database changes.
 
 ## Offline strategy
 
-The UI reads **only the local Drift (SQLite) database** — the single source of
-truth. The bundled seed (`assets/seed/catalog.json`, a versioned
+Home, Product and Rewards data are read **only from the local Drift (SQLite)
+database**, the single source of truth. The session is kept in secure storage,
+and short-lived screen state (cart quantity, claimed challenges) in memory. The bundled seed (`assets/seed/catalog.json`, a versioned
 `{version, data}` envelope) acts as the fake remote; there is no mock server.
 
 1. **First launch:** the seed is imported into Drift and its version recorded.
@@ -139,8 +144,8 @@ Pure-Dart validators in the domain layer, with unit tests for each rule:
   digits rejected (Myanmar digits too).
 - **DOB:** real calendar date (no 31 April; 29 Feb only in leap years), not in
   the future, age ≥ 13 (`kMinimumAgeYears`).
-- Every Continue shows a loading state for the ~1 s fake call; a double tap
-  sends one request. Back returns to the previous step and keeps what was
+- Steps that call the fake repository (Phone, OTP and DOB) show a loading
+  state for the ~1 s call and block repeated taps. Back returns to the previous step and keeps what was
   entered.
 
 Sessions persist in `flutter_secure_storage`; relaunch while logged in opens
@@ -191,8 +196,8 @@ motion throughout.
 ## Known gaps and decisions
 
 - **Integration test:** it runs with `flutter test` on in-memory stores, not
-  on a device through `integration_test`, so the device run is shown in the
-  recording instead.
+  on a device through `integration_test`. The flow was also run by hand on an
+  Android emulator and an iPhone 16 Pro simulator.
 - **Points ring progress:** the PDF says the ring sweeps to "the member's
   progress" but doesn't say where Silver starts, so progress can't be derived
   from 680,000 points and "500 to Gold". The member record stores
@@ -217,10 +222,12 @@ motion throughout.
   Onboarding.
 - **Reachability:** the probe proves a socket to a public DNS server opens,
   not that a full HTTP request would succeed (e.g. behind a captive portal).
-- **Screen sizes:** layouts are tested on 4.7- to 6.9-inch phones at text
-  scale up to 1.3; smaller 4-inch screens can overflow on the auth steps.
+- **Screen sizes:** a widget test checks Rewards at 360×640 logical pixels
+  with text scale 1.3. By hand: an Android emulator at 720×1280 with text 1.3,
+  and an iPhone 16 Pro simulator at default and extra-extra-large text. Very
+  narrow screens (320 wide) can overflow on the auth steps.
 - **Not done:** Burmese locale (bonus), persistent cart (bonus), CI.
 
 ## Time spent
 
-TODO: about X hours over Y days.
+2 days.
