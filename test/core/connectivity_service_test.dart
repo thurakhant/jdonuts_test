@@ -70,4 +70,20 @@ void main() {
     expect(seen, [true]);
     await sub.cancel();
   });
+
+  test(
+    'a link-stream error triggers a fresh check instead of being ignored',
+    () async {
+      final seen = <bool>[];
+      final sub = service.online$.listen(seen.add);
+      await pumpEventQueue();
+
+      probe.reachable = false;
+      link.changes.addError(Exception('link monitor crashed'));
+      await pumpEventQueue();
+
+      expect(seen, [true, false]);
+      await sub.cancel();
+    },
+  );
 }

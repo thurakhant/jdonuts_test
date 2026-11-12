@@ -36,9 +36,11 @@ class ConnectivityService {
     controller = StreamController<bool>(
       onListen: () {
         check();
+        // A link-monitor error says nothing about the network, so it
+        // triggers a fresh check instead of being dropped.
         linkSub = connectivity.onConnectivityChanged.listen(
           (_) => check(),
-          onError: (_) {},
+          onError: (Object _) => check(),
         );
         timer = Timer.periodic(recheckEvery, (_) => check());
       },
