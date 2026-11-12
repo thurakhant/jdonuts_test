@@ -21,6 +21,7 @@ void main() {
     expect(member.pointsToNextTier, 500);
     expect(member.nextTier, 'Gold');
     expect(member.notificationCount, 2);
+    expect(member.tierProgress, 0.78);
     expect((await db.select(db.members).get()).length, 1);
   });
 }

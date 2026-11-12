@@ -1417,6 +1417,18 @@ class $MembersTable extends Members with TableInfo<$MembersTable, MemberRow> {
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _tierProgressMeta = const VerificationMeta(
+    'tierProgress',
+  );
+  @override
+  late final GeneratedColumn<double> tierProgress = GeneratedColumn<double>(
+    'tier_progress',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1427,6 +1439,7 @@ class $MembersTable extends Members with TableInfo<$MembersTable, MemberRow> {
     pointsToNextTier,
     nextTier,
     notificationCount,
+    tierProgress,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1511,6 +1524,15 @@ class $MembersTable extends Members with TableInfo<$MembersTable, MemberRow> {
         ),
       );
     }
+    if (data.containsKey('tier_progress')) {
+      context.handle(
+        _tierProgressMeta,
+        tierProgress.isAcceptableOrUnknown(
+          data['tier_progress']!,
+          _tierProgressMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -1552,6 +1574,10 @@ class $MembersTable extends Members with TableInfo<$MembersTable, MemberRow> {
         DriftSqlType.int,
         data['${effectivePrefix}notification_count'],
       )!,
+      tierProgress: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}tier_progress'],
+      )!,
     );
   }
 
@@ -1570,6 +1596,7 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
   final int pointsToNextTier;
   final String nextTier;
   final int notificationCount;
+  final double tierProgress;
   const MemberRow({
     required this.id,
     required this.name,
@@ -1579,6 +1606,7 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
     required this.pointsToNextTier,
     required this.nextTier,
     required this.notificationCount,
+    required this.tierProgress,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1591,6 +1619,7 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
     map['points_to_next_tier'] = Variable<int>(pointsToNextTier);
     map['next_tier'] = Variable<String>(nextTier);
     map['notification_count'] = Variable<int>(notificationCount);
+    map['tier_progress'] = Variable<double>(tierProgress);
     return map;
   }
 
@@ -1604,6 +1633,7 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
       pointsToNextTier: Value(pointsToNextTier),
       nextTier: Value(nextTier),
       notificationCount: Value(notificationCount),
+      tierProgress: Value(tierProgress),
     );
   }
 
@@ -1621,6 +1651,7 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
       pointsToNextTier: serializer.fromJson<int>(json['pointsToNextTier']),
       nextTier: serializer.fromJson<String>(json['nextTier']),
       notificationCount: serializer.fromJson<int>(json['notificationCount']),
+      tierProgress: serializer.fromJson<double>(json['tierProgress']),
     );
   }
   @override
@@ -1635,6 +1666,7 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
       'pointsToNextTier': serializer.toJson<int>(pointsToNextTier),
       'nextTier': serializer.toJson<String>(nextTier),
       'notificationCount': serializer.toJson<int>(notificationCount),
+      'tierProgress': serializer.toJson<double>(tierProgress),
     };
   }
 
@@ -1647,6 +1679,7 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
     int? pointsToNextTier,
     String? nextTier,
     int? notificationCount,
+    double? tierProgress,
   }) => MemberRow(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -1656,6 +1689,7 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
     pointsToNextTier: pointsToNextTier ?? this.pointsToNextTier,
     nextTier: nextTier ?? this.nextTier,
     notificationCount: notificationCount ?? this.notificationCount,
+    tierProgress: tierProgress ?? this.tierProgress,
   );
   MemberRow copyWithCompanion(MembersCompanion data) {
     return MemberRow(
@@ -1675,6 +1709,9 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
       notificationCount: data.notificationCount.present
           ? data.notificationCount.value
           : this.notificationCount,
+      tierProgress: data.tierProgress.present
+          ? data.tierProgress.value
+          : this.tierProgress,
     );
   }
 
@@ -1688,7 +1725,8 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
           ..write('totalPoints: $totalPoints, ')
           ..write('pointsToNextTier: $pointsToNextTier, ')
           ..write('nextTier: $nextTier, ')
-          ..write('notificationCount: $notificationCount')
+          ..write('notificationCount: $notificationCount, ')
+          ..write('tierProgress: $tierProgress')
           ..write(')'))
         .toString();
   }
@@ -1703,6 +1741,7 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
     pointsToNextTier,
     nextTier,
     notificationCount,
+    tierProgress,
   );
   @override
   bool operator ==(Object other) =>
@@ -1715,7 +1754,8 @@ class MemberRow extends DataClass implements Insertable<MemberRow> {
           other.totalPoints == this.totalPoints &&
           other.pointsToNextTier == this.pointsToNextTier &&
           other.nextTier == this.nextTier &&
-          other.notificationCount == this.notificationCount);
+          other.notificationCount == this.notificationCount &&
+          other.tierProgress == this.tierProgress);
 }
 
 class MembersCompanion extends UpdateCompanion<MemberRow> {
@@ -1727,6 +1767,7 @@ class MembersCompanion extends UpdateCompanion<MemberRow> {
   final Value<int> pointsToNextTier;
   final Value<String> nextTier;
   final Value<int> notificationCount;
+  final Value<double> tierProgress;
   final Value<int> rowid;
   const MembersCompanion({
     this.id = const Value.absent(),
@@ -1737,6 +1778,7 @@ class MembersCompanion extends UpdateCompanion<MemberRow> {
     this.pointsToNextTier = const Value.absent(),
     this.nextTier = const Value.absent(),
     this.notificationCount = const Value.absent(),
+    this.tierProgress = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   MembersCompanion.insert({
@@ -1748,6 +1790,7 @@ class MembersCompanion extends UpdateCompanion<MemberRow> {
     required int pointsToNextTier,
     required String nextTier,
     this.notificationCount = const Value.absent(),
+    this.tierProgress = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -1765,6 +1808,7 @@ class MembersCompanion extends UpdateCompanion<MemberRow> {
     Expression<int>? pointsToNextTier,
     Expression<String>? nextTier,
     Expression<int>? notificationCount,
+    Expression<double>? tierProgress,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1776,6 +1820,7 @@ class MembersCompanion extends UpdateCompanion<MemberRow> {
       if (pointsToNextTier != null) 'points_to_next_tier': pointsToNextTier,
       if (nextTier != null) 'next_tier': nextTier,
       if (notificationCount != null) 'notification_count': notificationCount,
+      if (tierProgress != null) 'tier_progress': tierProgress,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1789,6 +1834,7 @@ class MembersCompanion extends UpdateCompanion<MemberRow> {
     Value<int>? pointsToNextTier,
     Value<String>? nextTier,
     Value<int>? notificationCount,
+    Value<double>? tierProgress,
     Value<int>? rowid,
   }) {
     return MembersCompanion(
@@ -1800,6 +1846,7 @@ class MembersCompanion extends UpdateCompanion<MemberRow> {
       pointsToNextTier: pointsToNextTier ?? this.pointsToNextTier,
       nextTier: nextTier ?? this.nextTier,
       notificationCount: notificationCount ?? this.notificationCount,
+      tierProgress: tierProgress ?? this.tierProgress,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1831,6 +1878,9 @@ class MembersCompanion extends UpdateCompanion<MemberRow> {
     if (notificationCount.present) {
       map['notification_count'] = Variable<int>(notificationCount.value);
     }
+    if (tierProgress.present) {
+      map['tier_progress'] = Variable<double>(tierProgress.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1848,6 +1898,7 @@ class MembersCompanion extends UpdateCompanion<MemberRow> {
           ..write('pointsToNextTier: $pointsToNextTier, ')
           ..write('nextTier: $nextTier, ')
           ..write('notificationCount: $notificationCount, ')
+          ..write('tierProgress: $tierProgress, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2598,32 +2649,34 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   ];
 }
 
-typedef $$ProductsTableCreateCompanionBuilder = ProductsCompanion Function({
-  required String id,
-  required String code,
-  required String name,
-  required int priceMmk,
-  Value<bool> isNew,
-  Value<int?> discountPercent,
-  required String imageUrl,
-  required String description,
-  required String section,
-  Value<int> sortOrder,
-  Value<int> rowid,
-});
-typedef $$ProductsTableUpdateCompanionBuilder = ProductsCompanion Function({
-  Value<String> id,
-  Value<String> code,
-  Value<String> name,
-  Value<int> priceMmk,
-  Value<bool> isNew,
-  Value<int?> discountPercent,
-  Value<String> imageUrl,
-  Value<String> description,
-  Value<String> section,
-  Value<int> sortOrder,
-  Value<int> rowid,
-});
+typedef $$ProductsTableCreateCompanionBuilder =
+    ProductsCompanion Function({
+      required String id,
+      required String code,
+      required String name,
+      required int priceMmk,
+      Value<bool> isNew,
+      Value<int?> discountPercent,
+      required String imageUrl,
+      required String description,
+      required String section,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+typedef $$ProductsTableUpdateCompanionBuilder =
+    ProductsCompanion Function({
+      Value<String> id,
+      Value<String> code,
+      Value<String> name,
+      Value<int> priceMmk,
+      Value<bool> isNew,
+      Value<int?> discountPercent,
+      Value<String> imageUrl,
+      Value<String> description,
+      Value<String> section,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
 
 class $$ProductsTableFilterComposer
     extends Composer<_$AppDatabase, $ProductsTable> {
@@ -2901,22 +2954,24 @@ typedef $$ProductsTableProcessedTableManager =
       ProductRow,
       PrefetchHooks Function()
     >;
-typedef $$BannersTableCreateCompanionBuilder = BannersCompanion Function({
-  required String id,
-  required String title,
-  required String imageUrl,
-  Value<String?> badge,
-  Value<int> sortOrder,
-  Value<int> rowid,
-});
-typedef $$BannersTableUpdateCompanionBuilder = BannersCompanion Function({
-  Value<String> id,
-  Value<String> title,
-  Value<String> imageUrl,
-  Value<String?> badge,
-  Value<int> sortOrder,
-  Value<int> rowid,
-});
+typedef $$BannersTableCreateCompanionBuilder =
+    BannersCompanion Function({
+      required String id,
+      required String title,
+      required String imageUrl,
+      Value<String?> badge,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+typedef $$BannersTableUpdateCompanionBuilder =
+    BannersCompanion Function({
+      Value<String> id,
+      Value<String> title,
+      Value<String> imageUrl,
+      Value<String?> badge,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
 
 class $$BannersTableFilterComposer
     extends Composer<_$AppDatabase, $BannersTable> {
@@ -3102,22 +3157,24 @@ typedef $$BannersTableProcessedTableManager =
       BannerRow,
       PrefetchHooks Function()
     >;
-typedef $$ShopsTableCreateCompanionBuilder = ShopsCompanion Function({
-  required String id,
-  required String name,
-  required String address,
-  required String imageUrl,
-  Value<int> sortOrder,
-  Value<int> rowid,
-});
-typedef $$ShopsTableUpdateCompanionBuilder = ShopsCompanion Function({
-  Value<String> id,
-  Value<String> name,
-  Value<String> address,
-  Value<String> imageUrl,
-  Value<int> sortOrder,
-  Value<int> rowid,
-});
+typedef $$ShopsTableCreateCompanionBuilder =
+    ShopsCompanion Function({
+      required String id,
+      required String name,
+      required String address,
+      required String imageUrl,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+typedef $$ShopsTableUpdateCompanionBuilder =
+    ShopsCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> address,
+      Value<String> imageUrl,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
 
 class $$ShopsTableFilterComposer extends Composer<_$AppDatabase, $ShopsTable> {
   $$ShopsTableFilterComposer({
@@ -3302,28 +3359,32 @@ typedef $$ShopsTableProcessedTableManager =
       ShopRow,
       PrefetchHooks Function()
     >;
-typedef $$MembersTableCreateCompanionBuilder = MembersCompanion Function({
-  required String id,
-  required String name,
-  required String avatarAsset,
-  required String tier,
-  required int totalPoints,
-  required int pointsToNextTier,
-  required String nextTier,
-  Value<int> notificationCount,
-  Value<int> rowid,
-});
-typedef $$MembersTableUpdateCompanionBuilder = MembersCompanion Function({
-  Value<String> id,
-  Value<String> name,
-  Value<String> avatarAsset,
-  Value<String> tier,
-  Value<int> totalPoints,
-  Value<int> pointsToNextTier,
-  Value<String> nextTier,
-  Value<int> notificationCount,
-  Value<int> rowid,
-});
+typedef $$MembersTableCreateCompanionBuilder =
+    MembersCompanion Function({
+      required String id,
+      required String name,
+      required String avatarAsset,
+      required String tier,
+      required int totalPoints,
+      required int pointsToNextTier,
+      required String nextTier,
+      Value<int> notificationCount,
+      Value<double> tierProgress,
+      Value<int> rowid,
+    });
+typedef $$MembersTableUpdateCompanionBuilder =
+    MembersCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> avatarAsset,
+      Value<String> tier,
+      Value<int> totalPoints,
+      Value<int> pointsToNextTier,
+      Value<String> nextTier,
+      Value<int> notificationCount,
+      Value<double> tierProgress,
+      Value<int> rowid,
+    });
 
 class $$MembersTableFilterComposer
     extends Composer<_$AppDatabase, $MembersTable> {
@@ -3371,6 +3432,11 @@ class $$MembersTableFilterComposer
 
   ColumnFilters<int> get notificationCount => $composableBuilder(
     column: $table.notificationCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get tierProgress => $composableBuilder(
+    column: $table.tierProgress,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -3423,6 +3489,11 @@ class $$MembersTableOrderingComposer
     column: $table.notificationCount,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<double> get tierProgress => $composableBuilder(
+    column: $table.tierProgress,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$MembersTableAnnotationComposer
@@ -3465,6 +3536,11 @@ class $$MembersTableAnnotationComposer
     column: $table.notificationCount,
     builder: (column) => column,
   );
+
+  GeneratedColumn<double> get tierProgress => $composableBuilder(
+    column: $table.tierProgress,
+    builder: (column) => column,
+  );
 }
 
 class $$MembersTableTableManager
@@ -3503,6 +3579,7 @@ class $$MembersTableTableManager
                 Value<int> pointsToNextTier = const Value.absent(),
                 Value<String> nextTier = const Value.absent(),
                 Value<int> notificationCount = const Value.absent(),
+                Value<double> tierProgress = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MembersCompanion(
                 id: id,
@@ -3513,6 +3590,7 @@ class $$MembersTableTableManager
                 pointsToNextTier: pointsToNextTier,
                 nextTier: nextTier,
                 notificationCount: notificationCount,
+                tierProgress: tierProgress,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -3525,6 +3603,7 @@ class $$MembersTableTableManager
                 required int pointsToNextTier,
                 required String nextTier,
                 Value<int> notificationCount = const Value.absent(),
+                Value<double> tierProgress = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MembersCompanion.insert(
                 id: id,
@@ -3535,6 +3614,7 @@ class $$MembersTableTableManager
                 pointsToNextTier: pointsToNextTier,
                 nextTier: nextTier,
                 notificationCount: notificationCount,
+                tierProgress: tierProgress,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -3568,28 +3648,30 @@ typedef $$MembersTableProcessedTableManager =
       MemberRow,
       PrefetchHooks Function()
     >;
-typedef $$ChallengesTableCreateCompanionBuilder = ChallengesCompanion Function({
-  required String id,
-  required String title,
-  required String imageAsset,
-  required String style,
-  required int goal,
-  required int progress,
-  required int rewardPoints,
-  Value<int> sortOrder,
-  Value<int> rowid,
-});
-typedef $$ChallengesTableUpdateCompanionBuilder = ChallengesCompanion Function({
-  Value<String> id,
-  Value<String> title,
-  Value<String> imageAsset,
-  Value<String> style,
-  Value<int> goal,
-  Value<int> progress,
-  Value<int> rewardPoints,
-  Value<int> sortOrder,
-  Value<int> rowid,
-});
+typedef $$ChallengesTableCreateCompanionBuilder =
+    ChallengesCompanion Function({
+      required String id,
+      required String title,
+      required String imageAsset,
+      required String style,
+      required int goal,
+      required int progress,
+      required int rewardPoints,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+typedef $$ChallengesTableUpdateCompanionBuilder =
+    ChallengesCompanion Function({
+      Value<String> id,
+      Value<String> title,
+      Value<String> imageAsset,
+      Value<String> style,
+      Value<int> goal,
+      Value<int> progress,
+      Value<int> rewardPoints,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
 
 class $$ChallengesTableFilterComposer
     extends Composer<_$AppDatabase, $ChallengesTable> {
@@ -3836,16 +3918,18 @@ typedef $$ChallengesTableProcessedTableManager =
       ChallengeRow,
       PrefetchHooks Function()
     >;
-typedef $$KeyValuesTableCreateCompanionBuilder = KeyValuesCompanion Function({
-  required String key,
-  required String value,
-  Value<int> rowid,
-});
-typedef $$KeyValuesTableUpdateCompanionBuilder = KeyValuesCompanion Function({
-  Value<String> key,
-  Value<String> value,
-  Value<int> rowid,
-});
+typedef $$KeyValuesTableCreateCompanionBuilder =
+    KeyValuesCompanion Function({
+      required String key,
+      required String value,
+      Value<int> rowid,
+    });
+typedef $$KeyValuesTableUpdateCompanionBuilder =
+    KeyValuesCompanion Function({
+      Value<String> key,
+      Value<String> value,
+      Value<int> rowid,
+    });
 
 class $$KeyValuesTableFilterComposer
     extends Composer<_$AppDatabase, $KeyValuesTable> {
@@ -3932,16 +4016,22 @@ class $$KeyValuesTableTableManager
               $$KeyValuesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$KeyValuesTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<String> key = const Value.absent(),
-            Value<String> value = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) => KeyValuesCompanion(key: key, value: value, rowid: rowid),
-          createCompanionCallback: ({
-            required String key,
-            required String value,
-            Value<int> rowid = const Value.absent(),
-          }) => KeyValuesCompanion.insert(key: key, value: value, rowid: rowid),
+          updateCompanionCallback:
+              ({
+                Value<String> key = const Value.absent(),
+                Value<String> value = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => KeyValuesCompanion(key: key, value: value, rowid: rowid),
+          createCompanionCallback:
+              ({
+                required String key,
+                required String value,
+                Value<int> rowid = const Value.absent(),
+              }) => KeyValuesCompanion.insert(
+                key: key,
+                value: value,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (

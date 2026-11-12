@@ -94,6 +94,10 @@ truth. The bundled seed (`assets/seed/catalog.json`, a versioned
    the same Drift row (the design mock-ups disagree — Bronze/1,290 on Home,
    Silver/500 on Rewards — so both screens intentionally show the same stored
    record: Silver, 680,000 points, 500 to Gold).
+   The points ring sweeps to the member's `tierProgress` (0.78 in the seed).
+   The PDF doesn't say where Silver starts, so true progress can't be derived
+   from 680,000 and "500 to Gold"; the value is stored data, chosen to match
+   the design's ring, and schema v4 adds the column.
 
 ## Validation (Task 1)
 
@@ -127,8 +131,8 @@ motion throughout.
   banner carousel.
 - Product: hero flight on the product image; the quantity/total animate on
   change.
-- Rewards: a donut-frosting points ring (pink arc with sprinkles) sweeps while
-  the total counts up to 680,000 (CustomPainter), the three-tier ladder staggers
+- Rewards: a donut-frosting points ring (pink arc with sprinkles) sweeps to the
+  member's tier progress while the total counts up to 680,000 (CustomPainter), the three-tier ladder staggers
   in with a filling progress line, the "Rewards 3" pill pops in, the tab pill
   slides between tabs, and challenge cards (read from the local DB) enter
   staggered with a quarter-by-quarter donut painter and a coffee arc painter;

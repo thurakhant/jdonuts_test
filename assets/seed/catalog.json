@@ -196,7 +196,8 @@
       "totalPoints": 680000,
       "pointsToNextTier": 500,
       "nextTier": "Gold",
-      "notificationCount": 2
+      "notificationCount": 2,
+      "tierProgress": 0.78
     }
   }
 }

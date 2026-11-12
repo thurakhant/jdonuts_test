@@ -11,6 +11,9 @@ import '../support/test_app.dart';
 
 const _heading = "J' Donuts Rewards";
 
+/// The member's tier progress in the bundled seed.
+const _seedProgress = 0.78;
+
 /// Pumps small steps until the member record has loaded and the screen
 /// shows, so animation checks start from the first frames.
 Future<void> _pumpUntilShown(WidgetTester tester) async {
@@ -64,7 +67,7 @@ void main() {
     }
     expect(find.text('100 pts'), findsNWidgets(3));
     expect(find.text('EARN'), findsNWidgets(3));
-    expect(_ringFraction(tester), closeTo(PointsRing.glazeFraction, 0.0001));
+    expect(_ringFraction(tester), closeTo(_seedProgress, 0.0001));
   });
 
   testWidgets('points count up from zero to 680,000', (tester) async {
@@ -72,10 +75,10 @@ void main() {
     expect(find.text('680,000'), findsNothing);
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('680,000'), findsNothing);
-    expect(_ringFraction(tester), lessThan(PointsRing.glazeFraction));
+    expect(_ringFraction(tester), lessThan(_seedProgress));
     await tester.pump(const Duration(seconds: 2));
     expect(find.text('680,000'), findsOneWidget);
-    expect(_ringFraction(tester), closeTo(PointsRing.glazeFraction, 0.0001));
+    expect(_ringFraction(tester), closeTo(_seedProgress, 0.0001));
   });
 
   testWidgets('donut progress clips the image and coffee uses its arc', (
@@ -201,7 +204,7 @@ void main() {
     await tester.pump();
 
     expect(find.text('680,000'), findsOneWidget);
-    expect(_ringFraction(tester), closeTo(PointsRing.glazeFraction, 0.0001));
+    expect(_ringFraction(tester), closeTo(_seedProgress, 0.0001));
     expect(find.text('Eat 4 Coco donuts'), findsNWidgets(2));
     // No looping EARN pulse and no running tweens.
     expect(tester.hasRunningAnimations, isFalse);

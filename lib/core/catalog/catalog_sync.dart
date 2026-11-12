@@ -104,6 +104,7 @@ class CatalogSync {
           pointsToNextTier: m.pointsToNextTier,
           nextTier: m.nextTier,
           notificationCount: Value(m.notificationCount),
+          tierProgress: Value(m.tierProgress),
         ),
       ]);
       b.insertAllOnConflictUpdate(_db.challenges, [

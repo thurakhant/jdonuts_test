@@ -59,6 +59,7 @@ class Members extends Table {
   IntColumn get pointsToNextTier => integer()();
   TextColumn get nextTier => text()();
   IntColumn get notificationCount => integer().withDefault(const Constant(0))();
+  RealColumn get tierProgress => real().withDefault(const Constant(0))();
 
   @override
   Set<Column> get primaryKey => {id};

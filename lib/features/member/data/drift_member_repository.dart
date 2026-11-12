@@ -21,6 +21,7 @@ class DriftMemberRepository implements MemberRepository {
               pointsToNextTier: row.pointsToNextTier,
               nextTier: row.nextTier,
               notificationCount: row.notificationCount,
+              tierProgress: row.tierProgress,
             ),
     );
   }

@@ -21,7 +21,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump when a table changes and add a step to [_migrateTo].
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -44,6 +44,13 @@ class AppDatabase extends _$AppDatabase {
       case 3:
         // v3: banner badge pill. Filled by the next catalog refresh.
         await m.addColumn(banners, banners.badge);
+      case 4:
+        // v4: member tier progress. Forgetting the catalog version makes
+        // the next start re-import the seed, which fills the new column.
+        await m.addColumn(members, members.tierProgress);
+        await (delete(
+          keyValues,
+        )..where((t) => t.key.equals(kCatalogVersionKey))).go();
       default:
         break;
     }

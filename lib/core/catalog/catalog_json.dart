@@ -96,4 +96,5 @@ Member _member(Map<String, dynamic> json) => Member(
   pointsToNextTier: json['pointsToNextTier'] as int,
   nextTier: json['nextTier'] as String,
   notificationCount: json['notificationCount'] as int,
+  tierProgress: (json['tierProgress'] as num).toDouble(),
 );

@@ -187,7 +187,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
               AppSpacing.screenEdge + AppSpacing.pointsRingBleed,
               0,
             ),
-            child: PointsRing(points: m.totalPoints),
+            child: PointsRing(points: m.totalPoints, progress: m.tierProgress),
           ),
         ),
       ],

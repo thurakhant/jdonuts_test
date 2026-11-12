@@ -9,6 +9,7 @@ class Member {
     required this.pointsToNextTier,
     required this.nextTier,
     required this.notificationCount,
+    required this.tierProgress,
   });
 
   final String id;
@@ -19,4 +20,7 @@ class Member {
   final int pointsToNextTier;
   final String nextTier;
   final int notificationCount;
+
+  /// How far the member is from the current tier to the next, 0 to 1.
+  final double tierProgress;
 }

@@ -9,24 +9,22 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/format/mmk.dart';
 import '../../../../l10n/app_localizations.dart';
 
-/// Donut-frosting ring: a thick pink glaze arc with sprinkles sweeps in
-/// while the number counts up in the white centre.
+/// Donut-frosting ring: the pink glaze sweeps from 0 to the member's tier
+/// progress while the total counts up in the white centre.
 class PointsRing extends StatelessWidget {
-  const PointsRing({required this.points, super.key});
+  const PointsRing({required this.points, required this.progress, super.key});
 
   final int points;
 
-  /// Share of the donut that is glazed. This matches the design's artwork;
-  /// it is not a progress value, since the points total has no defined
-  /// target to measure against.
-  static const double glazeFraction = 0.78;
+  /// Share of the way to the next tier, 0 to 1.
+  final double progress;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final sweep = AppMotion.effective(context, AppMotion.pointsRingSweep);
     final count = AppMotion.effective(context, AppMotion.pointsCountUp);
-    const fraction = glazeFraction;
+    final fraction = progress.clamp(0.0, 1.0);
     final pink = AppTypography.title.copyWith(color: AppColors.accent);
     return Semantics(
       label: '${formatMmk(points)} ${l10n.totalPoints}',
