@@ -39,6 +39,9 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+# Kotlin tooling cache
+/android/.kotlin/
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
@@ -49,3 +52,5 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+# Submission artifacts (apk, simulator app zip, demo video)
+/deliverables/

@@ -1,0 +1,203 @@
+{
+  "version": 2,
+  "data": {
+    "products": [
+      {
+        "id": "p-mistletoe",
+        "code": "JD022118",
+        "name": "Mistletoe Romance box",
+        "priceMmk": 18000,
+        "isNew": false,
+        "discountPercent": 50,
+        "imageUrl": "assets/images/product_mistletoe_box.png",
+        "description": "A festive box of heart-shaped donuts dusted with sugar and filled with berry cream. Made for sharing, or not.",
+        "section": "seasonal"
+      },
+      {
+        "id": "p-family-box",
+        "code": "JD022119",
+        "name": "Christmas Milestone Family box",
+        "priceMmk": 24000,
+        "isNew": true,
+        "discountPercent": null,
+        "imageUrl": "assets/images/product_christmas_family_box.png",
+        "description": "Twelve holiday donuts in one box, with something for everyone at the table.",
+        "section": "seasonal"
+      },
+      {
+        "id": "p-santa-cookies",
+        "code": "JD022120",
+        "name": "Santa's favorite cookies set",
+        "priceMmk": 9500,
+        "isNew": false,
+        "discountPercent": 20,
+        "imageUrl": "assets/images/product_santa_cookies.png",
+        "description": "Warm, buttery cookies with chocolate chunks. Leave a few out for Santa.",
+        "section": "seasonal"
+      },
+      {
+        "id": "p-strawberry",
+        "code": "JD022121",
+        "name": "Strawberry Chocolate Donuts",
+        "priceMmk": 3500,
+        "isNew": false,
+        "discountPercent": null,
+        "imageUrl": "assets/images/product_strawberry_sprinkle.png",
+        "description": "Enjoy our scrumptious donuts – soft, sweet, and satisfying in every bite. Choose from classic glazed, rich chocolate, or fun sprinkles. Dive into deliciousness now!",
+        "section": "seasonal"
+      },
+      {
+        "id": "p-coconut",
+        "code": "JD022123",
+        "name": "Coconut Donut",
+        "priceMmk": 3200,
+        "isNew": true,
+        "discountPercent": null,
+        "imageUrl": "assets/images/product_coconut.png",
+        "description": "Enjoy our scrumptious donuts – soft, sweet, and satisfying in every bite. Choose from classic glazed, rich chocolate, or fun sprinkles. Dive into deliciousness now!",
+        "section": "popular"
+      },
+      {
+        "id": "p-classic-glazed",
+        "code": "JD022124",
+        "name": "Classic Glazed Donut",
+        "priceMmk": 2500,
+        "isNew": false,
+        "discountPercent": null,
+        "imageUrl": "assets/images/product_classic_glazed.png",
+        "description": "Enjoy our scrumptious donuts – soft, sweet, and satisfying in every bite. Choose from classic glazed, rich chocolate, or fun sprinkles. Dive into deliciousness now!",
+        "section": "popular"
+      },
+      {
+        "id": "p-choco-drizzle",
+        "code": "JD022125",
+        "name": "Choco Drizzle Donut",
+        "priceMmk": 3000,
+        "isNew": false,
+        "discountPercent": null,
+        "imageUrl": "assets/images/product_choco_drizzle.png",
+        "description": "Enjoy our scrumptious donuts – soft, sweet, and satisfying in every bite. Choose from classic glazed, rich chocolate, or fun sprinkles. Dive into deliciousness now!",
+        "section": "popular"
+      },
+      {
+        "id": "p-berry-bliss",
+        "code": "JD022126",
+        "name": "Berry Bliss Donut",
+        "priceMmk": 3300,
+        "isNew": false,
+        "discountPercent": 10,
+        "imageUrl": "assets/images/product_berry_bliss.png",
+        "description": "Enjoy our scrumptious donuts – soft, sweet, and satisfying in every bite. Choose from classic glazed, rich chocolate, or fun sprinkles. Dive into deliciousness now!",
+        "section": "orderAgain"
+      },
+      {
+        "id": "p-daigona",
+        "code": "JD022127",
+        "name": "Daigona Creamy Coffee",
+        "priceMmk": 4500,
+        "isNew": false,
+        "discountPercent": null,
+        "imageUrl": "assets/images/product_daigona_coffee.png",
+        "description": "Whipped coffee foam over cold milk. Creamy, bold and a little bit playful.",
+        "section": "orderAgain"
+      },
+      {
+        "id": "p-americano",
+        "code": "JD022128",
+        "name": "Iced Americano",
+        "priceMmk": 3800,
+        "isNew": false,
+        "discountPercent": null,
+        "imageUrl": "assets/images/product_americano.png",
+        "description": "Double espresso over ice. Clean, strong and refreshing.",
+        "section": "orderAgain"
+      }
+    ],
+    "banners": [
+      {
+        "id": "b-central",
+        "title": "We are now at Central Boulevard",
+        "imageUrl": "assets/images/banner_central_boulevard.png",
+        "badge": "New shop"
+      },
+      {
+        "id": "b-hot",
+        "title": "Hot deals",
+        "imageUrl": "assets/images/banner_hot_deals.png",
+        "badge": "50% off"
+      },
+      {
+        "id": "b-new-shop",
+        "title": "New shop",
+        "imageUrl": "assets/images/banner_new_shop.png",
+        "badge": "Grand opening"
+      }
+    ],
+    "shops": [
+      {
+        "id": "s-myaynigone",
+        "name": "Myaynigone J'Donut",
+        "address": "2972 Pyay Road, Sanchaung Township, Yangon.",
+        "imageUrl": "assets/images/shop_myaynigone.png"
+      },
+      {
+        "id": "s-sanchaung",
+        "name": "Sanchaung J'Donut",
+        "address": "58 Kyun Taw Road, Sanchaung Township, Yangon.",
+        "imageUrl": "assets/images/shop_sanchaung.png"
+      },
+      {
+        "id": "s-downtown",
+        "name": "Downtown J'Donut",
+        "address": "12 Maha Bandula Road, Kyauktada Township, Yangon.",
+        "imageUrl": "assets/images/shop_downtown.png"
+      },
+      {
+        "id": "s-junction-city",
+        "name": "Junction City J'Donut",
+        "address": "Bogyoke Aung San Road, Pabedan Township, Yangon.",
+        "imageUrl": "assets/images/shop_junction_city.png"
+      }
+    ],
+    "challenges": [
+      {
+        "id": "c-coco-full",
+        "title": "Eat 4 Coco donuts",
+        "imageAsset": "assets/images/product_strawberry_sprinkle.png",
+        "style": "quarterDonut",
+        "goal": 4,
+        "progress": 4,
+        "rewardPoints": 100
+      },
+      {
+        "id": "c-coco-start",
+        "title": "Eat 4 Coco donuts",
+        "imageAsset": "assets/images/product_strawberry_sprinkle.png",
+        "style": "quarterDonut",
+        "goal": 4,
+        "progress": 1,
+        "rewardPoints": 100
+      },
+      {
+        "id": "c-americano",
+        "title": "Drink 12 cups americano",
+        "imageAsset": "assets/images/product_americano.png",
+        "style": "coffeeCup",
+        "goal": 12,
+        "progress": 9,
+        "rewardPoints": 100
+      }
+    ],
+    "member": {
+      "id": "member-1",
+      "name": "Hania",
+      "avatarAsset": "assets/images/avatar_member.png",
+      "tier": "Silver",
+      "totalPoints": 680000,
+      "pointsToNextTier": 500,
+      "nextTier": "Gold",
+      "notificationCount": 2,
+      "tierProgress": 0.78
+    }
+  }
+}

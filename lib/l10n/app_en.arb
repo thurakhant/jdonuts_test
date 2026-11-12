@@ -1,0 +1,230 @@
+{
+  "@@locale": "en",
+  "appTitle": "J'Donuts",
+  "onboardingTitle": "Round food for\nevery mood",
+  "letsGetStarted": "LET'S GET STARTED",
+  "alreadyHaveAccount": "Already have an account?",
+  "logIn": "Log In",
+  "legalNotice": "By continuing, you acknowledge that you have read and agree to our {termsOfUse} and {privacyPolicy}.",
+  "@legalNotice": {
+    "placeholders": {
+      "termsOfUse": {
+        "type": "String"
+      },
+      "privacyPolicy": {
+        "type": "String"
+      }
+    }
+  },
+  "termsOfUse": "Terms of Use",
+  "privacyPolicy": "Privacy Policy",
+  "enterYourPhoneNumber": "Enter your phone number",
+  "phonePrefixMm": "+95",
+  "continueLabel": "CONTINUE",
+  "verifyYourNumber": "Verify your number",
+  "otpSentTo": "We've sent 6 digit OTP to {phone}",
+  "@otpSentTo": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "didntReceiveCode": "Didn't receive the code?",
+  "resendIn": "resend in {time} min",
+  "@resendIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "whatsYourName": "What's your name?",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "whatsYourDateOfBirth": "What's your date of birth?",
+  "month": "Month",
+  "day": "Day",
+  "year": "Year",
+  "welcomeTitle": "Welcome to the\nworld of J'donuts",
+  "letsExplore": "LET'S EXPLORE",
+  "homeTab": "Home",
+  "rewardTab": "Reward",
+  "donutsTab": "J'Donuts",
+  "ordersTab": "Orders",
+  "registrationSavedRetry": "Your account is saved. Continue to retry signing in.",
+  "settingsTab": "Settings",
+  "logOut": "Log out",
+  "placeholderSheetBody": "This is a placeholder. No real integration in this demo.",
+  "placeholderSheetTitle": "Coming soon",
+  "continueWithGoogle": "Continue with Google",
+  "continueWithApple": "Continue with Apple",
+  "continueWithFacebook": "Continue with Facebook",
+  "registerLink": "register",
+  "logInLink": "log in",
+  "errorPhoneInvalid": "Enter a valid Myanmar mobile number.",
+  "errorPhoneUnknown": "This number hasn't registered yet. Want to {register}?",
+  "@errorPhoneUnknown": {
+    "placeholders": {
+      "register": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPhoneTaken": "This number is already registered. Want to {logIn}?",
+  "@errorPhoneTaken": {
+    "placeholders": {
+      "logIn": {
+        "type": "String"
+      }
+    }
+  },
+  "errorOtpWrong": "That code is wrong. {count, plural, =1{1 try left} other{{count} tries left}}.",
+  "@errorOtpWrong": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorOtpLocked": "Too many wrong codes. Tap Resend to get a new one.",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "resendActive": "Resend",
+  "errorNameRequired": "Please enter your name.",
+  "errorNameTooLong": "That name is too long (50 characters max).",
+  "errorNameChars": "Names can only contain letters and spaces.",
+  "errorDobInvalid": "That isn't a real date.",
+  "errorDobFuture": "Date of birth can't be in the future.",
+  "errorDobTooYoung": "You must be at least 13 to sign up.",
+  "month1": "January",
+  "month2": "February",
+  "month3": "March",
+  "month4": "April",
+  "month5": "May",
+  "month6": "June",
+  "month7": "July",
+  "month8": "August",
+  "month9": "September",
+  "month10": "October",
+  "month11": "November",
+  "month12": "December",
+  "offlineBanner": "You're offline — showing saved data",
+  "seasonalSpecials": "Seasonal specials",
+  "popularSection": "Popular 🔥",
+  "orderAgain": "Order again",
+  "tierMember": "{tier} member",
+  "@tierMember": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsLeftToTier": "{points} points left to become {tier} Member",
+  "@pointsLeftToTier": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      },
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsLabel": "Notifications",
+  "discountOff": "{percent}% off",
+  "@discountOff": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "productNew": "New",
+  "shopsNearYou": "There are {count} J'Donut shops near you. 😋",
+  "@shopsNearYou": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orderOnline": "Order Online",
+  "exploreNow": "Explore now",
+  "sectionEmpty": "Nothing here yet.",
+  "sectionError": "We couldn't load this section.",
+  "retry": "Retry",
+  "errorCatalogMalformed": "The saved menu data looks broken. Please try again.",
+  "errorCatalogUnavailable": "We couldn't read the menu data. Please try again.",
+  "errorStorage": "We couldn't open your saved data. Please try again.",
+  "refreshFailed": "Couldn't refresh. Showing saved data.",
+  "mmkAmount": "{amount} MMK",
+  "@mmkAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "whatsThis": "What's this?",
+  "addToCartLabel": "ADD TO CART",
+  "addedToCart": "Added {count} x {name} to your cart",
+  "@addedToCart": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "productNotFound": "We couldn't find that product.",
+  "backLabel": "Back",
+  "decreaseQuantity": "Decrease quantity",
+  "increaseQuantity": "Increase quantity",
+  "tierSilver": "Silver",
+  "tierGold": "Gold",
+  "tierPlatinum": "Platinum",
+  "rewardsHeading": "J' Donuts Rewards",
+  "rewardsPill": "Rewards",
+  "totalPoints": "Total points",
+  "tierHere": "You're here now",
+  "tierRemaining": "{points} pts Remaining to become {tier}",
+  "@tierRemaining": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      },
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "tierSoon": "You'll be here soon",
+  "tierReached": "Reached",
+  "tabEatMore": "Eat more earn more",
+  "tabGift": "Gift",
+  "giftEmpty": "Gifts you receive will show up here.",
+  "earnButton": "EARN",
+  "claimedButton": "CLAIMED",
+  "challengeProgress": "{done}/{goal}",
+  "@challengeProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "pointsShort": "{points} pts",
+  "@pointsShort": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  }
+}
