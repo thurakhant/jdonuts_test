@@ -316,4 +316,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get increaseQuantity => 'Increase quantity';
+
+  @override
+  String get rewardsTitle => 'Rewards';
+
+  @override
+  String pointsToTier(String points, String tier) {
+    return '$points points to $tier';
+  }
+
+  @override
+  String get pointsTotalLabel => 'Your points';
+
+  @override
+  String get tierBronze => 'Bronze';
+
+  @override
+  String get tierSilver => 'Silver';
+
+  @override
+  String get tierGold => 'Gold';
+
+  @override
+  String get tierPlatinum => 'Platinum';
+
+  @override
+  String get tabChallenges => 'Challenges';
+
+  @override
+  String get tabHistory => 'History';
+
+  @override
+  String get earnButton => 'Earn';
+
+  @override
+  String get claimedLabel => 'Claimed';
+
+  @override
+  String challengeProgress(int done, int goal) {
+    return '$done / $goal';
+  }
+
+  @override
+  String rewardPoints(String points) {
+    return '+$points pts';
+  }
+
+  @override
+  String daysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days ago',
+      one: '1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rewardsLoadError => 'We couldn\'t load your rewards.';
 }

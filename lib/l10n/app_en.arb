@@ -115,13 +115,34 @@
   "popularSection": "Popular 🔥",
   "orderAgain": "Order again",
   "pointsLeftToTier": "{points} points left to become {tier} Member",
-  "@pointsLeftToTier": {"placeholders": {"points": {"type": "String"}, "tier": {"type": "String"}}},
+  "@pointsLeftToTier": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      },
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
   "notificationsLabel": "Notifications",
   "discountOff": "{percent}% off",
-  "@discountOff": {"placeholders": {"percent": {"type": "int"}}},
+  "@discountOff": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
   "productNew": "New",
   "shopsNearYou": "There are {count} J'Donut shops near you 😊",
-  "@shopsNearYou": {"placeholders": {"count": {"type": "int"}}},
+  "@shopsNearYou": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "orderOnline": "Order Online",
   "exploreNow": "Explore now",
   "sectionEmpty": "Nothing here yet.",
@@ -132,14 +153,84 @@
   "errorStorage": "We couldn't open your saved data. Please try again.",
   "refreshFailed": "Couldn't refresh. Showing saved data.",
   "mmkAmount": "{amount} MMK",
-  "@mmkAmount": {"placeholders": {"amount": {"type": "String"}}},
+  "@mmkAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "whatsThis": "What's this?",
   "addToCartButton": "ADD TO CART | {total} MMK",
-  "@addToCartButton": {"placeholders": {"total": {"type": "String"}}},
+  "@addToCartButton": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "addedToCart": "Added {count} x {name} to your cart",
-  "@addedToCart": {"placeholders": {"count": {"type": "int"}, "name": {"type": "String"}}},
+  "@addedToCart": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "productNotFound": "We couldn't find that product.",
   "backLabel": "Back",
   "decreaseQuantity": "Decrease quantity",
-  "increaseQuantity": "Increase quantity"
+  "increaseQuantity": "Increase quantity",
+  "rewardsTitle": "Rewards",
+  "pointsToTier": "{points} points to {tier}",
+  "@pointsToTier": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      },
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsTotalLabel": "Your points",
+  "tierBronze": "Bronze",
+  "tierSilver": "Silver",
+  "tierGold": "Gold",
+  "tierPlatinum": "Platinum",
+  "tabChallenges": "Challenges",
+  "tabHistory": "History",
+  "earnButton": "Earn",
+  "claimedLabel": "Claimed",
+  "challengeProgress": "{done} / {goal}",
+  "@challengeProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardPoints": "+{points} pts",
+  "@rewardPoints": {
+    "placeholders": {
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "daysAgo": "{days, plural, =1{1 day ago} other{{days} days ago}}",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "rewardsLoadError": "We couldn't load your rewards."
 }

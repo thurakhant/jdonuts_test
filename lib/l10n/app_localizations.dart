@@ -639,6 +639,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Increase quantity'**
   String get increaseQuantity;
+
+  /// No description provided for @rewardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get rewardsTitle;
+
+  /// No description provided for @pointsToTier.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} points to {tier}'**
+  String pointsToTier(String points, String tier);
+
+  /// No description provided for @pointsTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your points'**
+  String get pointsTotalLabel;
+
+  /// No description provided for @tierBronze.
+  ///
+  /// In en, this message translates to:
+  /// **'Bronze'**
+  String get tierBronze;
+
+  /// No description provided for @tierSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver'**
+  String get tierSilver;
+
+  /// No description provided for @tierGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold'**
+  String get tierGold;
+
+  /// No description provided for @tierPlatinum.
+  ///
+  /// In en, this message translates to:
+  /// **'Platinum'**
+  String get tierPlatinum;
+
+  /// No description provided for @tabChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get tabChallenges;
+
+  /// No description provided for @tabHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get tabHistory;
+
+  /// No description provided for @earnButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn'**
+  String get earnButton;
+
+  /// No description provided for @claimedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed'**
+  String get claimedLabel;
+
+  /// No description provided for @challengeProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} / {goal}'**
+  String challengeProgress(int done, int goal);
+
+  /// No description provided for @rewardPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'+{points} pts'**
+  String rewardPoints(String points);
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day ago} other{{days} days ago}}'**
+  String daysAgo(int days);
+
+  /// No description provided for @rewardsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your rewards.'**
+  String get rewardsLoadError;
 }
 
 class _AppLocalizationsDelegate

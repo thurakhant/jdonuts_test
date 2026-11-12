@@ -28,6 +28,7 @@ abstract final class AppColors {
   static const Color success = Color(0xFF4CAF50);
 
   // Rewards tiers
+  static const Color tierBronze = Color(0xFFCD9B6A);
   static const Color tierSilver = Color(0xFFB0BEC5);
   static const Color tierGold = Color(0xFFE8C34A);
   static const Color tierPlatinum = Color(0xFF9FD8EF);
