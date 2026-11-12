@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 /// Which progress art a challenge card draws over its picture.
 enum ChallengeStyle {
   quarterDonut,
@@ -11,7 +13,8 @@ enum ChallengeStyle {
   }
 }
 
-class Challenge {
+@immutable
+final class Challenge {
   const Challenge({
     required this.id,
     required this.title,

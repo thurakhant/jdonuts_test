@@ -22,6 +22,7 @@ dependencies:
   cached_network_image: ^4.0.7
   intl: ^0.20.3
   material_ui: ^1.11.0
+  meta: ^1.19.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,7 @@
-class PromoBanner {
+import 'package:meta/meta.dart';
+
+@immutable
+final class PromoBanner {
   const PromoBanner({
     required this.id,
     required this.title,

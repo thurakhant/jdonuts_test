@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 /// Home list a product is shown in. Each product belongs to exactly one
 /// section, so its image Hero tag is unique on the Home screen.
 enum ProductSection {
@@ -13,7 +15,8 @@ enum ProductSection {
   }
 }
 
-class Product {
+@immutable
+final class Product {
   const Product({
     required this.id,
     required this.code,

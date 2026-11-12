@@ -1,4 +1,7 @@
-class Shop {
+import 'package:meta/meta.dart';
+
+@immutable
+final class Shop {
   const Shop({
     required this.id,
     required this.name,

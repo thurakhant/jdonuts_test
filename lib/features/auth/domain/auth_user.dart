@@ -1,5 +1,8 @@
+import 'package:meta/meta.dart';
+
 /// A registered user.
-class AuthUser {
+@immutable
+final class AuthUser {
   const AuthUser({
     required this.id,
     required this.phone,
@@ -36,7 +39,8 @@ class AuthUser {
 }
 
 /// The signed-in user as remembered between launches.
-class AuthSession {
+@immutable
+final class AuthSession {
   const AuthSession({
     required this.userId,
     required this.phone,

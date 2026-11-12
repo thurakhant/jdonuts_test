@@ -1,5 +1,8 @@
+import 'package:meta/meta.dart';
+
 /// The one member record Home and Rewards both read.
-class Member {
+@immutable
+final class Member {
   const Member({
     required this.id,
     required this.name,
