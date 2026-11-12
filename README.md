@@ -42,7 +42,8 @@ Analysis and tests:
 
 ```bash
 fvm flutter analyze    # clean, flutter_lints
-fvm flutter test       # unit + widget + integration
+fvm flutter test       # unit + widget + in-memory integration
+fvm flutter test integration_test -d <device-id>   # on a device/emulator
 ```
 
 Builds:
@@ -93,8 +94,10 @@ lib/
 - **Presentation** depends on **domain**; **data** implements domain
   interfaces. The domain layer has no Flutter imports, and a test
   (`test/architecture/domain_purity_test.dart`) keeps it that way.
-- Errors are typed `Failure`s returned in a `Result`; every screen and Home
-  section has its own loading (skeleton), error (with Retry) and empty state.
+- Errors are typed `Failure`s returned in a `Result` (auth, catalog,
+  sign-out, session restore); database streams report a `StorageFailure`.
+  Every screen and Home section has its own loading (skeleton), error (with
+  Retry) and empty state.
 - No services are created inside widgets: everything comes from Riverpod
   providers.
 
@@ -181,7 +184,7 @@ motion throughout.
 
 ## Tests
 
-138 tests in 27 files, all passing, named after the behaviour they check:
+146 tests in 28 files, plus one on-device integration test, all passing, named after the behaviour they check:
 
 - **Unit:** every validator rule, the fake auth repository (lockout, resend,
   sessions, storage failures), registration retry, catalog import/refresh,
@@ -190,15 +193,15 @@ motion throughout.
 - **Widget:** login and registration validation and flow, logout retry,
   failed resend, OTP boxes, session routing, Home states, Product detail, Rewards motion and states, including
   a 4.7-inch phone at text scale 1.3.
-- **Integration:** `test/integration/register_to_product_test.dart` runs
-  Register → Home → Product detail (with the Hero flight) through the real
-  app, router and seed file.
+- **Integration:**
+  - `integration_test/register_to_product_test.dart` runs Register → Home →
+    Product detail on a device or emulator with the real secure storage,
+    database file and ~1 s fake delays (passes on an Android 14 emulator).
+  - `test/integration/register_to_product_test.dart` runs the same journey
+    in memory with `flutter test`, and also checks the Hero flight.
 
 ## Known gaps and decisions
 
-- **Integration test:** it runs with `flutter test` on in-memory stores, not
-  on a device through `integration_test`. The flow was also run by hand on an
-  Android emulator and an iPhone 16 Pro simulator.
 - **Points ring progress:** the PDF says the ring sweeps to "the member's
   progress" but doesn't say where Silver starts, so progress can't be derived
   from 680,000 points and "500 to Gold". The member record stores
@@ -210,9 +213,10 @@ motion throughout.
   bundled images are stand-ins in the design's style.
 - **Names:** "letters and spaces" is enforced literally, so hyphenated names
   (`Aung-Kyaw`) are rejected — a product question I'd raise.
-- **Sign-up OTP:** the fake backend can't verify a code before the account
-  exists, so register mode asks `AuthRepository.acceptsSignUpCode` with the
-  same attempt/lockout rules, then registers and verifies at the DOB step.
+- **Sign-up OTP:** `AuthRepository.requestSignUpCode` and
+  `verifySignUpCode` check the code before the account exists, with the same
+  attempt and lockout rules as login; the account is created and signed in
+  at the DOB step. A real API can implement the same interface.
 - **Buttons with no logic:** Add to cart and Earn give visual feedback only.
   Earn also shows a CLAIMED state, kept in memory, so it resets on relaunch.
 - **Placeholder tabs:** the J'Donuts tab (the middle doughnut icon; the PDF
@@ -221,10 +225,6 @@ motion throughout.
   (`/home/product/:id`) so the Hero flight stays inside one navigator; the
   PDF's `/product/:id` forwards there, and signed-out users still go to
   Onboarding.
-- **Auth rules in two places:** the fake backend can only check an OTP for an
-  existing account, so sign-up attempts are counted in the registration flow
-  and login attempts in the repository. With a real backend both would move
-  behind `AuthRepository`.
 - **Catalog repair check:** startup re-reads the seed when the challenges
   table is empty (to repair installs from before challenges existed). A
   catalog with truly zero challenges would re-read it on every start; a
@@ -237,6 +237,10 @@ motion throughout.
   with text scale 1.3. By hand: an Android emulator at 720×1280 with text 1.3,
   and an iPhone 16 Pro simulator at default and extra-extra-large text. Very
   narrow screens (320 wide) can overflow on the auth steps.
+- **Models:** entities are Dart 3 `@immutable final class`es with hand-written
+  JSON where needed, rather than freezed; the analyzer rejects any mutable
+  field.
+- **60 fps:** not measured on a mid-range Android phone in profile mode.
 - **Not done:** Burmese locale (bonus), persistent cart (bonus), CI.
 
 ## Time spent
