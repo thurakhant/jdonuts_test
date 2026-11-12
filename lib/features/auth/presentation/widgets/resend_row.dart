@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../app/motion/app_motion.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../l10n/app_localizations.dart';
-
-/// Length of the resend countdown.
-const Duration kResendCountdown = Duration(minutes: 5);
 
 /// "Didn't receive the code?" plus a pink countdown that becomes a Resend
 /// link at 0:00. [onResend] returns once the new code is sent; the timer
@@ -22,7 +20,7 @@ class ResendRow extends StatefulWidget {
 }
 
 class _ResendRowState extends State<ResendRow> {
-  Duration _left = kResendCountdown;
+  Duration _left = AppMotion.resendCountdown;
   Timer? _timer;
   bool _sending = false;
 
@@ -40,13 +38,13 @@ class _ResendRowState extends State<ResendRow> {
 
   void _startTimer() {
     _timer?.cancel();
-    setState(() => _left = kResendCountdown);
-    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-      if (_left <= const Duration(seconds: 1)) {
+    setState(() => _left = AppMotion.resendCountdown);
+    _timer = Timer.periodic(AppMotion.resendTick, (t) {
+      if (_left <= AppMotion.resendTick) {
         t.cancel();
         setState(() => _left = Duration.zero);
       } else {
-        setState(() => _left -= const Duration(seconds: 1));
+        setState(() => _left -= AppMotion.resendTick);
       }
     });
   }

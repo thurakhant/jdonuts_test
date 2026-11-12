@@ -137,9 +137,9 @@ class _Dots extends StatelessWidget {
         for (var i = 0; i < count; i++)
           AnimatedContainer(
             duration: AppMotion.base,
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: i == active ? 18 : 6,
-            height: 6,
+            margin: const EdgeInsets.symmetric(horizontal: AppSpacing.dotGap),
+            width: i == active ? AppSpacing.dotActiveWidth : AppSpacing.dotSize,
+            height: AppSpacing.dotSize,
             decoration: BoxDecoration(
               color: i == active ? AppColors.accent : AppColors.skeletonBase,
               borderRadius: BorderRadius.circular(AppRadius.pill),

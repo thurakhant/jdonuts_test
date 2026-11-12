@@ -25,6 +25,8 @@ abstract final class AppMotion {
   static const Duration heroFlight = Duration(milliseconds: 400);
   static const Duration bannerAutoAdvance = Duration(seconds: 4);
   static const Duration bannerSlide = Duration(milliseconds: 500);
+  static const Duration resendCountdown = Duration(minutes: 5);
+  static const Duration resendTick = Duration(seconds: 1);
   static const Duration quantityTick = Duration(milliseconds: 180);
 
   // Curves

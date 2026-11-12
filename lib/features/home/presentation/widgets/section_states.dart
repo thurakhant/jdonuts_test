@@ -38,7 +38,7 @@ class ProductRowSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: AppSpacing.productRowHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const NeverScrollableScrollPhysics(),
@@ -48,9 +48,9 @@ class ProductRowSkeleton extends StatelessWidget {
         itemBuilder: (_, _) => const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SkeletonBox(width: 140, height: 140, radius: AppRadius.lg),
+            SkeletonBox(width: AppSpacing.productTileSize, height: AppSpacing.productTileSize, radius: AppRadius.lg),
             SizedBox(height: AppSpacing.sm),
-            SkeletonBox(width: 100, height: 14, radius: AppRadius.sm),
+            SkeletonBox(width: AppSpacing.skeletonLineWidth, height: AppSpacing.skeletonLineHeight, radius: AppRadius.sm),
           ],
         ),
       ),

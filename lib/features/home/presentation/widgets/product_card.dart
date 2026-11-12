@@ -15,7 +15,7 @@ class ProductCard extends StatelessWidget {
 
   final Product product;
 
-  static const double width = 140;
+  static const double width = AppSpacing.productTileSize;
 
   @override
   Widget build(BuildContext context) {

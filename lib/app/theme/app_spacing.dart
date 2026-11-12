@@ -9,6 +9,17 @@ abstract final class AppSpacing {
 
   /// Default horizontal screen padding.
   static const double screenEdge = 24;
+
+  /// Gap between carousel page dots, and the dot sizes.
+  static const double dotGap = 3;
+  static const double dotSize = 6;
+  static const double dotActiveWidth = 18;
+
+  /// Horizontal product rows on Home: tile width and total row height.
+  static const double productTileSize = 140;
+  static const double productRowHeight = 200;
+  static const double skeletonLineWidth = 100;
+  static const double skeletonLineHeight = 14;
 }
 
 abstract final class AppRadius {
