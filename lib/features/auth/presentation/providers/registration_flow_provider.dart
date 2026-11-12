@@ -23,11 +23,7 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
 
   void setStep(AuthStep step) => state = state.copyWith(step: step);
 
-  void setPhoneInput(String value) => state = state.copyWith(
-    phoneInput: value,
-    registerOtpMisses: 0,
-    otpLocked: state.isRegister ? false : state.otpLocked,
-  );
+  void setPhoneInput(String value) => state = state.copyWith(phoneInput: value);
 
   void setName({String? first, String? last}) =>
       state = state.copyWith(firstName: first, lastName: last);
@@ -42,7 +38,11 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
     final phone = validateMyanmarPhone(state.phoneInput);
     if (phone case FailureResult(:final failure)) return failure;
     final e164 = phone.valueOrNull!;
-    state = state.copyWith(phone: e164);
+    // Wrong-code attempts belong to a number: only a different number
+    // starts fresh, so Back and the same number stay locked until Resend.
+    state = e164 == state.phone
+        ? state
+        : state.copyWith(phone: e164, registerOtpMisses: 0, otpLocked: false);
     final sent = await _repo.requestOtp(e164);
     if (state.isRegister) {
       return switch (sent.failureOrNull) {
