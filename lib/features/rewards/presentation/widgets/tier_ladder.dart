@@ -9,16 +9,20 @@ import '../../../../l10n/app_localizations.dart';
 import '../../domain/reward_tier.dart';
 
 /// Silver -> Gold -> Platinum, top to bottom, joined by a line. Rows appear
-/// one after another and each sizes to its own text.
+/// one after another, then the line to the next tier fills to [progress].
 class TierLadder extends StatefulWidget {
   const TierLadder({
     required this.current,
     required this.pointsRemaining,
+    required this.progress,
     super.key,
   });
 
   final RewardTier current;
   final int pointsRemaining;
+
+  /// Share of the way to the next tier, 0 to 1.
+  final double progress;
 
   @override
   State<TierLadder> createState() => _TierLadderState();
@@ -89,6 +93,19 @@ class _TierLadderState extends State<TierLadder>
     return l10n.tierSoon;
   }
 
+  /// How full the line below [tier] is: tiers already passed are full, the
+  /// current one fills to the member's progress once the rows are in.
+  double _lineFill(RewardTier tier) {
+    if (tier.index < widget.current.index) return 1;
+    if (tier.index > widget.current.index) return 0;
+    final t = Interval(
+      _at(_count),
+      1,
+      curve: AppMotion.standard,
+    ).transform(_controller.value);
+    return widget.progress.clamp(0.0, 1.0) * t;
+  }
+
   /// Badge with the line down to the next badge, beside the tier's text.
   Widget _row(AppLocalizations l10n, RewardTier tier, double t) {
     final isLast = tier == RewardTier.values.last;
@@ -106,11 +123,10 @@ class _TierLadderState extends State<TierLadder>
                   children: [
                     _TierBadge(tier: tier, letter: tier.label(l10n)[0]),
                     if (!isLast)
-                      const Expanded(
-                        child: VerticalDivider(
-                          width: AppSpacing.tierLineStroke,
-                          thickness: AppSpacing.tierLineStroke,
-                          color: AppColors.skeletonBase,
+                      Expanded(
+                        child: _TierLine(
+                          key: ValueKey('tier-line-${tier.name}'),
+                          fill: _lineFill(tier),
                         ),
                       ),
                   ],
@@ -135,6 +151,45 @@ class _TierLadderState extends State<TierLadder>
       ),
     );
   }
+}
+
+/// Grey track with a pink fill growing down from the top.
+class _TierLine extends StatelessWidget {
+  const _TierLine({required this.fill, super.key});
+
+  final double fill;
+
+  @override
+  Widget build(BuildContext context) =>
+      CustomPaint(painter: TierLinePainter(fill: fill));
+}
+
+class TierLinePainter extends CustomPainter {
+  const TierLinePainter({required this.fill});
+
+  /// Filled share of the segment, 0 to 1.
+  final double fill;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final x = size.width / 2;
+    final paint = Paint()..strokeWidth = AppSpacing.tierLineStroke;
+    canvas.drawLine(
+      Offset(x, 0),
+      Offset(x, size.height),
+      paint..color = AppColors.skeletonBase,
+    );
+    if (fill > 0) {
+      canvas.drawLine(
+        Offset(x, 0),
+        Offset(x, size.height * fill),
+        paint..color = AppColors.accent,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(TierLinePainter old) => old.fill != fill;
 }
 
 /// Shield badge with the tier's letter and one star per rank, standing in

@@ -5,6 +5,7 @@ import 'package:jdonuts_test/features/rewards/presentation/screens/rewards_scree
 import 'package:jdonuts_test/features/rewards/presentation/widgets/challenge_painters.dart';
 import 'package:jdonuts_test/features/rewards/presentation/widgets/earn_button.dart';
 import 'package:jdonuts_test/features/rewards/presentation/widgets/points_ring.dart';
+import 'package:jdonuts_test/features/rewards/presentation/widgets/tier_ladder.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../support/test_app.dart';
@@ -79,6 +80,26 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
     expect(find.text('680,000'), findsOneWidget);
     expect(_ringFraction(tester), closeTo(_seedProgress, 0.0001));
+  });
+
+  testWidgets('the line to the next tier fills to the member progress', (
+    tester,
+  ) async {
+    double fill() {
+      final paint = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byKey(const ValueKey('tier-line-silver')),
+          matching: find.byType(CustomPaint),
+        ),
+      );
+      return (paint.painter! as TierLinePainter).fill;
+    }
+
+    await _pumpUntilShown(tester);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(fill(), 0); // rows enter first
+    await _settle(tester);
+    expect(fill(), closeTo(_seedProgress, 0.0001));
   });
 
   testWidgets('donut progress clips the image and coffee uses its arc', (

@@ -176,6 +176,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
             child: TierLadder(
               current: RewardTier.fromName(m.tier),
               pointsRemaining: m.pointsToNextTier,
+              progress: m.tierProgress,
             ),
           ),
         ),
