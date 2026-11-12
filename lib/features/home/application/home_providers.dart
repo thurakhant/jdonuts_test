@@ -14,12 +14,12 @@ final homeRepositoryProvider = Provider<HomeRepository>(
 final bannersProvider = StreamProvider<List<PromoBanner>>((ref) async* {
   await ref.watch(catalogReadyProvider.future);
   yield* ref.watch(homeRepositoryProvider).watchBanners();
-});
+}, retry: noRetry);
 
 final shopsProvider = StreamProvider<List<Shop>>((ref) async* {
   await ref.watch(catalogReadyProvider.future);
   yield* ref.watch(homeRepositoryProvider).watchShops();
-});
+}, retry: noRetry);
 
 /// Refreshes the catalog in the background each time the app comes back
 /// online (offline -> online edge). Home watches this to keep it alive.

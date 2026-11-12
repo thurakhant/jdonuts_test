@@ -13,7 +13,7 @@ final productsBySectionProvider =
     StreamProvider.family<List<Product>, ProductSection>((ref, section) async* {
       await ref.watch(catalogReadyProvider.future);
       yield* ref.watch(productRepositoryProvider).watchSection(section);
-    });
+    }, retry: noRetry);
 
 /// Emits null when the id is unknown (the detail screen shows "not found").
 final productByIdProvider = StreamProvider.family<Product?, String>((
@@ -22,4 +22,4 @@ final productByIdProvider = StreamProvider.family<Product?, String>((
 ) async* {
   await ref.watch(catalogReadyProvider.future);
   yield* ref.watch(productRepositoryProvider).watchById(id);
-});
+}, retry: noRetry);

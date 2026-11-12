@@ -14,4 +14,4 @@ final memberRepositoryProvider = Provider<MemberRepository>(
 final memberProvider = StreamProvider<Member?>((ref) async* {
   await ref.watch(catalogReadyProvider.future);
   yield* ref.watch(memberRepositoryProvider).watchMember();
-});
+}, retry: noRetry);

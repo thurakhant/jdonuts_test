@@ -24,6 +24,10 @@ final catalogSyncProvider = Provider<CatalogSync>(
   ),
 );
 
+/// Local-data errors are not transient: skip Riverpod's automatic retry and
+/// let the screen offer a Retry button instead.
+Duration? noRetry(int retryCount, Object error) => null;
+
 /// Completes once the first-launch import is done (instant afterwards).
 /// Every data stream waits on it; a failure surfaces as an error state with
 /// the typed [Failure] so screens can offer Retry.
@@ -31,4 +35,4 @@ final catalogReadyProvider = FutureProvider<void>((ref) async {
   final result = await ref.watch(catalogSyncProvider).seedIfNeeded();
   final failure = result.failureOrNull;
   if (failure != null) throw failure;
-});
+}, retry: noRetry);

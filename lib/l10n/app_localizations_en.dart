@@ -217,4 +217,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get month12 => 'December';
+
+  @override
+  String get offlineBanner => 'You\'re offline — showing saved data';
+
+  @override
+  String get seasonalSpecials => 'Seasonal specials';
+
+  @override
+  String get popularSection => 'Popular 🔥';
+
+  @override
+  String get orderAgain => 'Order again';
+
+  @override
+  String pointsLeftToTier(String points, String tier) {
+    return '$points points left to become $tier Member';
+  }
+
+  @override
+  String get notificationsLabel => 'Notifications';
+
+  @override
+  String discountOff(int percent) {
+    return '$percent% off';
+  }
+
+  @override
+  String get productNew => 'New';
+
+  @override
+  String shopsNearYou(int count) {
+    return 'There are $count J\'Donut shops near you 😊';
+  }
+
+  @override
+  String get orderOnline => 'Order Online';
+
+  @override
+  String get exploreNow => 'Explore now';
+
+  @override
+  String get sectionEmpty => 'Nothing here yet.';
+
+  @override
+  String get sectionError => 'We couldn\'t load this section.';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get errorCatalogMalformed =>
+      'The saved menu data looks broken. Please try again.';
+
+  @override
+  String get errorCatalogUnavailable =>
+      'We couldn\'t read the menu data. Please try again.';
+
+  @override
+  String get errorStorage =>
+      'We couldn\'t open your saved data. Please try again.';
+
+  @override
+  String get refreshFailed => 'Couldn\'t refresh. Showing saved data.';
+
+  @override
+  String mmkAmount(String amount) {
+    return '$amount MMK';
+  }
+
+  @override
+  String get whatsThis => 'What\'s this?';
+
+  @override
+  String addToCartButton(String total) {
+    return 'ADD TO CART | $total MMK';
+  }
+
+  @override
+  String addedToCart(int count, String name) {
+    return 'Added $count x $name to your cart';
+  }
+
+  @override
+  String get productNotFound => 'We couldn\'t find that product.';
+
+  @override
+  String get backLabel => 'Back';
+
+  @override
+  String get decreaseQuantity => 'Decrease quantity';
+
+  @override
+  String get increaseQuantity => 'Increase quantity';
 }
