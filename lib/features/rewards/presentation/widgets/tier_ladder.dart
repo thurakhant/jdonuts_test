@@ -8,8 +8,8 @@ import '../../../../core/format/mmk.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/reward_tier.dart';
 
-/// Silver -> Gold -> Platinum, top to bottom. Rows appear one after another
-/// while a line fills down to the member's position.
+/// Silver -> Gold -> Platinum, top to bottom, joined by a line. Rows appear
+/// one after another and each sizes to its own text.
 class TierLadder extends StatefulWidget {
   const TierLadder({
     required this.current,
@@ -60,32 +60,19 @@ class _TierLadderState extends State<TierLadder>
     final l10n = AppLocalizations.of(context)!;
     return AnimatedBuilder(
       animation: _controller,
-      builder: (context, _) => SizedBox(
-        height: AppSpacing.tierRowHeight * _count,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: CustomPaint(painter: TierLinePainter(rows: _count)),
+      builder: (context, _) => Column(
+        children: [
+          for (final tier in RewardTier.values)
+            _row(
+              l10n,
+              tier,
+              Interval(
+                _at(tier.index),
+                _at(tier.index + 2),
+                curve: AppMotion.standard,
+              ).transform(_controller.value),
             ),
-            Column(
-              children: [
-                for (final tier in RewardTier.values)
-                  SizedBox(
-                    height: AppSpacing.tierRowHeight,
-                    child: _row(
-                      l10n,
-                      tier,
-                      Interval(
-                        _at(tier.index),
-                        _at(tier.index + 2),
-                        curve: AppMotion.standard,
-                      ).transform(_controller.value),
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -102,26 +89,48 @@ class _TierLadderState extends State<TierLadder>
     return l10n.tierSoon;
   }
 
+  /// Badge with the line down to the next badge, beside the tier's text.
   Widget _row(AppLocalizations l10n, RewardTier tier, double t) {
+    final isLast = tier == RewardTier.values.last;
     return Opacity(
       opacity: t,
       child: Transform.translate(
         offset: Offset(0, (1 - t) * AppSpacing.md),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _TierBadge(tier: tier, letter: tier.label(l10n)[0]),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(tier.label(l10n), style: AppTypography.title),
-                  Text(_sub(l10n, tier), style: AppTypography.caption),
-                ],
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: AppSpacing.tierBadgeSize,
+                child: Column(
+                  children: [
+                    _TierBadge(tier: tier, letter: tier.label(l10n)[0]),
+                    if (!isLast)
+                      const Expanded(
+                        child: VerticalDivider(
+                          width: AppSpacing.tierLineStroke,
+                          thickness: AppSpacing.tierLineStroke,
+                          color: AppColors.skeletonBase,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: isLast ? 0 : AppSpacing.lg),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(tier.label(l10n), style: AppTypography.title),
+                      Text(_sub(l10n, tier), style: AppTypography.caption),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -175,30 +184,4 @@ class _TierBadge extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Grey vertical track connecting the badge centres.
-class TierLinePainter extends CustomPainter {
-  const TierLinePainter({required this.rows});
-
-  final int rows;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const half = AppSpacing.tierBadgeSize / 2;
-    final top = const Offset(half, AppSpacing.tierBadgeSize);
-    final bottom = Offset(
-      half,
-      AppSpacing.tierRowHeight * (rows - 1) + AppSpacing.sm,
-    );
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = AppSpacing.tierLineStroke
-      ..strokeCap = StrokeCap.round
-      ..color = AppColors.skeletonBase;
-    canvas.drawLine(top, bottom, paint);
-  }
-
-  @override
-  bool shouldRepaint(TierLinePainter old) => old.rows != rows;
 }

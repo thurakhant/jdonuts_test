@@ -179,6 +179,18 @@ void main() {
     expect(sweeps.first, closeTo(2 * 3.141592653589793, 0.0001));
   });
 
+  testWidgets('fits a 4.7-inch phone at text scale 1.3 without overflow', (
+    tester,
+  ) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pumpUntilShown(tester);
+    tester.view.physicalSize = const Size(360, 640) * 2;
+    await _settle(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.text('EARN'), findsNWidgets(3));
+  });
+
   testWidgets('Reduce Motion shows the final state at once, no timers', (
     tester,
   ) async {

@@ -56,7 +56,11 @@ class ChallengeCard extends ConsumerWidget {
                     style: AppTypography.body,
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  Row(
+                  // Wraps the points under the button when space is short.
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.xs,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       EarnButton(
                         enabled: c.isComplete && !claimed,
@@ -65,7 +69,6 @@ class ChallengeCard extends ConsumerWidget {
                             .read(claimedChallengesProvider.notifier)
                             .claim(c.id),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
                       Text(
                         l10n.pointsShort(formatMmk(c.rewardPoints)),
                         style: AppTypography.body,

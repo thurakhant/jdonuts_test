@@ -42,7 +42,6 @@ abstract final class AppSpacing {
   static const double earnButtonHeight = 36;
   static const double iconSm = 18;
   static const double tierBadgeSize = 40;
-  static const double tierRowHeight = 76;
   static const double tierLineStroke = 4;
   static const double tabBarHeight = 48;
   static const double challengeArtSize = 88;

@@ -21,19 +21,28 @@ class RewardsTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        for (var i = 0; i < labels.length; i++) ...[
-          if (i > 0) const SizedBox(width: AppSpacing.xs),
-          _TabPill(
-            key: i == selected ? const ValueKey('tab-indicator') : null,
-            label: labels[i],
-            selected: i == selected,
-            onTap: () => onSelected(i),
+    // Scales both pills together, and only when they cannot fit.
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenEdge),
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < labels.length; i++) ...[
+                if (i > 0) const SizedBox(width: AppSpacing.xs),
+                _TabPill(
+                  key: i == selected ? const ValueKey('tab-indicator') : null,
+                  label: labels[i],
+                  selected: i == selected,
+                  onTap: () => onSelected(i),
+                ),
+              ],
+            ],
           ),
-        ],
-      ],
+        ),
+      ),
     );
   }
 }

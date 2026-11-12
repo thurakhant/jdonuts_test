@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -165,38 +163,34 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
     );
   }
 
+  /// Ladder on the left half, donut on the right; the taller of the two
+  /// sets the height, so larger text pushes the section down, not over.
   Widget _summary(Member m) {
-    final height = math.max(
-      AppSpacing.tierRowHeight * RewardTier.values.length,
-      AppSpacing.pointsRingSize,
-    );
-    return SizedBox(
-      height: height,
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: FractionallySizedBox(
-              widthFactor: 0.5,
-              child: TierLadder(
-                current: RewardTier.fromName(m.tier),
-                pointsRemaining: m.pointsToNextTier,
-              ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: FractionallySizedBox(
+            widthFactor: 0.5,
+            child: TierLadder(
+              current: RewardTier.fromName(m.tier),
+              pointsRemaining: m.pointsToNextTier,
             ),
           ),
-          // The donut bleeds past the right screen edge, as in the design.
-          Align(
-            alignment: Alignment.centerRight,
-            child: Transform.translate(
-              offset: const Offset(
-                AppSpacing.screenEdge + AppSpacing.pointsRingBleed,
-                0,
-              ),
-              child: PointsRing(points: m.totalPoints),
+        ),
+        // The donut bleeds past the right screen edge, as in the design.
+        Align(
+          alignment: Alignment.centerRight,
+          child: Transform.translate(
+            offset: const Offset(
+              AppSpacing.screenEdge + AppSpacing.pointsRingBleed,
+              0,
             ),
+            child: PointsRing(points: m.totalPoints),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
