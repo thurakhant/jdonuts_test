@@ -33,6 +33,8 @@ dev_dependencies:
   drift_dev: ^2.35.3
   integration_test:
     sdk: flutter
+  flutter_driver:
+    sdk: flutter
 
 flutter:
   generate: true
