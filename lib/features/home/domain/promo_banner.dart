@@ -1,18 +1,19 @@
-import 'package:meta/meta.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-@immutable
-final class PromoBanner {
-  const PromoBanner({
-    required this.id,
-    required this.title,
-    required this.imageUrl,
-    this.badge,
-  });
+part 'promo_banner.freezed.dart';
+part 'promo_banner.g.dart';
 
-  final String id;
-  final String title;
-  final String imageUrl;
+@freezed
+abstract class PromoBanner with _$PromoBanner {
+  const factory PromoBanner({
+    required String id,
+    required String title,
+    required String imageUrl,
 
-  /// Short pill label over the title ("New shop"); null when absent.
-  final String? badge;
+    /// Short pill label over the title ("New shop"); null when absent.
+    String? badge,
+  }) = _PromoBanner;
+
+  factory PromoBanner.fromJson(Map<String, dynamic> json) =>
+      _$PromoBannerFromJson(json);
 }

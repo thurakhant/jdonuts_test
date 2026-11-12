@@ -1,4 +1,7 @@
-import 'package:meta/meta.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'product.freezed.dart';
+part 'product.g.dart';
 
 /// Home list a product is shown in. Each product belongs to exactly one
 /// section, so its image Hero tag is unique on the Home screen.
@@ -15,31 +18,27 @@ enum ProductSection {
   }
 }
 
-@immutable
-final class Product {
-  const Product({
-    required this.id,
-    required this.code,
-    required this.name,
-    required this.priceMmk,
-    required this.isNew,
-    required this.discountPercent,
-    required this.imageUrl,
-    required this.description,
-    required this.section,
-    this.sortOrder = 0,
-  });
+@freezed
+abstract class Product with _$Product {
+  const factory Product({
+    required String id,
+    required String code,
+    required String name,
+    required int priceMmk,
+    required bool isNew,
+    required int? discountPercent,
 
-  final String id;
-  final String code;
-  final String name;
-  final int priceMmk;
-  final bool isNew;
-  final int? discountPercent;
+    /// An `assets/...` path or an http(s) URL; see `JdImage`.
+    required String imageUrl,
+    required String description,
+    required ProductSection section,
 
-  /// An `assets/...` path or an http(s) URL; see `JdImage`.
-  final String imageUrl;
-  final String description;
-  final ProductSection section;
-  final int sortOrder;
+    /// Position in its Home list; set from the catalog order, not the JSON.
+    @JsonKey(includeFromJson: false, includeToJson: false)
+    @Default(0)
+    int sortOrder,
+  }) = _Product;
+
+  factory Product.fromJson(Map<String, dynamic> json) =>
+      _$ProductFromJson(json);
 }

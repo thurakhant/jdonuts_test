@@ -1,52 +1,38 @@
-import 'package:meta/meta.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'auth_user.freezed.dart';
+part 'auth_user.g.dart';
 
 /// A registered user.
-@immutable
-final class AuthUser {
-  const AuthUser({
-    required this.id,
-    required this.phone,
-    required this.firstName,
-    required this.lastName,
-    required this.dateOfBirth,
-  });
+@freezed
+abstract class AuthUser with _$AuthUser {
+  const factory AuthUser({
+    required String id,
 
-  factory AuthUser.fromJson(Map<String, Object?> json) => AuthUser(
-    id: json['id']! as String,
-    phone: json['phone']! as String,
-    firstName: json['firstName']! as String,
-    lastName: json['lastName']! as String,
-    dateOfBirth: DateTime.parse(json['dateOfBirth']! as String),
-  );
+    /// E.164, e.g. `+959254135592`.
+    required String phone,
+    required String firstName,
+    required String lastName,
+    required DateTime dateOfBirth,
+  }) = _AuthUser;
 
-  final String id;
+  const AuthUser._();
 
-  /// E.164, e.g. `+959254135592`.
-  final String phone;
-  final String firstName;
-  final String lastName;
-  final DateTime dateOfBirth;
+  factory AuthUser.fromJson(Map<String, dynamic> json) =>
+      _$AuthUserFromJson(json);
 
   String get fullName => lastName.isEmpty ? firstName : '$firstName $lastName';
-
-  Map<String, Object?> toJson() => {
-    'id': id,
-    'phone': phone,
-    'firstName': firstName,
-    'lastName': lastName,
-    'dateOfBirth': dateOfBirth.toIso8601String(),
-  };
 }
 
 /// The signed-in user as remembered between launches.
-@immutable
-final class AuthSession {
-  const AuthSession({
-    required this.userId,
-    required this.phone,
-    required this.firstName,
-    required this.lastName,
-  });
+@freezed
+abstract class AuthSession with _$AuthSession {
+  const factory AuthSession({
+    required String userId,
+    required String phone,
+    required String firstName,
+    required String lastName,
+  }) = _AuthSession;
 
   factory AuthSession.fromUser(AuthUser user) => AuthSession(
     userId: user.id,
@@ -55,22 +41,6 @@ final class AuthSession {
     lastName: user.lastName,
   );
 
-  factory AuthSession.fromJson(Map<String, Object?> json) => AuthSession(
-    userId: json['userId']! as String,
-    phone: json['phone']! as String,
-    firstName: json['firstName']! as String,
-    lastName: json['lastName']! as String,
-  );
-
-  final String userId;
-  final String phone;
-  final String firstName;
-  final String lastName;
-
-  Map<String, Object?> toJson() => {
-    'userId': userId,
-    'phone': phone,
-    'firstName': firstName,
-    'lastName': lastName,
-  };
+  factory AuthSession.fromJson(Map<String, dynamic> json) =>
+      _$AuthSessionFromJson(json);
 }

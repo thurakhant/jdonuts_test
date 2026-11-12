@@ -1,4 +1,7 @@
-import 'package:meta/meta.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'challenge.freezed.dart';
+part 'challenge.g.dart';
 
 /// Which progress art a challenge card draws over its picture.
 enum ChallengeStyle {
@@ -13,25 +16,22 @@ enum ChallengeStyle {
   }
 }
 
-@immutable
-final class Challenge {
-  const Challenge({
-    required this.id,
-    required this.title,
-    required this.imageAsset,
-    required this.style,
-    required this.goal,
-    required this.progress,
-    required this.rewardPoints,
-  });
+@freezed
+abstract class Challenge with _$Challenge {
+  const factory Challenge({
+    required String id,
+    required String title,
+    required String imageAsset,
+    required ChallengeStyle style,
+    required int goal,
+    required int progress,
+    required int rewardPoints,
+  }) = _Challenge;
 
-  final String id;
-  final String title;
-  final String imageAsset;
-  final ChallengeStyle style;
-  final int goal;
-  final int progress;
-  final int rewardPoints;
+  const Challenge._();
+
+  factory Challenge.fromJson(Map<String, dynamic> json) =>
+      _$ChallengeFromJson(json);
 
   double get fraction => goal == 0 ? 0 : (progress / goal).clamp(0, 1);
 

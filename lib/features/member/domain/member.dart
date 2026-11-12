@@ -1,29 +1,24 @@
-import 'package:meta/meta.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'member.freezed.dart';
+part 'member.g.dart';
 
 /// The one member record Home and Rewards both read.
-@immutable
-final class Member {
-  const Member({
-    required this.id,
-    required this.name,
-    required this.avatarAsset,
-    required this.tier,
-    required this.totalPoints,
-    required this.pointsToNextTier,
-    required this.nextTier,
-    required this.notificationCount,
-    required this.tierProgress,
-  });
+@freezed
+abstract class Member with _$Member {
+  const factory Member({
+    required String id,
+    required String name,
+    required String avatarAsset,
+    required String tier,
+    required int totalPoints,
+    required int pointsToNextTier,
+    required String nextTier,
+    required int notificationCount,
 
-  final String id;
-  final String name;
-  final String avatarAsset;
-  final String tier;
-  final int totalPoints;
-  final int pointsToNextTier;
-  final String nextTier;
-  final int notificationCount;
+    /// How far the member is from the current tier to the next, 0 to 1.
+    required double tierProgress,
+  }) = _Member;
 
-  /// How far the member is from the current tier to the next, 0 to 1.
-  final double tierProgress;
+  factory Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
 }

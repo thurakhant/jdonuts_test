@@ -1,16 +1,16 @@
-import 'package:meta/meta.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-@immutable
-final class Shop {
-  const Shop({
-    required this.id,
-    required this.name,
-    required this.address,
-    required this.imageUrl,
-  });
+part 'shop.freezed.dart';
+part 'shop.g.dart';
 
-  final String id;
-  final String name;
-  final String address;
-  final String imageUrl;
+@freezed
+abstract class Shop with _$Shop {
+  const factory Shop({
+    required String id,
+    required String name,
+    required String address,
+    required String imageUrl,
+  }) = _Shop;
+
+  factory Shop.fromJson(Map<String, dynamic> json) => _$ShopFromJson(json);
 }
