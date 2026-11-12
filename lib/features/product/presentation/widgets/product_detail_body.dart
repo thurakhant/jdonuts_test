@@ -84,11 +84,22 @@ class _Card extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(product.code, style: AppTypography.caption),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(product.code, style: AppTypography.caption),
+                ),
+                if (product.isNew) OrangeBadge(l10n.productNew),
+              ],
+            ),
             const SizedBox(height: AppSpacing.xs),
             Text(product.name, style: AppTypography.display),
             const SizedBox(height: AppSpacing.sm),
-            _PriceRow(product: product, l10n: l10n),
+            Text(
+              l10n.mmkAmount(formatMmk(product.priceMmk)),
+              style: AppTypography.title,
+            ),
             const SizedBox(height: AppSpacing.md),
             Hero(
               tag: productHeroTag(product.id),
@@ -103,9 +114,7 @@ class _Card extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             child,
             const SizedBox(height: AppSpacing.md),
-            Text(l10n.whatsThis, style: AppTypography.title),
-            const SizedBox(height: AppSpacing.xs),
-            Text(product.description, style: AppTypography.body),
+            _WhatsThisRow(l10n: l10n, description: product.description),
           ],
         ),
       ),
@@ -113,24 +122,43 @@ class _Card extends StatelessWidget {
   }
 }
 
-class _PriceRow extends StatelessWidget {
-  const _PriceRow({required this.product, required this.l10n});
+/// Side-label layout from the mock: a green "?" and "What's this?" on the
+/// left, the description in muted text on the right.
+class _WhatsThisRow extends StatelessWidget {
+  const _WhatsThisRow({required this.l10n, required this.description});
 
-  final Product product;
   final AppLocalizations l10n;
+  final String description;
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          l10n.mmkAmount(formatMmk(product.priceMmk)),
-          style: AppTypography.title,
+        SizedBox(
+          width: AppSpacing.whatsThisLabelWidth,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.help,
+                color: AppColors.success,
+                size: AppSpacing.lg,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(l10n.whatsThis, style: AppTypography.title),
+            ],
+          ),
         ),
-        if (product.isNew) ...[
-          const SizedBox(width: AppSpacing.sm),
-          OrangeBadge(l10n.productNew),
-        ],
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: Text(
+            description,
+            style: AppTypography.body.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ),
       ],
     );
   }

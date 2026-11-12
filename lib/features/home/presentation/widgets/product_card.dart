@@ -44,7 +44,7 @@ class ProductCard extends StatelessWidget {
                 ),
                 if (discount != null)
                   Positioned(
-                    top: AppSpacing.sm,
+                    bottom: AppSpacing.sm,
                     left: AppSpacing.sm,
                     child: OrangeBadge(
                       AppLocalizations.of(context)!.discountOff(discount),

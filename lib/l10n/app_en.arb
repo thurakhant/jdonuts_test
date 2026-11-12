@@ -114,6 +114,14 @@
   "seasonalSpecials": "Seasonal specials",
   "popularSection": "Popular 🔥",
   "orderAgain": "Order again",
+  "tierMember": "{tier} member",
+  "@tierMember": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
   "pointsLeftToTier": "{points} points left to become {tier} Member",
   "@pointsLeftToTier": {
     "placeholders": {

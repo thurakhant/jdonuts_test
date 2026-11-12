@@ -508,6 +508,12 @@ abstract class AppLocalizations {
   /// **'Order again'**
   String get orderAgain;
 
+  /// No description provided for @tierMember.
+  ///
+  /// In en, this message translates to:
+  /// **'{tier} member'**
+  String tierMember(String tier);
+
   /// No description provided for @pointsLeftToTier.
   ///
   /// In en, this message translates to:

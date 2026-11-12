@@ -21,7 +21,8 @@ const List<String> _tiles = [
   'assets/images/product_santa_cookies.png',
 ];
 
-const int _gridColumns = 3;
+/// Mock-up collage: two tall tiles on the left, three shorter on the right.
+const int _leftTiles = 2;
 
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
@@ -71,25 +72,53 @@ class WelcomeScreen extends ConsumerWidget {
 class _TileGrid extends StatelessWidget {
   const _TileGrid();
 
-  @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: _gridColumns,
-      mainAxisSpacing: AppSpacing.sm,
-      crossAxisSpacing: AppSpacing.sm,
-      physics: const NeverScrollableScrollPhysics(),
-      children: [
-        for (final (i, asset) in _tiles.indexed)
-          StaggeredEntrance(
-            index: i,
-            slide: AppMotion.driftSlide,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-              child: ExcludeSemantics(
-                child: Image.asset(asset, fit: BoxFit.cover, cacheWidth: 300),
+  Widget _tile(int index, {required int flex}) {
+    return Expanded(
+      flex: flex,
+      child: StaggeredEntrance(
+        index: index,
+        slide: AppMotion.driftSlide,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          child: ExcludeSemantics(
+            child: SizedBox.expand(
+              child: Image.asset(
+                _tiles[index],
+                fit: BoxFit.cover,
+                cacheWidth: 500,
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: Column(
+            children: [
+              _tile(0, flex: 3),
+              const SizedBox(height: AppSpacing.sm),
+              _tile(1, flex: 4),
+            ],
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Column(
+            children: [
+              for (var i = _leftTiles; i < _tiles.length - 1; i++) ...[
+                if (i > _leftTiles) const SizedBox(height: AppSpacing.sm),
+                _tile(i, flex: 1),
+              ],
+            ],
+          ),
+        ),
       ],
     );
   }

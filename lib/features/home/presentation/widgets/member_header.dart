@@ -54,12 +54,14 @@ class _Header extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: AppSpacing.sm,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(member.name, style: AppTypography.headline),
-                    _TierChip(member.tier),
+                    Text(
+                      l10n.tierMember(member.tier),
+                      style: AppTypography.caption,
+                    ),
                   ],
                 ),
               ),
@@ -86,49 +88,13 @@ class _Header extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppRadius.pill),
               child: LinearProgressIndicator(
                 value: value,
-                minHeight: 8,
+                minHeight: 4,
                 color: AppColors.accent,
                 backgroundColor: AppColors.backgroundPink,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _TierChip extends StatelessWidget {
-  const _TierChip(this.tier);
-
-  final String tier;
-
-  Color get _color => switch (tier.toLowerCase()) {
-    'gold' => AppColors.tierGold,
-    'platinum' => AppColors.tierPlatinum,
-    'silver' => AppColors.tierSilver,
-    _ => AppColors.highlight,
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: _color,
-        borderRadius: BorderRadius.circular(AppRadius.pill),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.xs,
-        ),
-        child: Text(
-          tier,
-          style: AppTypography.caption.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
       ),
     );
   }

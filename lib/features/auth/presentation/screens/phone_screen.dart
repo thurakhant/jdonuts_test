@@ -89,7 +89,9 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
             onChanged: _onChanged,
             decoration: InputDecoration(
               prefixText: '${l10n.phonePrefixMm}  ',
-              prefixStyle: AppTypography.title,
+              prefixStyle: AppTypography.title.copyWith(
+                color: AppColors.textSecondary,
+              ),
               errorText: _fieldError(l10n),
               errorMaxLines: 2,
             ),

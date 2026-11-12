@@ -39,6 +39,9 @@ abstract final class AppSpacing {
   static const double ringSprinkleLength = 5;
   static const double ringSprinkleStroke = 2.5;
 
+  /// Product detail: width of the "What's this?" side-label column.
+  static const double whatsThisLabelWidth = 72;
+
   static const double skeletonLineWidth = 100;
   static const double skeletonLineHeight = 14;
 }

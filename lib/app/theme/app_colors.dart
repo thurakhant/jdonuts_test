@@ -34,6 +34,7 @@ abstract final class AppColors {
 
   // Decorative
   static const Color donutPink = Color(0xFFF48FB1);
+  static const Color ringTrack = Color(0xFFBDE9F6); // pale cyan ring track
   static const Color skeletonBase = Color(0xFFEDEDF0);
   static const Color skeletonShine = Color(0xFFF8F8FA);
 }

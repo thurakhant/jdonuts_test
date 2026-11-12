@@ -72,6 +72,7 @@ class _ResendRowState extends State<ResendRow> {
       fontWeight: FontWeight.w700,
     );
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(l10n.didntReceiveCode, style: AppTypography.body),
         if (_left > Duration.zero)

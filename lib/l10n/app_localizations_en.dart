@@ -237,6 +237,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderAgain => 'Order again';
 
   @override
+  String tierMember(String tier) {
+    return '$tier member';
+  }
+
+  @override
   String pointsLeftToTier(String points, String tier) {
     return '$points points left to become $tier Member';
   }

@@ -19,7 +19,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Hania'), findsOneWidget);
-    expect(find.text('Silver'), findsOneWidget);
+    expect(find.text('Silver member'), findsOneWidget);
     expect(find.text('2'), findsOneWidget);
     expect(find.text('500 points left to become Gold Member'), findsOneWidget);
     expect(find.text('Seasonal specials'), findsOneWidget);

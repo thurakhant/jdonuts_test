@@ -4,7 +4,10 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../providers/registration_flow_state.dart';
+import 'linked_text.dart';
+import 'placeholder_sheet.dart';
 import 'step_ring.dart';
 
 /// Shared frame for Phone, OTP, Name and DOB: back circle top-left,
@@ -47,10 +50,31 @@ class AuthScaffold extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               Expanded(child: SingleChildScrollView(child: body)),
               action,
+              const SizedBox(height: AppSpacing.md),
+              const _LegalFooter(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The same terms line the design repeats under every auth step.
+class _LegalFooter extends StatelessWidget {
+  const _LegalFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    void sheet() => showPlaceholderSheet(context);
+    return LinkedText(
+      template: l10n.legalNotice(kLinkMarkers[0], kLinkMarkers[1]),
+      links: [
+        LinkSpec(l10n.termsOfUse, sheet),
+        LinkSpec(l10n.privacyPolicy, sheet),
+      ],
+      style: AppTypography.caption,
     );
   }
 }

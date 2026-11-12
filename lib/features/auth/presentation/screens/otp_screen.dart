@@ -99,7 +99,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           if (_failure case final failure?)
             Text(
               failureMessage(l10n, failure),
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.start,
               style: AppTypography.caption.copyWith(color: AppColors.error),
             ),
           const SizedBox(height: AppSpacing.lg),

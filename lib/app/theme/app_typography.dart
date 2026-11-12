@@ -8,8 +8,8 @@ abstract final class AppTypography {
 
   static const TextStyle display = TextStyle(
     fontFamily: _family,
-    fontSize: 28,
-    height: 1.25,
+    fontSize: 32,
+    height: 1.2,
     fontWeight: FontWeight.w800,
     color: AppColors.textPrimary,
   );

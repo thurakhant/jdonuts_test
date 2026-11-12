@@ -77,7 +77,7 @@ class _RingFace extends StatelessWidget {
               value: progress,
               strokeWidth: _ringStroke,
               color: AppColors.accent,
-              backgroundColor: AppColors.backgroundPink,
+              backgroundColor: AppColors.ringTrack,
               semanticsLabel: percentLabel,
             ),
           ),
