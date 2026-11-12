@@ -1,6 +1,7 @@
 import '../../features/home/domain/promo_banner.dart';
 import '../../features/home/domain/shop.dart';
 import '../../features/member/domain/member.dart';
+import '../../features/rewards/domain/challenge.dart';
 import '../../features/product/domain/product.dart';
 
 /// One versioned copy of all catalog data, as delivered by a
@@ -13,6 +14,7 @@ class CatalogSnapshot {
     required this.banners,
     required this.shops,
     required this.member,
+    required this.challenges,
   });
 
   final int version;
@@ -20,4 +22,5 @@ class CatalogSnapshot {
   final List<PromoBanner> banners;
   final List<Shop> shops;
   final Member member;
+  final List<Challenge> challenges;
 }

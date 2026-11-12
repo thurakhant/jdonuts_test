@@ -61,6 +61,24 @@ class Members extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// Rewards challenges shown on the Rewards tab.
+@DataClassName('ChallengeRow')
+class Challenges extends Table {
+  TextColumn get id => text()();
+  TextColumn get title => text()();
+  TextColumn get imageAsset => text()();
+
+  /// `quarterDonut` or `coffeeCup`: which progress art the card draws.
+  TextColumn get style => text()();
+  IntColumn get goal => integer()();
+  IntColumn get progress => integer()();
+  IntColumn get rewardPoints => integer()();
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// Small key/value store for data metadata (e.g. the imported catalog version).
 @DataClassName('KeyValueRow')
 class KeyValues extends Table {

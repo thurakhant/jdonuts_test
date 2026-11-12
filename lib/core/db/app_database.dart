@@ -12,14 +12,16 @@ const String kCatalogVersionKey = 'catalog_version';
 ///
 /// Pass a [QueryExecutor] in tests (`NativeDatabase.memory()`); production
 /// opens the on-disk file through `drift_flutter`.
-@DriftDatabase(tables: [Products, Banners, Shops, Members, KeyValues])
+@DriftDatabase(
+  tables: [Products, Banners, Shops, Members, Challenges, KeyValues],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
     : super(executor ?? driftDatabase(name: 'jdonuts'));
 
   /// Bump when a table changes and add a step to [_migrateTo].
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -33,10 +35,12 @@ class AppDatabase extends _$AppDatabase {
     },
   );
 
-  /// One method per schema version. Example for a future v2:
-  /// `case 2: await m.addColumn(products, products.calories);`
+  /// One method per schema version.
   Future<void> _migrateTo(Migrator m, int version) async {
     switch (version) {
+      case 2:
+        // v2: rewards challenges. Filled by the next catalog refresh.
+        await m.createTable(challenges);
       default:
         break;
     }

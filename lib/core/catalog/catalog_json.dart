@@ -3,6 +3,7 @@ import 'dart:convert';
 import '../../features/home/domain/promo_banner.dart';
 import '../../features/home/domain/shop.dart';
 import '../../features/member/domain/member.dart';
+import '../../features/rewards/domain/challenge.dart';
 import '../../features/product/domain/product.dart';
 import '../failure.dart';
 import '../result.dart';
@@ -39,6 +40,7 @@ Result<CatalogSnapshot> parseCatalog(String source) {
             ),
         ],
         member: _member(data['member'] as Map<String, dynamic>),
+        challenges: [for (final c in _list(data['challenges'])) _challenge(c)],
       ),
     );
   } on Object catch (error) {
@@ -63,6 +65,20 @@ Product _product(Map<String, dynamic> json, int index) {
     description: json['description'] as String,
     section: section,
     sortOrder: index,
+  );
+}
+
+Challenge _challenge(Map<String, dynamic> json) {
+  final style = ChallengeStyle.tryParse(json['style'] as String?);
+  if (style == null) throw FormatException('bad style: ${json['id']}');
+  return Challenge(
+    id: json['id'] as String,
+    title: json['title'] as String,
+    imageAsset: json['imageAsset'] as String,
+    style: style,
+    goal: json['goal'] as int,
+    progress: json['progress'] as int,
+    rewardPoints: json['rewardPoints'] as int,
   );
 }
 

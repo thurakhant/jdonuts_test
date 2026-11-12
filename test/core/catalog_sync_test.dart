@@ -36,6 +36,7 @@ void main() {
     expect(snapshot.banners.length, 3);
     expect(snapshot.shops.length, 4);
     expect(snapshot.member.tier, 'Silver');
+    expect(snapshot.challenges.map((c) => c.progress), [4, 1, 9]);
   });
 
   test('first launch imports once and records the version', () async {
@@ -47,6 +48,7 @@ void main() {
 
     expect(source.fetches, 1);
     expect(await count(), 10);
+    expect((await db.select(db.challenges).get()).length, 3);
     expect(await storedVersion(), '1');
   });
 
@@ -83,6 +85,9 @@ void main() {
       database: db,
       source: AssetCatalogSource(load: () async => throw Exception('gone')),
     );
-    expect((await sync.seedIfNeeded()).failureOrNull, isA<CatalogUnavailable>());
+    expect(
+      (await sync.seedIfNeeded()).failureOrNull,
+      isA<CatalogUnavailable>(),
+    );
   });
 }

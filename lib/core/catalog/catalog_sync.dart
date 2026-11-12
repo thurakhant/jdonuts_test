@@ -98,6 +98,19 @@ class CatalogSync {
           notificationCount: Value(m.notificationCount),
         ),
       ]);
+      b.insertAllOnConflictUpdate(_db.challenges, [
+        for (var i = 0; i < s.challenges.length; i++)
+          ChallengesCompanion.insert(
+            id: s.challenges[i].id,
+            title: s.challenges[i].title,
+            imageAsset: s.challenges[i].imageAsset,
+            style: s.challenges[i].style.name,
+            goal: s.challenges[i].goal,
+            progress: s.challenges[i].progress,
+            rewardPoints: s.challenges[i].rewardPoints,
+            sortOrder: Value(i),
+          ),
+      ]);
       b.insertAllOnConflictUpdate(_db.keyValues, [
         KeyValuesCompanion.insert(
           key: kCatalogVersionKey,
@@ -119,6 +132,9 @@ class CatalogSync {
     await (_db.delete(
       _db.shops,
     )..where((t) => t.id.isNotIn(s.shops.map((x) => x.id)))).go();
+    await (_db.delete(
+      _db.challenges,
+    )..where((t) => t.id.isNotIn(s.challenges.map((x) => x.id)))).go();
     await (_db.delete(
       _db.members,
     )..where((t) => t.id.equals(s.member.id).not())).go();

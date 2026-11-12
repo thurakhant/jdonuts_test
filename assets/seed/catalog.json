@@ -156,6 +156,35 @@
         "imageUrl": "assets/images/shop_junction_city.png"
       }
     ],
+    "challenges": [
+      {
+        "id": "c-coco-full",
+        "title": "Eat 4 Coco donuts",
+        "imageAsset": "assets/images/product_coconut.png",
+        "style": "quarterDonut",
+        "goal": 4,
+        "progress": 4,
+        "rewardPoints": 100
+      },
+      {
+        "id": "c-coco-start",
+        "title": "Eat 4 Coco donuts",
+        "imageAsset": "assets/images/product_coconut.png",
+        "style": "quarterDonut",
+        "goal": 4,
+        "progress": 1,
+        "rewardPoints": 100
+      },
+      {
+        "id": "c-americano",
+        "title": "Drink 12 cups americano",
+        "imageAsset": "assets/images/product_americano.png",
+        "style": "coffeeCup",
+        "goal": 12,
+        "progress": 9,
+        "rewardPoints": 100
+      }
+    ],
     "member": {
       "id": "member-1",
       "name": "Hania",
