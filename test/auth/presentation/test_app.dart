@@ -6,6 +6,7 @@ import 'package:jdonuts_test/features/auth/application/auth_providers.dart';
 import 'package:jdonuts_test/features/auth/data/fake_auth_repository.dart';
 import 'package:jdonuts_test/features/auth/data/in_memory_stores.dart';
 import 'package:jdonuts_test/features/auth/domain/auth_user.dart';
+import 'package:jdonuts_test/features/auth/domain/auth_repository.dart';
 
 import '../../support/data_overrides.dart';
 
@@ -23,12 +24,14 @@ Future<InMemorySessionStore> pumpApp(
   bool signedIn = false,
   bool userRegistered = true,
   Duration latency = Duration.zero,
+  InMemorySessionStore? sessionStore,
+  AuthRepository? repository,
 }) async {
   tester.view.physicalSize = const Size(800, 1800);
   tester.view.devicePixelRatio = 2;
   addTearDown(tester.view.reset);
 
-  final sessions = InMemorySessionStore();
+  final sessions = sessionStore ?? InMemorySessionStore();
   final users = InMemoryUserStore();
   if (userRegistered) await users.writeAll([testUser]);
   if (signedIn) await sessions.write(AuthSession.fromUser(testUser));
@@ -40,11 +43,13 @@ Future<InMemorySessionStore> pumpApp(
         sessionStoreProvider.overrideWithValue(sessions),
         userStoreProvider.overrideWithValue(users),
         authRepositoryProvider.overrideWith(
-          (ref) => FakeAuthRepository(
-            sessionStore: sessions,
-            userStore: users,
-            delay: latency,
-          ),
+          (ref) =>
+              repository ??
+              FakeAuthRepository(
+                sessionStore: sessions,
+                userStore: users,
+                delay: latency,
+              ),
         ),
       ],
       child: const JDonutsApp(),

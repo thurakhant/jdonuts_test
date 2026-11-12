@@ -25,11 +25,15 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
 
   void setPhoneInput(String value) => state = state.copyWith(phoneInput: value);
 
-  void setName({String? first, String? last}) =>
-      state = state.copyWith(firstName: first, lastName: last);
+  void setName({String? first, String? last}) {
+    if (state.accountCreated) return;
+    state = state.copyWith(firstName: first, lastName: last);
+  }
 
-  void setDob({int? month, String? day, String? year}) =>
-      state = state.copyWith(month: month, day: day, year: year);
+  void setDob({int? month, String? day, String? year}) {
+    if (state.accountCreated) return;
+    state = state.copyWith(month: month, day: day, year: year);
+  }
 
   /// Phone step. Login asks for an OTP (fails for unknown numbers).
   /// Register must not hit a registered number: the repository answers
@@ -42,11 +46,16 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
     // starts fresh, so Back and the same number stay locked until Resend.
     state = e164 == state.phone
         ? state
-        : state.copyWith(phone: e164, registerOtpMisses: 0, otpLocked: false);
+        : state.copyWith(
+            phone: e164,
+            registerOtpMisses: 0,
+            otpLocked: false,
+            accountCreated: false,
+          );
     final sent = await _repo.requestOtp(e164);
     if (state.isRegister) {
       return switch (sent.failureOrNull) {
-        null => const PhoneAlreadyRegistered(),
+        null => state.accountCreated ? null : const PhoneAlreadyRegistered(),
         UnknownNumber() => null,
         final other => other,
       };
@@ -110,15 +119,18 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
       year: int.tryParse(state.year),
     );
     if (dob case FailureResult(:final failure)) return failure;
-    final registered = await _repo.register(
-      phone: state.phone!,
-      firstName: state.firstName.trim(),
-      lastName: state.lastName.trim(),
-      dateOfBirth: dob.valueOrNull!,
-    );
-    if (registered.failureOrNull case final failure?) return failure;
     final code = state.otpCode;
     if (code == null) return const InvalidOtp();
+    if (!state.accountCreated) {
+      final registered = await _repo.register(
+        phone: state.phone!,
+        firstName: state.firstName.trim(),
+        lastName: state.lastName.trim(),
+        dateOfBirth: dob.valueOrNull!,
+      );
+      if (registered.failureOrNull case final failure?) return failure;
+      state = state.copyWith(accountCreated: true);
+    }
     final signedIn = await _repo.verifyOtp(phone: state.phone!, code: code);
     return signedIn.failureOrNull;
   }

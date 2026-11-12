@@ -72,13 +72,16 @@ class _NameScreenState extends ConsumerState<NameScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final saved = ref.watch(registrationFlowProvider).accountCreated;
     return AuthScaffold(
       step: AuthStep.name,
       title: l10n.whatsYourName,
       body: Column(
         children: [
+          if (saved) Text(l10n.registrationSavedRetry),
           TextField(
             key: const ValueKey('first-name'),
+            readOnly: saved,
             controller: _first,
             focusNode: _firstFocus,
             textCapitalization: TextCapitalization.words,
@@ -92,6 +95,7 @@ class _NameScreenState extends ConsumerState<NameScreen> {
           const SizedBox(height: AppSpacing.md),
           TextField(
             key: const ValueKey('last-name'),
+            readOnly: saved,
             controller: _last,
             focusNode: _lastFocus,
             textCapitalization: TextCapitalization.words,

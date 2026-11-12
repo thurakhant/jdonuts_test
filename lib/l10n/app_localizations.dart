@@ -262,6 +262,12 @@ abstract class AppLocalizations {
   /// **'Orders'**
   String get ordersTab;
 
+  /// No description provided for @registrationSavedRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is saved. Continue to retry signing in.'**
+  String get registrationSavedRetry;
+
   /// No description provided for @settingsTab.
   ///
   /// In en, this message translates to:

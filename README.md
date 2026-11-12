@@ -181,13 +181,14 @@ motion throughout.
 
 ## Tests
 
-134 tests in 26 files, all passing, named after the behaviour they check:
+138 tests in 27 files, all passing, named after the behaviour they check:
 
 - **Unit:** every validator rule, the fake auth repository (lockout, resend,
-  sessions, storage failures), catalog import/refresh, the v3 → v4 migration, connectivity,
+  sessions, storage failures), registration retry, catalog import/refresh,
+  the v3 → v4 migration, connectivity,
   MMK formatting, and the domain-purity check.
-- **Widget:** login and registration validation and flow, OTP boxes, session
-  routing, Home states, Product detail, Rewards motion and states, including
+- **Widget:** login and registration validation and flow, logout retry,
+  failed resend, OTP boxes, session routing, Home states, Product detail, Rewards motion and states, including
   a 4.7-inch phone at text scale 1.3.
 - **Integration:** `test/integration/register_to_product_test.dart` runs
   Register → Home → Product detail (with the Hero flight) through the real

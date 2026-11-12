@@ -8,12 +8,12 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../l10n/app_localizations.dart';
 
 /// "Didn't receive the code?" plus a pink countdown that becomes a Resend
-/// link at 0:00. [onResend] returns once the new code is sent; the timer
-/// then restarts.
+/// link at 0:00. [onResend] returns true only when the new code is sent;
+/// only a successful resend restarts the timer.
 class ResendRow extends StatefulWidget {
   const ResendRow({required this.onResend, super.key});
 
-  final Future<void> Function() onResend;
+  final Future<bool> Function() onResend;
 
   @override
   State<ResendRow> createState() => _ResendRowState();
@@ -52,10 +52,10 @@ class _ResendRowState extends State<ResendRow> {
   Future<void> _resend() async {
     if (_sending) return;
     setState(() => _sending = true);
-    await widget.onResend();
+    final sent = await widget.onResend();
     if (!mounted) return;
     setState(() => _sending = false);
-    _startTimer();
+    if (sent) _startTimer();
   }
 
   String get _clock {

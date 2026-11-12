@@ -96,14 +96,18 @@ class _DobScreenState extends ConsumerState<DobScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MonthField(
-            month: flow.month,
-            onPicked: (m) => _changed(month: m),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _numberField('dob-day', _day, l10n.day, _dayDigits),
-          const SizedBox(height: AppSpacing.md),
-          _numberField('dob-year', _year, l10n.year, _yearDigits),
+          if (flow.accountCreated)
+            Text(l10n.registrationSavedRetry)
+          else ...[
+            MonthField(
+              month: flow.month,
+              onPicked: (m) => _changed(month: m),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _numberField('dob-day', _day, l10n.day, _dayDigits),
+            const SizedBox(height: AppSpacing.md),
+            _numberField('dob-year', _year, l10n.year, _yearDigits),
+          ],
           if (failure != null)
             Padding(
               padding: const EdgeInsets.only(top: AppSpacing.sm),

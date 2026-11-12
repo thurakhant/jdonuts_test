@@ -100,6 +100,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ordersTab => 'Orders';
 
   @override
+  String get registrationSavedRetry =>
+      'Your account is saved. Continue to retry signing in.';
+
+  @override
   String get settingsTab => 'Settings';
 
   @override

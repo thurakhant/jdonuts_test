@@ -52,6 +52,7 @@
   "rewardTab": "Reward",
   "donutsTab": "J'Donuts",
   "ordersTab": "Orders",
+  "registrationSavedRetry": "Your account is saved. Continue to retry signing in.",
   "settingsTab": "Settings",
   "logOut": "Log out",
   "placeholderSheetBody": "This is a placeholder. No real integration in this demo.",

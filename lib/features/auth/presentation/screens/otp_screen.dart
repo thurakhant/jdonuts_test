@@ -64,13 +64,14 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     }
   }
 
-  Future<void> _resend() async {
+  Future<bool> _resend() async {
     final failure = await ref
         .read(registrationFlowProvider.notifier)
         .resendOtp();
-    if (!mounted) return;
+    if (!mounted) return false;
     setState(() => _failure = failure);
-    _clearBoxes();
+    if (failure == null) _clearBoxes();
+    return failure == null;
   }
 
   @override

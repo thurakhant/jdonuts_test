@@ -28,6 +28,7 @@ class RegistrationFlowState {
     this.otpCode,
     this.registerOtpMisses = 0,
     this.otpLocked = false,
+    this.accountCreated = false,
     this.firstName = '',
     this.lastName = '',
     this.month,
@@ -54,6 +55,9 @@ class RegistrationFlowState {
   /// True once three wrong codes locked entry; survives leaving the OTP
   /// screen so coming back still shows the boxes disabled.
   final bool otpLocked;
+
+  /// This flow saved the account; retry only the remaining session write.
+  final bool accountCreated;
   final String firstName;
   final String lastName;
 
@@ -72,6 +76,7 @@ class RegistrationFlowState {
     String? otpCode,
     int? registerOtpMisses,
     bool? otpLocked,
+    bool? accountCreated,
     String? firstName,
     String? lastName,
     int? month,
@@ -86,6 +91,7 @@ class RegistrationFlowState {
       otpCode: otpCode ?? this.otpCode,
       registerOtpMisses: registerOtpMisses ?? this.registerOtpMisses,
       otpLocked: otpLocked ?? this.otpLocked,
+      accountCreated: accountCreated ?? this.accountCreated,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       month: month ?? this.month,
