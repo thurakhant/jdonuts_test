@@ -9,13 +9,18 @@ import '../../../../app/widgets/failure_text.dart';
 import '../../../../core/db/database_providers.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../application/product_providers.dart';
+import '../../domain/product.dart';
 import '../widgets/product_detail_body.dart';
 
-/// `/product/:id`. Handles loading, error and "no such product".
+/// `/home/product/:id`. Handles loading, error and "no such product".
 class ProductDetailScreen extends ConsumerWidget {
-  const ProductDetailScreen({required this.productId, super.key});
+  const ProductDetailScreen({required this.productId, this.initial, super.key});
 
   final String productId;
+
+  /// The product the Home tile already has. Showing it on the first frame
+  /// gives the Hero flight a destination; the DB stream takes over after.
+  final Product? initial;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +38,9 @@ class ProductDetailScreen extends ConsumerWidget {
         ),
       ),
       body: product.when(
-        loading: () => const ProductDetailSkeleton(),
+        loading: () => initial == null
+            ? const ProductDetailSkeleton()
+            : ProductDetailBody(product: initial!),
         error: (error, _) => _Message(
           dataErrorMessage(l10n, error),
           onRetry: () {

@@ -11,6 +11,7 @@ import '../../features/auth/presentation/screens/phone_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/welcome_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/product/domain/product.dart';
 import '../../features/product/presentation/screens/product_detail_screen.dart';
 import '../../features/rewards/presentation/screens/rewards_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
@@ -50,15 +51,29 @@ final List<RouteBase> _routes = [
   _stepPage(AppRoutes.name, (_) => const NameScreen()),
   _stepPage(AppRoutes.dob, (_) => const DobScreen()),
   _stepPage(AppRoutes.welcome, (_) => const WelcomeScreen()),
-  GoRoute(
-    path: AppRoutes.productDetailPattern,
-    builder: (_, state) =>
-        ProductDetailScreen(productId: state.pathParameters['id']!),
-  ),
   StatefulShellRoute.indexedStack(
-    builder: (_, _, shell) => AppShell(navigationShell: shell),
+    builder: (_, state, shell) => AppShell(
+      navigationShell: shell,
+      showNavBar: !AppRoutes.isProductDetail(state.uri.path),
+    ),
     branches: [
-      _branch(AppRoutes.home, (_) => const HomeScreen()),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: AppRoutes.home,
+            builder: (context, _) => const HomeScreen(),
+            routes: [
+              GoRoute(
+                path: AppRoutes.productDetailPattern,
+                builder: (_, state) => ProductDetailScreen(
+                  productId: state.pathParameters['id']!,
+                  initial: state.extra as Product?,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       _branch(AppRoutes.rewards, (_) => const RewardsScreen()),
       _branch(
         AppRoutes.scan,

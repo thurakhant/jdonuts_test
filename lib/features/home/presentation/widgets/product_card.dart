@@ -22,7 +22,8 @@ class ProductCard extends StatelessWidget {
     final discount = product.discountPercent;
     return InkWell(
       borderRadius: BorderRadius.circular(AppRadius.lg),
-      onTap: () => context.push(AppRoutes.productDetail(product.id)),
+      onTap: () =>
+          context.push(AppRoutes.productDetail(product.id), extra: product),
       child: SizedBox(
         width: width,
         child: Column(

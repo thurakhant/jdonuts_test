@@ -14,9 +14,14 @@ abstract final class AppRoutes {
   static const String orders = '/orders';
   static const String settings = '/settings';
 
-  static const String productDetailPattern = '/product/:id';
+  /// Nested under Home so the detail page lives in the same navigator as
+  /// the Home tiles: Hero flights only connect heroes in one navigator.
+  static const String productDetailPattern = 'product/:id';
 
-  static String productDetail(String id) => '/product/$id';
+  static String productDetail(String id) => '$home/product/$id';
+
+  static bool isProductDetail(String location) =>
+      location.startsWith('$home/product/');
 
   /// Screens a signed-out user may visit. `welcome` is included because the
   /// session is only published when the user taps LET'S EXPLORE.
