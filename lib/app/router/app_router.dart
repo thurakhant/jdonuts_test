@@ -40,9 +40,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.productDetailPattern,
-        builder: (_, state) => PlaceholderScreen(
-          title: 'Product ${state.pathParameters['id']}',
-        ),
+        builder: (_, state) =>
+            PlaceholderScreen(title: 'Product ${state.pathParameters['id']}'),
       ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => AppShell(navigationShell: shell),
@@ -61,7 +60,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 StatefulShellBranch _branch(String path, String title) {
   return StatefulShellBranch(
     routes: [
-      GoRoute(path: path, builder: (_, _) => PlaceholderScreen(title: title)),
+      GoRoute(
+        path: path,
+        builder: (_, _) => PlaceholderScreen(title: title),
+      ),
     ],
   );
 }

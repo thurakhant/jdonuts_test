@@ -8,7 +8,9 @@ abstract final class AppColors {
   // Brand
   static const Color primary = Color(0xFF59C9E8); // cyan CTA buttons, nav bar
   static const Color accent = Color(0xFFEE5A8E); // hot-pink links, ring, pill
-  static const Color highlight = Color(0xFFF7941D); // orange badges (New, % off)
+  static const Color highlight = Color(
+    0xFFF7941D,
+  ); // orange badges (New, % off)
 
   // Surfaces
   static const Color background = Color(0xFFFFF7F9);
