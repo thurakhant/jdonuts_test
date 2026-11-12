@@ -51,6 +51,11 @@ final List<RouteBase> _routes = [
   _stepPage(AppRoutes.name, (_) => const NameScreen()),
   _stepPage(AppRoutes.dob, (_) => const DobScreen()),
   _stepPage(AppRoutes.welcome, (_) => const WelcomeScreen()),
+  GoRoute(
+    path: AppRoutes.productLink,
+    redirect: (_, state) =>
+        AppRoutes.productDetail(state.pathParameters['id']!),
+  ),
   StatefulShellRoute.indexedStack(
     builder: (_, state, shell) => AppShell(
       navigationShell: shell,

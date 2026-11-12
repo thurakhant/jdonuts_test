@@ -20,6 +20,9 @@ abstract final class AppRoutes {
 
   static String productDetail(String id) => '$home/product/$id';
 
+  /// The short product link; forwards to [productDetail].
+  static const String productLink = '/product/:id';
+
   static bool isProductDetail(String location) =>
       location.startsWith('$home/product/');
 

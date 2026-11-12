@@ -153,7 +153,8 @@ motion throughout.
 - Add to cart is visual feedback only (persistent cart listed as a bonus).
 - The J'Donuts tab (the middle doughnut icon; the PDF doesn't name it) and Orders are placeholder screens, as allowed.
 - Product detail is nested under the Home tab (`/home/product/:id`) so the
-  Hero flight works inside one navigator; the tile passes the product along so
+  Hero flight works inside one navigator; the PDF's `/product/:id` forwards
+  there (signed-out users still go to onboarding); the tile passes the product along so
   the first frame has a flight target.
 
 ## Time spent
