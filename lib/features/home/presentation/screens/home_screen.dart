@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
+import '../../../../app/widgets/entrance.dart';
 import '../../../../core/connectivity/connectivity_providers.dart';
 import '../../../../core/db/database_providers.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -33,21 +34,8 @@ class HomeScreen extends ConsumerWidget {
                 onRefresh: () => _refresh(context, ref),
                 child: ListView(
                   children: [
-                    const MemberHeader(),
-                    const BannerCarousel(),
-                    ProductSectionView(
-                      section: ProductSection.seasonal,
-                      title: l10n.seasonalSpecials,
-                    ),
-                    ProductSectionView(
-                      section: ProductSection.popular,
-                      title: l10n.popularSection,
-                    ),
-                    ProductSectionView(
-                      section: ProductSection.orderAgain,
-                      title: l10n.orderAgain,
-                    ),
-                    const ShopsSection(),
+                    for (final (i, section) in _sections(l10n).indexed)
+                      StaggeredEntrance(index: i, child: section),
                     const SizedBox(height: AppSpacing.xl),
                   ],
                 ),
@@ -58,6 +46,24 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
+
+  List<Widget> _sections(AppLocalizations l10n) => [
+    const MemberHeader(),
+    const BannerCarousel(),
+    ProductSectionView(
+      section: ProductSection.seasonal,
+      title: l10n.seasonalSpecials,
+    ),
+    ProductSectionView(
+      section: ProductSection.popular,
+      title: l10n.popularSection,
+    ),
+    ProductSectionView(
+      section: ProductSection.orderAgain,
+      title: l10n.orderAgain,
+    ),
+    const ShopsSection(),
+  ];
 
   /// Pull-to-refresh: re-reads the (fake) remote; failures keep saved data.
   Future<void> _refresh(BuildContext context, WidgetRef ref) async {
