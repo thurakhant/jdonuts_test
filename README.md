@@ -1,273 +1,224 @@
-# J'Donuts — Senior Flutter Code Test
+# J'Donuts — Flutter Code Test
 
-A working slice of the J'Donuts customer app: fake login/registration with real
-validation, an offline-first Home and Product detail, and an animated Rewards
-screen.
+A two-day implementation of the J'Donuts brief: registration and login,
+an offline-first catalog, and an animated Rewards screen. It runs on Android
+and the iOS Simulator. No backend setup or API keys are needed.
 
-## Deliverables
+## Run the app
 
-Sent with the submission email:
+| Tool | Version |
+| --- | --- |
+| Flutter | 3.50.0 stable |
+| Dart | 3.14.0 |
 
-| Item | File |
-| ---- | ---- |
-| Android release build | `app-release.apk` |
-| iOS Simulator build | `Runner.app.zip` |
-| Screen recording | Video link: register, log out, log in, Home, Product detail, Rewards, then the same flow in airplane mode |
-
-## Versions
-
-| Tool    | Version                      |
-| ------- | ---------------------------- |
-| Flutter | 3.50.0 (stable, via **fvm**) |
-| Dart    | 3.14.0                       |
-
-> Flutter 3.50 deprecates `package:flutter/material.dart`; this project uses
-> the official replacement `package:material_ui/material_ui.dart` throughout.
-
-## Run it
+Flutter is pinned in `.fvmrc`. The app uses `material_ui` for Material widgets.
 
 ```bash
-fvm install            # picks up .fvmrc (3.50.0) — or use any Flutter 3.50.0
+fvm install
 fvm flutter pub get
-fvm flutter run        # on an iOS Simulator or Android emulator
+fvm flutter run
 ```
 
-Without fvm, plain `flutter pub get` / `flutter run` on Flutter 3.50.0 works
-the same. No code generation step is needed — the Drift and l10n outputs are
-committed. First launch imports `assets/seed/catalog.json` into the local
-database. Clearing the app's data on Android resets both the catalog and the
-session; on iOS the session lives in the Keychain, so log out to reset it.
+Without FVM, use Flutter 3.50.0 and run `flutter pub get` followed by
+`flutter run`. Android needs the Android SDK and an emulator or phone;
+iOS needs macOS, Xcode and an installed Simulator runtime.
 
-Analysis and tests:
+Generated Drift, freezed/json_serializable and localization files are
+committed, so no code generation step is needed to run the project.
+
+### Try the main flow
+
+1. Choose **Let's get started**, enter a Myanmar mobile number, and use OTP
+   **`123456`**. Complete Name and Date of birth, then open Home.
+2. Open a product and change its quantity. Visit Reward to try the animations
+   and Gift tab.
+3. Log out from Settings, then log in with the same number and OTP. A returning
+   user goes straight to Home; the session survives relaunch.
+4. Turn on airplane mode and relaunch. Home, Product and Rewards should still
+   render, including images. Reconnect to trigger a background refresh, or
+   pull down on Home to refresh manually.
+
+Any other six-digit OTP fails. Three wrong attempts lock that number until
+**Resend**, available after the five-minute countdown. Going back does not
+clear the lock. The fake repository waits about one second per request;
+buttons show loading feedback and block repeated submissions.
+
+Phone, OTP, name and date-of-birth validation are pure domain functions.
+Names support Myanmar letters; last name is optional. Date of birth must be
+a real date, not in the future, with a minimum age of 13.
+
+To reset an Android installation, clear its app data. On iOS, log out first:
+the session is stored in the Keychain and can survive reinstalling the app.
+
+## Structure and state management
+
+```text
+lib/
+  app/          Router, theme tokens, motion constants and shared widgets
+  core/         Result/Failure, Drift database, catalog sync and connectivity
+  features/
+    auth/
+    home/
+    product/
+    member/
+    rewards/
+    settings/
+  l10n/         English ARB strings and generated localizations
+```
+
+Features use `presentation`, `application`, `domain` and `data` folders where
+needed. Settings only needs presentation. Domain contains entities,
+validators and repository interfaces, with no Flutter imports. Entities are
+immutable `freezed` classes, with `json_serializable` for the ones read from
+JSON. Data implements those interfaces; application providers connect them to
+the UI.
+
+I chose **Riverpod** for state management and dependency injection. The same
+providers that supply repositories to screens can be overridden in tests.
+Drift query streams feed `StreamProvider`, so database changes reach the UI
+without keeping a second copy of the catalog in widget state.
+
+Auth sits behind `AuthRepository`, including asynchronous sign-up code checks,
+lockout, login and session restoration. The fake implementation persists users
+and sessions through `flutter_secure_storage`. Auth and catalog operations
+return typed `Result` values; database streams map failures to `StorageFailure`.
+Data screens show loading, error/retry and empty states.
+
+Navigation uses `go_router` with a session-based redirect guard. The short
+`/product/:id` route forwards to `/home/product/:id`, keeping the product Hero
+transition inside the Home navigator.
+
+## Offline data
+
+**Drift is the source of truth for Home, Product and Rewards.** On first launch,
+`assets/seed/catalog.json` is imported into SQLite. The bundled catalog is the
+fake remote source; there is no separate mock server.
+
+- The source has a `{version, data}` envelope. Refresh applies newer or equal
+  versions in a transaction, updates rows and removes entries the source
+  dropped. An HTTP source can implement the same `CatalogSource` interface.
+- Database migrations are incremental, from schema v1 to v4. A test opens a
+  v3 database and checks the upgrade and preservation of member data.
+- Seed images are bundled, so even a first launch without internet can show
+  them. Network image URLs use `cached_network_image` with disk caching,
+  placeholders and error states.
+- Connectivity combines `connectivity_plus` with a reachability probe. Home
+  shows an offline banner; reconnecting starts a background refresh.
+- Home and Rewards read the same member record. The supplied designs disagree
+  on the tier and points, so both screens use Silver, 680,000 points and
+  500 points to Gold.
+
+## Motion
+
+Durations and curves live in `lib/app/motion/app_motion.dart`. Decorative
+motion is shortened or skipped when Reduce Motion is enabled.
+
+- **Onboarding and Welcome:** staggered text, buttons and food artwork.
+- **Registration:** shared-axis transitions, an animated progress ring that
+  becomes a check, OTP shake feedback, and press/loading button states.
+- **Home and Product:** skeleton shimmer, section entrances, an auto-playing
+  banner carousel, product Hero transitions, and animated quantity/total changes.
+- **Rewards:** a CustomPainter points ring and count-up, staggered tier ladder
+  with a progress line, sliding tab indicator, transitioning cards, donut/coffee
+  progress artwork, Earn pulse and a badge entrance.
+- **Navigation:** the active bottom-bar pill slides between tabs.
+
+## Tests and checks
+
+The latest recorded check passed **149 tests across 29 files**. The separate
+device flow test also passed on an Android 14 emulator, an iPhone 16 Pro with
+iOS 18.1 Simulator, and an Infinix X6840 phone.
 
 ```bash
-fvm flutter analyze    # clean, flutter_lints
-fvm flutter test       # unit + widget + in-memory integration
+fvm flutter analyze
+fvm flutter test
+fvm flutter devices
 fvm flutter test integration_test/register_to_product_test.dart -d <device-id>
+```
 
-# frame timings, profile mode, physical Android phone -> build/integration_response_data.json
+The tests cover validator boundaries, OTP lockout and resend, session/storage
+failures, registration and logout recovery, catalog refresh/deletion, migration,
+connectivity, routing, product totals, and Home/Rewards states and animations.
+Rewards also has a 360×640 layout check at text scale 1.3.
+
+`test/integration/register_to_product_test.dart` checks Register → Home →
+Product in memory, including the Hero flight. The separate `integration_test/`
+flow uses real secure storage, the database file and the fake request delays.
+Run it on a test device: it clears the app's current session and registers a
+new local account.
+
+### Performance
+
+The profile test measures Home scrolling, Product Hero transitions, Rewards
+entrance and tab switching. Recorded on an **Infinix X6840** (MediaTek MT6769,
+4 GB RAM, Android 16), with about 600 frames per full-flow run:
+
+| Run | Build p99 | Raster p99 | Frames above the 16.7 ms budget |
+| --- | --- | --- | --- |
+| 1 | 9.4 ms | 13.2 ms | 2 build, 3 raster |
+| 2 | 9.3 ms | 12.5 ms | 1 build |
+| 3 | 9.0 ms | 11.8 ms | 2 build, 1 raster |
+
+The first Rewards build took about 19–26 ms in these runs. Most measured frames
+were within the 60 fps budget, but the first entrance still has a frame hitch.
+These measurements cover the scripted interactions, not every screen or device.
+
+```bash
 fvm flutter drive --profile --no-dds --driver=test_driver/perf_driver.dart \
   --target=integration_test/performance_test.dart -d <device-id>
 ```
 
-Builds:
+The report is written to `build/integration_response_data.json`. This test
+records timings; it does not assert that every frame meets the budget.
+
+## Build for review
 
 ```bash
 fvm flutter build apk --release
-# -> build/app/outputs/flutter-apk/app-release.apk   (adb install app-release.apk)
-
 fvm flutter build ios --simulator
-cd build/ios/iphonesimulator && zip -r Runner.app.zip Runner.app
-# unzip, then: xcrun simctl install booted Runner.app
 ```
 
-## Fake OTP
+The APK is at `build/app/outputs/flutter-apk/app-release.apk`. Install it with:
 
-**`123456`** is the only code that verifies; any other 6-digit code fails.
-Three wrong codes lock entry until **Resend** (a 5:00 countdown, which Resend
-restarts). Going back and re-entering the same number stays locked; only a
-different number starts fresh.
-
-## Architecture and folder map
-
-Feature-first clean architecture, three layers per feature:
-
-```
-lib/
-  app/                    # composition root
-    router/               # go_router, auth redirect guard, /product/:id
-    theme/                # design tokens: colors, spacing, radius, type
-    motion/app_motion.dart # named animation durations and curves
-    widgets/              # shared widgets (LoadingButton, JdImage, skeletons…)
-  core/                   # cross-feature plumbing
-    result.dart, failure.dart   # typed Result / sealed Failures
-    db/                   # Drift database (versioned migrations, schema v4)
-    catalog/              # seed import + refresh pipeline (fake remote)
-    connectivity/         # connectivity_plus + real reachability probe
-    format/mmk.dart       # MMK thousands formatting
-  features/
-    auth | home | product | member | rewards | settings
-      presentation/       # screens, widgets, Riverpod notifiers
-      application/        # providers that wire repositories to the UI
-      domain/             # pure Dart: entities, validators, repo interfaces
-      data/               # repo implementations (fake auth, drift, storage)
-  l10n/                   # ARB strings via gen-l10n
+```bash
+adb install -r build/app/outputs/flutter-apk/app-release.apk
 ```
 
-- Each feature has the folders it needs (Settings is presentation only).
-- **Presentation** depends on **domain**; **data** implements domain
-  interfaces. The domain layer has no Flutter imports, and a test
-  (`test/architecture/domain_purity_test.dart`) keeps it that way.
-- Errors are typed `Failure`s returned in a `Result` (auth, catalog,
-  sign-out, session restore); database streams report a `StorageFailure`.
-  Every screen and Home section has its own loading (skeleton), error (with
-  Retry) and empty state.
-- No services are created inside widgets: everything comes from Riverpod
-  providers.
+Package the Simulator app from the project root:
 
-## State management: Riverpod
+```bash
+cd build/ios/iphonesimulator
+zip -r Runner.app.zip Runner.app
+```
 
-Riverpod provides both state and dependency injection. Tests override the
-repositories and storage with fakes and an in-memory database;
-`StreamProvider` exposes Drift query streams, so screens update when the
-database changes.
+After extracting the ZIP, install it into a booted iOS Simulator with
+`xcrun simctl install booted Runner.app`. This is a Simulator build, not an IPA
+for a physical iPhone.
 
-## Offline strategy
+The submission requires the repository, release APK, Simulator ZIP and a
+2–4 minute recording of registration, logout, login, Home, Product and Rewards,
+followed by the same flow in airplane mode. Build files and the recording are
+kept outside the source history.
 
-Home, Product and Rewards data are read **only from the local Drift (SQLite)
-database**, the single source of truth. The session is kept in secure storage,
-and short-lived screen state (cart quantity, claimed challenges) in memory. The bundled seed (`assets/seed/catalog.json`, a versioned
-`{version, data}` envelope) acts as the fake remote; there is no mock server.
+## Trade-offs and remaining gaps
 
-1. **First launch:** the seed is imported into Drift and its version recorded.
-2. **Refresh** (pull-to-refresh on Home, and automatically when connectivity
-   returns): re-reads the source, upserts when the version is newer-or-equal,
-   deletes rows the source dropped. A real HTTP source only needs to implement
-   `CatalogSource` — nothing above the data layer changes.
-3. **Migrations** are versioned and step-by-step (v1 → v4); a test opens a real
-   v3 database and checks the upgrade.
-4. **Connectivity** = `connectivity_plus` *and* a real reachability probe
-   (socket to 1.1.1.1:53, 3 s timeout) behind an interface; Home shows an
-   offline banner while offline. To try it: turn on airplane mode, relaunch
-   the app — everything still renders from the database — then turn it off
-   and watch the banner clear and a background refresh run.
-5. **Images** are bundled as assets for all seed data (shown instantly in
-   airplane mode); network URLs go through `cached_network_image` with a disk
-   cache, placeholder and error state.
-6. One **member record** is shared app-wide: Home's header and Rewards read
-   the same Drift row (the design mock-ups disagree — Bronze/1,290 on Home,
-   Silver/500 on Rewards — so both screens intentionally show the same stored
-   record: Silver, 680,000 points, 500 to Gold).
-
-## Validation (Task 1)
-
-Pure-Dart validators in the domain layer, with unit tests for each rule:
-
-- **Phone:** after `+95`, spaces/dashes and one leading `0` are stripped; the
-  result must be `9` + 7–9 digits (`09254135592` → `+959254135592`).
-- **OTP:** 6 digits; see [Fake OTP](#fake-otp).
-- **Names:** first required, last optional (many Myanmar names have no family
-  name); 1–50 chars after trimming; letters and spaces incl. Myanmar script;
-  digits rejected (Myanmar digits too).
-- **DOB:** real calendar date (no 31 April; 29 Feb only in leap years), not in
-  the future, age ≥ 13 (`kMinimumAgeYears`).
-- Steps that call the fake repository (Phone, OTP and DOB) show a loading
-  state for the ~1 s call and block repeated taps. Back returns to the previous step and keeps what was
-  entered.
-
-Sessions persist in `flutter_secure_storage`; relaunch while logged in opens
-Home, logged out opens Onboarding; Log out lives in the Settings tab.
-
-## Animations
-
-All durations and curves are named constants in `lib/app/motion/app_motion.dart`.
-`MediaQuery.disableAnimations` (Reduce Motion) shortens or skips decorative
-motion throughout.
-
-- **Registration:** the progress ring animates 25 → 50 → 75 → 100 % and morphs
-  into a check; shared-axis step transitions; OTP boxes shake and clear on a
-  wrong code; buttons scale on press and Continue morphs into its loading
-  state.
-- **Home:** skeleton shimmer (no spinners), staggered section entrance,
-  auto-playing banner carousel.
-- **Product:** Hero flight on the product image; quantity and total animate on
-  change.
-- **Rewards:**
-  - the points ring (a CustomPainter frosting donut with sprinkles) sweeps from
-    0 to the member's tier progress while the total counts up to 680,000;
-  - Silver, Gold and Platinum appear in order, then the line to the next tier
-    fills to the member's progress;
-  - one blue pill slides between "Eat more earn more" and "Gift", and the card
-    list changes with a slide-and-fade;
-  - challenge cards enter staggered; the donut colours in by quarters
-    (1/4, 4/4) and the coffee arc fills to 9/12;
-  - EARN pulses when a challenge is complete (4/4), is grey otherwise, and
-    shows press feedback; the "Rewards 3" badge pops in.
-- **Navigation:** a floating bar whose pink pill slides between tabs;
-  Onboarding and Welcome stagger their entrance.
-
-## Tests
-
-147 tests in 28 files, plus one on-device integration test, all passing,
-named after the behaviour they check:
-
-- **Unit:** every validator rule, the fake auth repository (lockout, resend,
-  sessions, storage failures), registration retry, catalog import/refresh,
-  the v3 → v4 migration, connectivity,
-  MMK formatting, and the domain-purity check.
-- **Widget:** login and registration validation and flow, logout retry,
-  failed resend, OTP boxes, session routing, Home states, Product detail, Rewards motion and states, including
-  a 4.7-inch phone at text scale 1.3.
-- **Integration:**
-  - `integration_test/register_to_product_test.dart` runs Register → Home →
-    Product detail on a device or emulator with the real secure storage,
-    database file and ~1 s fake delays (passes on an Android 14 emulator,
-    an iPhone 16 Pro / iOS 18.1 simulator and an Infinix X6840 phone).
-  - `integration_test/performance_test.dart` records frame timings while
-    the main animations run (see [Performance](#performance)).
-  - `test/integration/register_to_product_test.dart` runs the same journey
-    in memory with `flutter test`, and also checks the Hero flight.
-
-## Performance
-
-Measured in profile mode on an **Infinix X6840** (MediaTek MT6769, 4 GB RAM,
-Android 16) with `integration_test/performance_test.dart`: Home scroll,
-product Hero there and back, Rewards entrance and tab switch. Three runs,
-about 600 frames each, against the 16.7 ms (60 fps) budget:
-
-| | Build p99 | Raster p99 | Frames over budget |
-| - | - | - | - |
-| Run 1 | 9.4 ms | 13.2 ms | 2 build, 3 raster (0.8 %) |
-| Run 2 | 9.3 ms | 12.5 ms | 1 build |
-| Run 3 | 9.0 ms | 11.8 ms | 2 build, 1 raster |
-
-The one slow frame in every run (19–26 ms build) is the first build of
-the Rewards screen when its tab opens; a separate run of only that switch
-confirmed it. Everything else stays within budget.
-
-## Known gaps and decisions
-
-- **Points ring progress:** the PDF says the ring sweeps to "the member's
-  progress" but doesn't say where Silver starts, so progress can't be derived
-  from 680,000 points and "500 to Gold". The member record stores
-  `tierProgress` (0.78, chosen to match the design's ring); schema v4 adds the
-  column.
-- **Typeface:** the design's rounded display font isn't specified or
-  provided; the system font with heavy weights approximates it.
-- **Artwork:** original product, shop and badge art wasn't provided; the
-  bundled images are stand-ins in the design's style.
-- **Names:** "letters and spaces" is enforced literally, so hyphenated names
-  (`Aung-Kyaw`) are rejected — a product question I'd raise.
-- **Sign-up OTP:** `AuthRepository.requestSignUpCode` and
-  `verifySignUpCode` check the code before the account exists, with the same
-  attempt and lockout rules as login; the account is created and signed in
-  at the DOB step. A real API can implement the same interface.
-- **Buttons with no logic:** Add to cart and Earn give visual feedback only.
-  Earn also shows a CLAIMED state, kept in memory, so it resets on relaunch.
-- **Placeholder tabs:** the J'Donuts tab (the middle doughnut icon; the PDF
-  doesn't name it) and Orders are placeholder screens, as allowed.
-- **Product route:** detail is nested under the Home tab
-  (`/home/product/:id`) so the Hero flight stays inside one navigator; the
-  PDF's `/product/:id` forwards there, and signed-out users still go to
-  Onboarding.
-- **Catalog repair check:** startup re-reads the seed when the challenges
-  table is empty (to repair installs from before challenges existed). A
-  catalog with truly zero challenges would re-read it on every start; a
-  stored "repaired" flag would fix that with one more migration.
-- **Catalog values:** imported JSON is checked for shape and types, not
-  ranges (e.g. a negative price would be accepted).
-- **Reachability:** the probe proves a socket to a public DNS server opens,
-  not that a full HTTP request would succeed (e.g. behind a captive portal).
-- **Screen sizes:** a widget test checks Rewards at 360×640 logical pixels
-  with text scale 1.3. By hand: an Android emulator at 720×1280 with text 1.3,
-  and an iPhone 16 Pro simulator at default and extra-extra-large text. Very
-  narrow screens (320 wide) can overflow on the auth steps.
-- **Models:** entities are Dart 3 `@immutable final class`es with hand-written
-  JSON where needed, rather than freezed; the analyzer rejects any mutable
-  field.
-- **60 fps:** one frame is dropped when Rewards opens for the first time;
-  see [Performance](#performance).
-- **Not done:** Burmese locale (bonus), persistent cart (bonus), CI.
+- **Scope:** cart and Earn actions provide visual feedback. Claimed rewards
+  stay in memory and reset on relaunch. J'Donuts and Orders are placeholders,
+  as allowed by the brief. Social login and legal links open placeholders.
+- **Design assets:** the exact font and original artwork were not supplied.
+  The app uses a system-font approximation and bundled stand-in images.
+- **Tier progress:** the designs do not define the start of Silver. The member
+  record stores `tierProgress` separately; 0.78 was chosen to match the ring.
+- **Catalog:** JSON shape and types are checked, but numeric ranges are not.
+  An empty challenges table triggers a startup repair read, so a deliberately
+  empty catalog would repeat that read on each launch.
+- **Connectivity:** a TCP connection to `1.1.1.1:53` is used as the probe. It does
+  not prove an HTTP service is reachable or detect every captive portal.
+- **Validation and layout:** names allow letters and spaces, so hyphenated names
+  are rejected. Very narrow 320-pixel auth layouts can overflow. Layout checks
+  do not cover every phone/text-size combination.
+- **Not included:** Burmese localization, a persistent cart and CI. The first
+  Rewards entrance hitch remains as described in Performance.
 
 ## Time spent
 
