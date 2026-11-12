@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_initializing_formals
+
 import '../../../core/failure.dart';
 import '../../../core/result.dart';
 import '../domain/auth_repository.dart';
@@ -11,11 +13,14 @@ const String kFakeOtp = '123456';
 /// Fake backend: ~1 s latency per call, one correct OTP, users kept in
 /// memory and mirrored to a [UserStore] so login survives relaunch.
 class FakeAuthRepository implements AuthRepository {
+  // Classic initializers on purpose: `required this._field` (private named
+  // parameters, new in Dart 3.14) shows as an error in older editors.
   FakeAuthRepository({
-    required this._sessionStore,
-    required this._userStore,
+    required SessionStore sessionStore,
+    required UserStore userStore,
     this.delay = const Duration(seconds: 1),
-  });
+  }) : _sessionStore = sessionStore,
+       _userStore = userStore;
 
   final SessionStore _sessionStore;
   final UserStore _userStore;
