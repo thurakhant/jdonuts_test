@@ -10,6 +10,8 @@ import '../../features/auth/presentation/screens/otp_screen.dart';
 import '../../features/auth/presentation/screens/phone_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/welcome_screen.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/product/presentation/screens/product_detail_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/placeholder_screen.dart';
@@ -48,12 +50,12 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: AppRoutes.productDetailPattern,
     builder: (_, state) =>
-        PlaceholderScreen(title: 'Product ${state.pathParameters['id']}'),
+        ProductDetailScreen(productId: state.pathParameters['id']!),
   ),
   StatefulShellRoute.indexedStack(
     builder: (_, _, shell) => AppShell(navigationShell: shell),
     branches: [
-      _branch(AppRoutes.home, (_) => const PlaceholderScreen(title: 'Home')),
+      _branch(AppRoutes.home, (_) => const HomeScreen()),
       _branch(
         AppRoutes.rewards,
         (_) => const PlaceholderScreen(title: 'Rewards'),
