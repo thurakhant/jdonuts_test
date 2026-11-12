@@ -26,8 +26,15 @@ abstract final class AppColors {
   static const Color navBarBlue = Color(0xFF7ACCE8);
   static const Color navBarPink = Color(0xFFE0639E);
 
-  // Onboarding page blush, sampled from the design screens.
+  // Onboarding page blush, sampled from the design screens, and the same
+  // blush fully clear, for fades into it.
   static const Color blushPink = Color(0xFFF9EEF2);
+  static const Color blushPinkClear = Color(0x00F9EEF2);
+
+  // Shops panel fallback when its illustration can't load: sky to meadow.
+  static const Color skyLight = Color(0xFFA9DFF2);
+  static const Color meadowLight = Color(0xFFB4E08A);
+  static const Color meadowDeep = Color(0xFF8CCB62);
 
   // Surfaces
   static const Color background = Color(0xFFF4F5F7);
@@ -54,4 +61,17 @@ abstract final class AppColors {
   static const Color ringTrack = Color(0xFFB1DDF6); // pale blue ring track
   static const Color skeletonBase = Color(0xFFEDEDF0);
   static const Color skeletonShine = Color(0xFFF8F8FA);
+  static const Color ringSheen = Color(0x2EFFFFFF); // soft glaze highlight
+
+  // Shadows
+  static const Color shadowCard = Color(0x14000000);
+  static const Color shadowNavBar = Color(0x1F000000);
+
+  // Sign-in provider brand colours.
+  static const Color brandApple = Color(0xFF000000);
+  static const Color brandFacebook = Color(0xFF1877F2);
+  static const Color brandGoogleRed = Color(0xFFEA4335);
+  static const Color brandGoogleYellow = Color(0xFFFBBC05);
+  static const Color brandGoogleGreen = Color(0xFF34A853);
+  static const Color brandGoogleBlue = Color(0xFF4285F4);
 }

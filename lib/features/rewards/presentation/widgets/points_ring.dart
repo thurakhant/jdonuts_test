@@ -139,7 +139,7 @@ class PointsRingPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = stroke * 0.45
         ..strokeCap = StrokeCap.round
-        ..color = const Color(0x2EFFFFFF),
+        ..color = AppColors.ringSheen,
     );
     _sprinkles(canvas, arcRect, sweep);
   }

@@ -228,7 +228,7 @@ class _AddToCartBar extends StatelessWidget {
               backgroundColor: AppColors.navBarBlue,
               foregroundColor: AppColors.textOnPrimary,
               elevation: 0,
-              shadowColor: const Color(0x00000000),
+              shadowColor: Colors.transparent,
               shape: const StadiumBorder(),
             ),
             child: FittedBox(

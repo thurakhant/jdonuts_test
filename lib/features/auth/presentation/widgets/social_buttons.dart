@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'placeholder_sheet.dart';
@@ -16,11 +17,11 @@ class SocialButtons extends StatelessWidget {
     final items = <(Widget, String)>[
       (const _GoogleMark(size: 26), l10n.continueWithGoogle),
       (
-        const Icon(Icons.apple, size: 30, color: Color(0xFF000000)),
+        const Icon(Icons.apple, size: 30, color: AppColors.brandApple),
         l10n.continueWithApple,
       ),
       (
-        const Icon(Icons.facebook, size: 28, color: Color(0xFF1877F2)),
+        const Icon(Icons.facebook, size: 28, color: AppColors.brandFacebook),
         l10n.continueWithFacebook,
       ),
     ];
@@ -61,10 +62,10 @@ class _GoogleMark extends StatelessWidget {
 class _GPainter extends CustomPainter {
   const _GPainter();
 
-  static const _red = Color(0xFFEA4335);
-  static const _yellow = Color(0xFFFBBC05);
-  static const _green = Color(0xFF34A853);
-  static const _blue = Color(0xFF4285F4);
+  static const _red = AppColors.brandGoogleRed;
+  static const _yellow = AppColors.brandGoogleYellow;
+  static const _green = AppColors.brandGoogleGreen;
+  static const _blue = AppColors.brandGoogleBlue;
 
   @override
   void paint(Canvas canvas, Size size) {

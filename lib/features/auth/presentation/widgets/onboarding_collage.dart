@@ -50,7 +50,7 @@ class OnboardingCollage extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Color(0x00F9EEF2), AppColors.blushPink],
+                      colors: [AppColors.blushPinkClear, AppColors.blushPink],
                       stops: [0.55, 0.98],
                     ),
                   ),

@@ -23,10 +23,10 @@ class JDonutsApp extends ConsumerWidget {
       // bottom nav bar reaches the physical bottom edge like the design.
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: const SystemUiOverlayStyle(
-          statusBarColor: Color(0x00000000),
+          statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.dark,
           statusBarBrightness: Brightness.light,
-          systemNavigationBarColor: Color(0x00000000),
+          systemNavigationBarColor: Colors.transparent,
           systemNavigationBarContrastEnforced: false,
           systemNavigationBarIconBrightness: Brightness.dark,
         ),

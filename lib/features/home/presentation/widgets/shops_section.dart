@@ -67,9 +67,9 @@ class _ShopsPanel extends StatelessWidget {
                   stops: [0.0, 0.55, 0.78, 1.0],
                   colors: [
                     AppColors.primary,
-                    Color(0xFFA9DFF2),
-                    Color(0xFFB4E08A),
-                    Color(0xFF8CCB62),
+                    AppColors.skyLight,
+                    AppColors.meadowLight,
+                    AppColors.meadowDeep,
                   ],
                 ),
               ),

@@ -64,7 +64,7 @@ class _LoadingButtonState extends State<LoadingButton> {
                 : widget.color.withValues(alpha: 0.4),
             // Flat capsule, as in the design screens.
             elevation: 0,
-            shadowColor: const Color(0x00000000),
+            shadowColor: Colors.transparent,
             textStyle: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w800,

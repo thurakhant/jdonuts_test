@@ -69,7 +69,7 @@ class PillNavBar extends StatelessWidget {
                 ),
                 boxShadow: const [
                   BoxShadow(
-                    color: Color(0x1F000000),
+                    color: AppColors.shadowNavBar,
                     blurRadius: 14,
                     offset: Offset(0, -2),
                   ),
@@ -191,6 +191,9 @@ class _Tab extends StatelessWidget {
   final PillNavItem item;
   final bool selected;
 
+  /// The label starts to fade in once the pill is this far open.
+  static const double _labelShowsAt = 0.55;
+
   /// 0 (closed) .. 1 (fully the pill's tab): fades the label in and out.
   final double openness;
   final VoidCallback onTap;
@@ -221,11 +224,13 @@ class _Tab extends StatelessWidget {
                       color: AppColors.textOnPrimary,
                       size: AppSpacing.navIconSize,
                     ),
-                if (openness > 0.55) ...[
+                if (openness > _labelShowsAt) ...[
                   const SizedBox(width: AppSpacing.xs),
                   Flexible(
                     child: Opacity(
-                      opacity: ((openness - 0.55) / 0.45).clamp(0.0, 1.0),
+                      opacity:
+                          ((openness - _labelShowsAt) / (1 - _labelShowsAt))
+                              .clamp(0.0, 1.0),
                       child: Text(
                         item.label,
                         maxLines: 1,
