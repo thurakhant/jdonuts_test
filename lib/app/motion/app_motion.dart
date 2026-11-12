@@ -35,6 +35,7 @@ abstract final class AppMotion {
   // Distances (fraction of the child's own size)
   static const Offset entranceSlide = Offset(0, 0.12);
   static const Offset driftSlide = Offset(0, 0.35);
+  static const Offset tabSwitchSlide = Offset(0.08, 0);
   static const Offset sharedAxisSlide = Offset(0.12, 0);
 
   // Curves
