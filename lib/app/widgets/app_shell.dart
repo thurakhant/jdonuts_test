@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/app_localizations.dart';
+import 'crown_icon.dart';
 import 'pill_nav_bar.dart';
 
 /// Scaffold around the bottom-nav branches (Home, Reward, Scan, Orders,
@@ -31,15 +32,16 @@ class AppShell extends StatelessWidget {
               items: [
                 PillNavItem(icon: Icons.home_outlined, label: l10n.homeTab),
                 PillNavItem(
-                  icon: Icons.emoji_events_outlined,
+                  iconBuilder: (color, size) =>
+                      CrownIcon(color: color, size: size),
                   label: l10n.rewardTab,
                 ),
                 PillNavItem(
-                  icon: Icons.qr_code_scanner_outlined,
+                  icon: Icons.radio_button_checked,
                   label: l10n.scanTab,
                 ),
                 PillNavItem(
-                  icon: Icons.receipt_long_outlined,
+                  icon: Icons.account_balance_wallet_outlined,
                   label: l10n.ordersTab,
                 ),
                 PillNavItem(

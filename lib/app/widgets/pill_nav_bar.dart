@@ -7,11 +7,14 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 
-/// One tab in [PillNavBar].
+/// One tab in [PillNavBar]. Pass [iconBuilder] for an icon that is not in
+/// the Material set (the crown).
 class PillNavItem {
-  const PillNavItem({required this.icon, required this.label});
+  const PillNavItem({required this.label, this.icon, this.iconBuilder})
+    : assert(icon != null || iconBuilder != null, 'tab needs an icon');
 
-  final IconData icon;
+  final IconData? icon;
+  final Widget Function(Color color, double size)? iconBuilder;
   final String label;
 }
 
@@ -189,11 +192,15 @@ class _Tab extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  item.icon,
-                  color: AppColors.textOnPrimary,
-                  size: AppSpacing.navIconSize,
-                ),
+                item.iconBuilder?.call(
+                      AppColors.textOnPrimary,
+                      AppSpacing.navIconSize,
+                    ) ??
+                    Icon(
+                      item.icon,
+                      color: AppColors.textOnPrimary,
+                      size: AppSpacing.navIconSize,
+                    ),
                 if (openness > 0.55) ...[
                   const SizedBox(width: AppSpacing.xs),
                   Flexible(
