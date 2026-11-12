@@ -61,9 +61,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get resendNow => 'Resend now';
-
-  @override
   String get whatsYourName => 'What\'s your name?';
 
   @override
@@ -107,9 +104,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logOut => 'Log out';
-
-  @override
-  String get comingSoon => 'Coming soon';
 
   @override
   String get placeholderSheetBody =>
@@ -184,9 +178,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorDobTooYoung => 'You must be at least 13 to sign up.';
-
-  @override
-  String get monthPickerTitle => 'Choose a month';
 
   @override
   String get month1 => 'January';
@@ -330,9 +321,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tierPlatinum => 'Platinum';
-
-  @override
-  String get rewardsLoadError => 'We couldn\'t load your rewards.';
 
   @override
   String get rewardsHeading => 'J\' Donuts Rewards';

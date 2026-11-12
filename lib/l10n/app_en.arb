@@ -39,7 +39,6 @@
       }
     }
   },
-  "resendNow": "Resend now",
   "whatsYourName": "What's your name?",
   "firstName": "First Name",
   "lastName": "Last Name",
@@ -55,7 +54,6 @@
   "ordersTab": "Orders",
   "settingsTab": "Settings",
   "logOut": "Log out",
-  "comingSoon": "Coming soon",
   "placeholderSheetBody": "This is a placeholder. No real integration in this demo.",
   "placeholderSheetTitle": "Coming soon",
   "continueWithGoogle": "Continue with Google",
@@ -97,7 +95,6 @@
   "errorDobInvalid": "That isn't a real date.",
   "errorDobFuture": "Date of birth can't be in the future.",
   "errorDobTooYoung": "You must be at least 13 to sign up.",
-  "monthPickerTitle": "Choose a month",
   "month1": "January",
   "month2": "February",
   "month3": "March",
@@ -195,7 +192,6 @@
   "tierSilver": "Silver",
   "tierGold": "Gold",
   "tierPlatinum": "Platinum",
-  "rewardsLoadError": "We couldn't load your rewards.",
   "rewardsHeading": "J' Donuts Rewards",
   "rewardsPill": "Rewards",
   "totalPoints": "Total points",

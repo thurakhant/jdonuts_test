@@ -184,12 +184,6 @@ abstract class AppLocalizations {
   /// **'resend in {time} min'**
   String resendIn(String time);
 
-  /// No description provided for @resendNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Resend now'**
-  String get resendNow;
-
   /// No description provided for @whatsYourName.
   ///
   /// In en, this message translates to:
@@ -279,12 +273,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log out'**
   String get logOut;
-
-  /// No description provided for @comingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Coming soon'**
-  String get comingSoon;
 
   /// No description provided for @placeholderSheetBody.
   ///
@@ -405,12 +393,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You must be at least 13 to sign up.'**
   String get errorDobTooYoung;
-
-  /// No description provided for @monthPickerTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a month'**
-  String get monthPickerTitle;
 
   /// No description provided for @month1.
   ///
@@ -663,12 +645,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Platinum'**
   String get tierPlatinum;
-
-  /// No description provided for @rewardsLoadError.
-  ///
-  /// In en, this message translates to:
-  /// **'We couldn\'t load your rewards.'**
-  String get rewardsLoadError;
 
   /// No description provided for @rewardsHeading.
   ///
