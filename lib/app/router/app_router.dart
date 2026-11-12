@@ -12,6 +12,7 @@ import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/welcome_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/product/presentation/screens/product_detail_screen.dart';
+import '../../features/rewards/presentation/screens/rewards_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../l10n/app_localizations.dart';
 import '../widgets/app_shell.dart';
@@ -57,10 +58,7 @@ final List<RouteBase> _routes = [
     builder: (_, _, shell) => AppShell(navigationShell: shell),
     branches: [
       _branch(AppRoutes.home, (_) => const HomeScreen()),
-      _branch(
-        AppRoutes.rewards,
-        (_) => const PlaceholderScreen(title: 'Rewards'),
-      ),
+      _branch(AppRoutes.rewards, (_) => const RewardsScreen()),
       _branch(
         AppRoutes.scan,
         (c) => PlaceholderScreen(title: AppLocalizations.of(c)!.scanTab),
