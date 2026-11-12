@@ -52,3 +52,5 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+# Submission artifacts (apk, simulator app zip, demo video)
+/deliverables/
