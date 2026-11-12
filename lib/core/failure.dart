@@ -53,3 +53,25 @@ final class InvalidDateOfBirth extends AuthFailure {
   const InvalidDateOfBirth(this.problem);
   final DateOfBirthProblem problem;
 }
+
+/// Failures raised by the local data layer (database and catalog source).
+sealed class DataFailure extends Failure {
+  const DataFailure();
+}
+
+/// The catalog JSON (seed or, later, a server response) could not be parsed.
+final class MalformedCatalog extends DataFailure {
+  const MalformedCatalog([this.detail = '']);
+  final String detail;
+}
+
+/// The catalog source could not be read (asset missing, or network down once
+/// a real HTTP source replaces the bundled one).
+final class CatalogUnavailable extends DataFailure {
+  const CatalogUnavailable();
+}
+
+/// The local database failed to read or write.
+final class StorageFailure extends DataFailure {
+  const StorageFailure();
+}
