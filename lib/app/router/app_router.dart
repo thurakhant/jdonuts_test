@@ -15,6 +15,7 @@ import '../../features/product/presentation/screens/product_detail_screen.dart';
 import '../../features/rewards/presentation/screens/rewards_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../l10n/app_localizations.dart';
+import '../motion/shared_axis_page.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/placeholder_screen.dart';
 import 'app_routes.dart';
@@ -44,11 +45,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 final List<RouteBase> _routes = [
   _page(AppRoutes.splash, (_) => const SplashScreen()),
   _page(AppRoutes.onboarding, (_) => const OnboardingScreen()),
-  _page(AppRoutes.phone, (_) => const PhoneScreen()),
-  _page(AppRoutes.otp, (_) => const OtpScreen()),
-  _page(AppRoutes.name, (_) => const NameScreen()),
-  _page(AppRoutes.dob, (_) => const DobScreen()),
-  _page(AppRoutes.welcome, (_) => const WelcomeScreen()),
+  _stepPage(AppRoutes.phone, (_) => const PhoneScreen()),
+  _stepPage(AppRoutes.otp, (_) => const OtpScreen()),
+  _stepPage(AppRoutes.name, (_) => const NameScreen()),
+  _stepPage(AppRoutes.dob, (_) => const DobScreen()),
+  _stepPage(AppRoutes.welcome, (_) => const WelcomeScreen()),
   GoRoute(
     path: AppRoutes.productDetailPattern,
     builder: (_, state) =>
@@ -71,6 +72,13 @@ final List<RouteBase> _routes = [
     ],
   ),
 ];
+
+/// Auth steps move with a shared-axis transition.
+GoRoute _stepPage(String path, WidgetBuilder builder) => GoRoute(
+  path: path,
+  pageBuilder: (context, state) =>
+      sharedAxisPage(context: context, state: state, child: builder(context)),
+);
 
 GoRoute _page(String path, WidgetBuilder builder) =>
     GoRoute(path: path, builder: (context, _) => builder(context));
