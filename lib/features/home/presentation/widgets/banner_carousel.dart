@@ -120,6 +120,13 @@ class _BannerTile extends StatelessWidget {
     AppColors.accent,
   ];
 
+  /// Title size and line height sampled from the design's banner.
+  static const double _titleSize = 21;
+  static const double _titleLineHeight = 1.25;
+
+  /// How far the logo chip rises above the photo's top edge.
+  static const double _logoRise = 14;
+
   @override
   Widget build(BuildContext context) {
     final badge = banner.badge;
@@ -145,58 +152,60 @@ class _BannerTile extends StatelessWidget {
                   const SizedBox(height: AppSpacing.sm),
                   if (badge != null) OrangeBadge(badge),
                   const SizedBox(height: AppSpacing.xs),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xl + AppSpacing.md,
-                    ),
-                    child: Text(
-                      banner.title,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.headline.copyWith(
-                        color: AppColors.textOnPrimary,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 21,
-                        height: 1.25,
-                      ),
-                    ),
-                  ),
+                  _title(),
                   const SizedBox(height: AppSpacing.md),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xxl,
-                      ),
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Positioned.fill(
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(AppRadius.md),
-                              ),
-                              child: JdImage(
-                                banner.imageUrl,
-                                width: double.infinity,
-                              ),
-                            ),
-                          ),
-                          const Positioned(
-                            top: -14,
-                            left: 0,
-                            right: 0,
-                            child: Center(child: _LogoChip()),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  Expanded(child: _photo()),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _title() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.xl + AppSpacing.md,
+      ),
+      child: Text(
+        banner.title,
+        textAlign: TextAlign.center,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: AppTypography.headline.copyWith(
+          color: AppColors.textOnPrimary,
+          fontWeight: FontWeight.w800,
+          fontSize: _titleSize,
+          height: _titleLineHeight,
+        ),
+      ),
+    );
+  }
+
+  /// The product photo with the shop's logo chip over its top edge.
+  Widget _photo() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppRadius.md),
+              ),
+              child: JdImage(banner.imageUrl, width: double.infinity),
+            ),
+          ),
+          const Positioned(
+            top: -_logoRise,
+            left: 0,
+            right: 0,
+            child: Center(child: _LogoChip()),
+          ),
+        ],
       ),
     );
   }

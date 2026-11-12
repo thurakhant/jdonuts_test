@@ -56,35 +56,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            // No right padding: the Rewards tab sits flush on the
-            // screen edge.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.screenEdge,
-                AppSpacing.md,
-                0,
-                0,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        l10n.rewardsHeading,
-                        style: AppTypography.headline,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  RewardsPill(
-                    label: l10n.rewardsPill,
-                    count: challenges.value?.length ?? 0,
-                  ),
-                ],
-              ),
-            ),
+            _header(l10n, challenges.value?.length ?? 0),
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.screenEdge,
@@ -94,60 +66,97 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
               ),
               child: _summaryState(l10n, member),
             ),
-            // The selector straddles the white/grey boundary: half
-            // its height on each colour.
-            Stack(
-              children: [
-                const Column(
-                  children: [
-                    SizedBox(height: AppSpacing.tabBarHeight / 2),
-                    ColoredBox(
-                      color: AppColors.background,
-                      child: SizedBox(
-                        height: AppSpacing.tabBarHeight / 2,
-                        width: double.infinity,
-                      ),
-                    ),
-                  ],
-                ),
-                RewardsTabBar(
-                  labels: [l10n.tabEatMore, l10n.tabGift],
-                  selected: _tab,
-                  onSelected: _select,
-                ),
-              ],
+            _tabSelector(l10n),
+            _tabContent(l10n, challenges),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Heading and the Rewards pill. No right padding: the pill sits flush on
+  /// the screen edge.
+  Widget _header(AppLocalizations l10n, int rewardCount) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.screenEdge,
+        AppSpacing.md,
+        0,
+        0,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(l10n.rewardsHeading, style: AppTypography.headline),
             ),
-            Container(
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          RewardsPill(label: l10n.rewardsPill, count: rewardCount),
+        ],
+      ),
+    );
+  }
+
+  /// The selector straddles the white/grey boundary: half its height on
+  /// each colour.
+  Widget _tabSelector(AppLocalizations l10n) {
+    return Stack(
+      children: [
+        const Column(
+          children: [
+            SizedBox(height: AppSpacing.tabBarHeight / 2),
+            ColoredBox(
               color: AppColors.background,
-              // The shell's nav bar floats over the body, so the last
-              // card needs room to scroll clear of it.
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.screenEdge,
-                AppSpacing.lg,
-                AppSpacing.screenEdge,
-                AppSpacing.navBarHeight +
-                    AppSpacing.xl +
-                    MediaQuery.paddingOf(context).bottom,
-              ),
-              child: AnimatedSwitcher(
-                duration: AppMotion.effective(context, AppMotion.base),
-                transitionBuilder: _slideFade,
-                child: KeyedSubtree(
-                  key: ValueKey(_tab),
-                  child: _tab == 0
-                      ? _challengeList(l10n, challenges)
-                      : Padding(
-                          padding: const EdgeInsets.all(AppSpacing.lg),
-                          child: Text(
-                            l10n.giftEmpty,
-                            textAlign: TextAlign.center,
-                            style: AppTypography.body,
-                          ),
-                        ),
-                ),
+              child: SizedBox(
+                height: AppSpacing.tabBarHeight / 2,
+                width: double.infinity,
               ),
             ),
           ],
+        ),
+        RewardsTabBar(
+          labels: [l10n.tabEatMore, l10n.tabGift],
+          selected: _tab,
+          onSelected: _select,
+        ),
+      ],
+    );
+  }
+
+  /// The selected tab's content on the grey band. The shell's nav bar
+  /// floats over the body, so the last card needs room to scroll clear.
+  Widget _tabContent(
+    AppLocalizations l10n,
+    AsyncValue<List<Challenge>> challenges,
+  ) {
+    return Container(
+      color: AppColors.background,
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.screenEdge,
+        AppSpacing.lg,
+        AppSpacing.screenEdge,
+        AppSpacing.navBarHeight +
+            AppSpacing.xl +
+            MediaQuery.paddingOf(context).bottom,
+      ),
+      child: AnimatedSwitcher(
+        duration: AppMotion.effective(context, AppMotion.base),
+        transitionBuilder: _slideFade,
+        child: KeyedSubtree(
+          key: ValueKey(_tab),
+          child: _tab == 0
+              ? _challengeList(l10n, challenges)
+              : Padding(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: Text(
+                    l10n.giftEmpty,
+                    textAlign: TextAlign.center,
+                    style: AppTypography.body,
+                  ),
+                ),
         ),
       ),
     );
