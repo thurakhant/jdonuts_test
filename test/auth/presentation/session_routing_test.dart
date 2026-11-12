@@ -19,7 +19,7 @@ void main() {
 
   testWidgets('Log out in Settings returns to Onboarding', (tester) async {
     final sessions = await pumpApp(tester, signedIn: true);
-    await tester.tap(find.text('Settings').last);
+    await tester.tap(find.byIcon(Icons.settings_outlined));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Log out'));
     await tester.pumpAndSettle();

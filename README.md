@@ -39,7 +39,7 @@ Feature-first clean architecture, three layers per feature:
 ```
 lib/
   app/                    # composition root
-    router/               # go_router, auth redirect guard, /product/:id
+    router/               # go_router, auth redirect guard, /home/product/:id
     theme/                # ALL design tokens (colors, spacing, type)
     motion/app_motion.dart # ALL durations & curves as named constants
     widgets/              # shared widgets (LoadingButton, JdImage, skeletons…)
@@ -120,11 +120,15 @@ motion throughout.
   banner carousel.
 - Product: hero flight on the product image; the quantity/total animate on
   change.
-- Rewards: points ring sweeps while the total counts up to 680,000
-  (CustomPainter), tier ladder staggers in with a filling progress line, tabs
-  switch with a moving indicator, challenge cards enter staggered with
-  quarter-donut and coffee-arc progress painters, badge pops in, and the bottom
-  nav pill slides between Home and Reward.
+- Rewards: a donut-frosting points ring (pink arc with sprinkles) sweeps while
+  the total counts up to 680,000 (CustomPainter), the three-tier ladder staggers
+  in with a filling progress line, the "Rewards 3" pill pops in, the tab pill
+  slides between tabs, and challenge cards (read from the local DB) enter
+  staggered with a quarter-by-quarter donut painter and a coffee arc painter;
+  EARN pulses when a challenge is complete (off under Reduce Motion).
+- Navigation: a floating bar whose pink pill slides between tabs; auth steps use
+  a shared-axis transition; Onboarding and Welcome stagger their entrance.
+- Reduce Motion: decorative motion is skipped or shortened via `AppMotion`.
 
 ## Known gaps / notes
 
@@ -136,7 +140,10 @@ motion throughout.
   mode checks the fake code in the flow controller with identical
   attempt/lockout semantics, then registers + verifies at the DOB step.
 - Add to cart is visual feedback only (persistent cart listed as a bonus).
-- The other three bottom-nav tabs are placeholders, as allowed.
+- Scan and Orders are placeholder screens, as allowed.
+- Product detail is nested under the Home tab (`/home/product/:id`) so the
+  Hero flight works inside one navigator; the tile passes the product along so
+  the first frame has a flight target.
 
 ## Time spent
 
