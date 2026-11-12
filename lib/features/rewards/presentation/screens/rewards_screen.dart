@@ -5,10 +5,15 @@ import '../../../../app/motion/app_motion.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../app/widgets/failure_text.dart';
+import '../../../../app/widgets/section_message.dart';
+import '../../../../app/widgets/skeleton.dart';
+import '../../../../core/db/database_providers.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../member/application/member_providers.dart';
 import '../../../member/domain/member.dart';
 import '../../application/rewards_providers.dart';
+import '../../domain/challenge.dart';
 import '../../domain/reward_tier.dart';
 import '../widgets/challenge_card.dart';
 import '../widgets/points_ring.dart';
@@ -40,126 +45,169 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final member = ref.watch(memberProvider).value;
-    final challenges = ref.watch(challengesProvider).value ?? const [];
+    final member = ref.watch(memberProvider);
+    final challenges = ref.watch(challengesProvider);
     return Scaffold(
       // White behind the heading, tiers and donut; the card list sits on a
       // light grey band below.
       backgroundColor: AppColors.surface,
       body: SafeArea(
         bottom: false,
-        child: member == null
-            ? const SizedBox.shrink()
-            : ListView(
-                padding: EdgeInsets.zero,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            // No right padding: the Rewards tab sits flush on the
+            // screen edge.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenEdge,
+                AppSpacing.md,
+                0,
+                0,
+              ),
+              child: Row(
                 children: [
-                  // No right padding: the Rewards tab sits flush on the
-                  // screen edge.
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.screenEdge,
-                      AppSpacing.md,
-                      0,
-                      0,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              l10n.rewardsHeading,
-                              style: AppTypography.headline,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        RewardsPill(
-                          label: l10n.rewardsPill,
-                          count: challenges.length,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.screenEdge,
-                      AppSpacing.lg,
-                      AppSpacing.screenEdge,
-                      AppSpacing.lg,
-                    ),
-                    child: _summary(member),
-                  ),
-                  // The selector straddles the white/grey boundary: half
-                  // its height on each colour.
-                  Stack(
-                    children: [
-                      const Column(
-                        children: [
-                          SizedBox(height: AppSpacing.tabBarHeight / 2),
-                          ColoredBox(
-                            color: AppColors.background,
-                            child: SizedBox(
-                              height: AppSpacing.tabBarHeight / 2,
-                              width: double.infinity,
-                            ),
-                          ),
-                        ],
-                      ),
-                      RewardsTabBar(
-                        labels: [l10n.tabEatMore, l10n.tabGift],
-                        selected: _tab,
-                        onSelected: _select,
-                      ),
-                    ],
-                  ),
-                  Container(
-                    color: AppColors.background,
-                    // The shell's nav bar floats over the body, so the last
-                    // card needs room to scroll clear of it.
-                    padding: EdgeInsets.fromLTRB(
-                      AppSpacing.screenEdge,
-                      AppSpacing.lg,
-                      AppSpacing.screenEdge,
-                      AppSpacing.navBarHeight +
-                          AppSpacing.xl +
-                          MediaQuery.paddingOf(context).bottom,
-                    ),
-                    child: AnimatedSwitcher(
-                      duration: AppMotion.effective(context, AppMotion.base),
-                      transitionBuilder: _slideFade,
-                      child: KeyedSubtree(
-                        key: ValueKey(_tab),
-                        child: _tab == 0
-                            ? Column(
-                                children: [
-                                  for (final (i, c) in challenges.indexed)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: AppSpacing.md,
-                                      ),
-                                      child: ChallengeCard(
-                                        challenge: c,
-                                        index: i,
-                                      ),
-                                    ),
-                                ],
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.all(AppSpacing.lg),
-                                child: Text(
-                                  l10n.giftEmpty,
-                                  textAlign: TextAlign.center,
-                                  style: AppTypography.body,
-                                ),
-                              ),
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        l10n.rewardsHeading,
+                        style: AppTypography.headline,
                       ),
                     ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  RewardsPill(
+                    label: l10n.rewardsPill,
+                    count: challenges.value?.length ?? 0,
                   ),
                 ],
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenEdge,
+                AppSpacing.lg,
+                AppSpacing.screenEdge,
+                AppSpacing.lg,
+              ),
+              child: _summaryState(l10n, member),
+            ),
+            // The selector straddles the white/grey boundary: half
+            // its height on each colour.
+            Stack(
+              children: [
+                const Column(
+                  children: [
+                    SizedBox(height: AppSpacing.tabBarHeight / 2),
+                    ColoredBox(
+                      color: AppColors.background,
+                      child: SizedBox(
+                        height: AppSpacing.tabBarHeight / 2,
+                        width: double.infinity,
+                      ),
+                    ),
+                  ],
+                ),
+                RewardsTabBar(
+                  labels: [l10n.tabEatMore, l10n.tabGift],
+                  selected: _tab,
+                  onSelected: _select,
+                ),
+              ],
+            ),
+            Container(
+              color: AppColors.background,
+              // The shell's nav bar floats over the body, so the last
+              // card needs room to scroll clear of it.
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.screenEdge,
+                AppSpacing.lg,
+                AppSpacing.screenEdge,
+                AppSpacing.navBarHeight +
+                    AppSpacing.xl +
+                    MediaQuery.paddingOf(context).bottom,
+              ),
+              child: AnimatedSwitcher(
+                duration: AppMotion.effective(context, AppMotion.base),
+                transitionBuilder: _slideFade,
+                child: KeyedSubtree(
+                  key: ValueKey(_tab),
+                  child: _tab == 0
+                      ? _challengeList(l10n, challenges)
+                      : Padding(
+                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          child: Text(
+                            l10n.giftEmpty,
+                            textAlign: TextAlign.center,
+                            style: AppTypography.body,
+                          ),
+                        ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  String _errorText(AppLocalizations l10n, Object error) =>
+      '${l10n.sectionError} ${dataErrorMessage(l10n, error)}';
+
+  Widget _summaryState(AppLocalizations l10n, AsyncValue<Member?> member) {
+    return member.when(
+      loading: () => const SkeletonBox(
+        height: AppSpacing.pointsRingSize,
+        radius: AppRadius.lg,
+      ),
+      error: (error, _) => SectionMessage(
+        message: _errorText(l10n, error),
+        // Re-runs the catalog import too, in case that is what failed.
+        onRetry: () => ref
+          ..invalidate(catalogReadyProvider)
+          ..invalidate(memberProvider),
+      ),
+      data: (m) =>
+          m == null ? SectionMessage(message: l10n.sectionEmpty) : _summary(m),
+    );
+  }
+
+  Widget _challengeList(
+    AppLocalizations l10n,
+    AsyncValue<List<Challenge>> challenges,
+  ) {
+    return challenges.when(
+      loading: () => Column(
+        children: [
+          for (var i = 0; i < 3; i++)
+            const Padding(
+              padding: EdgeInsets.only(bottom: AppSpacing.md),
+              child: SkeletonBox(
+                height: AppSpacing.challengeArtSize + 2 * AppSpacing.md,
+                radius: AppRadius.lg,
+              ),
+            ),
+        ],
+      ),
+      error: (error, _) => SectionMessage(
+        message: _errorText(l10n, error),
+        onRetry: () => ref
+          ..invalidate(catalogReadyProvider)
+          ..invalidate(challengesProvider),
+      ),
+      data: (items) => items.isEmpty
+          ? SectionMessage(message: l10n.sectionEmpty)
+          : Column(
+              children: [
+                for (final (i, c) in items.indexed)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                    child: ChallengeCard(challenge: c, index: i),
+                  ),
+              ],
+            ),
     );
   }
 

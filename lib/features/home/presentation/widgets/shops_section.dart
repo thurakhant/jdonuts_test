@@ -11,7 +11,7 @@ import '../../../../core/db/database_providers.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../application/home_providers.dart';
 import '../../domain/shop.dart';
-import 'section_states.dart';
+import '../../../../app/widgets/section_message.dart';
 
 /// Shops panel at the bottom of Home: sky-blue landscape backdrop with the
 /// "shops near you" headline, an EXPLORE NOW pill and a horizontal card

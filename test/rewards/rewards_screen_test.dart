@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:ui' show AccessibilityFeatures;
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jdonuts_test/app/widgets/skeleton.dart';
+import 'package:jdonuts_test/core/catalog/asset_catalog_source.dart';
 import 'package:jdonuts_test/features/rewards/presentation/screens/rewards_screen.dart';
+import 'package:jdonuts_test/features/rewards/presentation/widgets/challenge_card.dart';
 import 'package:jdonuts_test/features/rewards/presentation/widgets/challenge_painters.dart';
 import 'package:jdonuts_test/features/rewards/presentation/widgets/earn_button.dart';
 import 'package:jdonuts_test/features/rewards/presentation/widgets/points_ring.dart';
@@ -216,6 +220,39 @@ void main() {
     await _settle(tester);
     expect(tester.takeException(), isNull);
     expect(find.text('EARN'), findsNWidgets(3));
+  });
+
+  testWidgets('shows skeletons while the data loads', (tester) async {
+    final never = Completer<String>();
+    await pumpScreen(
+      tester,
+      const RewardsScreen(),
+      source: AssetCatalogSource(load: () => never.future),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.text(_heading), findsOneWidget);
+    expect(find.byType(SkeletonBox), findsNWidgets(4)); // summary + 3 cards
+    expect(find.byType(ChallengeCard), findsNothing);
+  });
+
+  testWidgets('a broken seed shows an error with Retry in each section', (
+    tester,
+  ) async {
+    await pumpScreen(
+      tester,
+      const RewardsScreen(),
+      source: AssetCatalogSource(load: () async => 'not json'),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text(_heading), findsOneWidget);
+    expect(find.text('Retry'), findsNWidgets(2)); // summary and card list
+    expect(
+      find.textContaining('The saved menu data looks broken'),
+      findsNWidgets(2),
+    );
   });
 
   testWidgets('Reduce Motion shows the final state at once, no timers', (

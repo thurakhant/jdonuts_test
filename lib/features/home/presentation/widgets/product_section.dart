@@ -8,6 +8,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../product/application/product_providers.dart';
 import '../../../product/domain/product.dart';
 import 'product_card.dart';
+import '../../../../app/widgets/section_message.dart';
 import 'section_states.dart';
 
 /// One horizontal product list (header + tiles, skeleton, empty or error).

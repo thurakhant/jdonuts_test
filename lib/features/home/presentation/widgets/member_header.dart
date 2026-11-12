@@ -4,9 +4,12 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../app/widgets/failure_text.dart';
 import '../../../../app/widgets/jd_image.dart';
 import '../../../../app/widgets/notification_bell.dart';
+import '../../../../app/widgets/section_message.dart';
 import '../../../../app/widgets/skeleton.dart';
+import '../../../../core/db/database_providers.dart';
 import '../../../../core/format/mmk.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../member/application/member_providers.dart';
@@ -19,6 +22,7 @@ class MemberHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return ref
         .watch(memberProvider)
         .when(
@@ -26,9 +30,16 @@ class MemberHeader extends ConsumerWidget {
             padding: EdgeInsets.all(AppSpacing.screenEdge),
             child: SkeletonBox(height: 72, radius: AppRadius.lg),
           ),
-          error: (_, _) => const SizedBox.shrink(),
-          data: (member) =>
-              member == null ? const SizedBox.shrink() : _Header(member),
+          error: (error, _) => SectionMessage(
+            message: '${l10n.sectionError} ${dataErrorMessage(l10n, error)}',
+            onRetry: () {
+              ref.invalidate(catalogReadyProvider);
+              ref.invalidate(memberProvider);
+            },
+          ),
+          data: (member) => member == null
+              ? SectionMessage(message: l10n.sectionEmpty)
+              : _Header(member),
         );
   }
 }

@@ -7,9 +7,13 @@ import '../../../../app/motion/app_motion.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../app/widgets/failure_text.dart';
 import '../../../../app/widgets/jd_image.dart';
 import '../../../../app/widgets/orange_badge.dart';
+import '../../../../app/widgets/section_message.dart';
 import '../../../../app/widgets/skeleton.dart';
+import '../../../../core/db/database_providers.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../application/home_providers.dart';
 import '../../domain/promo_banner.dart';
 
@@ -20,6 +24,7 @@ class BannerCarousel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return ref
         .watch(bannersProvider)
         .when(
@@ -27,9 +32,16 @@ class BannerCarousel extends ConsumerWidget {
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenEdge),
             child: SkeletonBox(height: height, radius: AppRadius.lg),
           ),
-          error: (_, _) => const SizedBox.shrink(),
-          data: (banners) =>
-              banners.isEmpty ? const SizedBox.shrink() : _Pager(banners),
+          error: (error, _) => SectionMessage(
+            message: '${l10n.sectionError} ${dataErrorMessage(l10n, error)}',
+            onRetry: () {
+              ref.invalidate(catalogReadyProvider);
+              ref.invalidate(bannersProvider);
+            },
+          ),
+          data: (banners) => banners.isEmpty
+              ? SectionMessage(message: l10n.sectionEmpty)
+              : _Pager(banners),
         );
   }
 }

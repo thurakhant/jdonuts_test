@@ -100,7 +100,8 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text('Retry'), findsWidgets);
+    // Header, banner, three product rows and shops: each has its own.
+    expect(find.text('Retry'), findsNWidgets(6));
     expect(
       find.textContaining('The saved menu data looks broken'),
       findsWidgets,
