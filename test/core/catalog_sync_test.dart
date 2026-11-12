@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/native.dart';
@@ -17,6 +18,13 @@ AssetCatalogSource _source(String text) =>
 
 String _withVersion(int version) =>
     _seed.replaceFirst('"version": 1', '"version": $version');
+
+/// The seed as an app-version-1 payload: same version, no challenges section.
+String _withoutChallenges() {
+  final root = jsonDecode(_seed) as Map<String, dynamic>;
+  (root['data'] as Map<String, dynamic>).remove('challenges');
+  return jsonEncode(root);
+}
 
 void main() {
   late AppDatabase db;
@@ -69,6 +77,34 @@ void main() {
 
     await CatalogSync(database: db, source: _source(_withVersion(2))).refresh();
     expect(await storedVersion(), '3');
+  });
+
+  test('an install seeded before challenges existed heals on start', () async {
+    // v1 app: catalog imported without a challenges section.
+    await CatalogSync(
+      database: db,
+      source: _source(_withoutChallenges()),
+    ).seedIfNeeded();
+    expect(await storedVersion(), '1');
+    expect((await db.select(db.challenges).get()).length, 0);
+
+    // After the upgrade, startup seeding fills the challenges table even
+    // though the stored version matches the seed's.
+    final sync = CatalogSync(database: db, source: _source(_seed));
+    expect((await sync.seedIfNeeded()).isSuccess, isTrue);
+    expect((await db.select(db.challenges).get()).length, 3);
+  });
+
+  test('a payload without challenges keeps the saved ones', () async {
+    await CatalogSync(database: db, source: _source(_seed)).seedIfNeeded();
+
+    final result = await CatalogSync(
+      database: db,
+      source: _source(_withoutChallenges()),
+    ).refresh();
+
+    expect(result.isSuccess, isTrue);
+    expect((await db.select(db.challenges).get()).length, 3);
   });
 
   test('malformed seed returns a typed failure and imports nothing', () async {

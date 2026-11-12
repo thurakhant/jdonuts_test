@@ -20,8 +20,12 @@ class CatalogSync {
   AppDatabase get _db => database;
 
   Future<Result<void>> seedIfNeeded() async {
-    if (await _storedVersion() != null) return const Success(null);
-    return _pull(onlyIfNotOlder: false);
+    if (await _storedVersion() == null) return _pull(onlyIfNotOlder: false);
+    // A database seeded before schema v2 has a version but no challenge
+    // rows; one equal-version pull fills them without waiting for a manual
+    // refresh.
+    if (await _hasChallenges()) return const Success(null);
+    return _pull(onlyIfNotOlder: true);
   }
 
   Future<Result<void>> refresh() => _pull(onlyIfNotOlder: true);
@@ -41,6 +45,9 @@ class CatalogSync {
       return const FailureResult(StorageFailure());
     }
   }
+
+  Future<bool> _hasChallenges() async =>
+      await (_db.select(_db.challenges)..limit(1)).getSingleOrNull() != null;
 
   Future<int?> _storedVersion() async {
     final row = await (_db.select(
@@ -132,9 +139,13 @@ class CatalogSync {
     await (_db.delete(
       _db.shops,
     )..where((t) => t.id.isNotIn(s.shops.map((x) => x.id)))).go();
-    await (_db.delete(
-      _db.challenges,
-    )..where((t) => t.id.isNotIn(s.challenges.map((x) => x.id)))).go();
+    // An empty list means the source has no challenges section (older
+    // payload), so the saved rows are kept rather than wiped.
+    if (s.challenges.isNotEmpty) {
+      await (_db.delete(
+        _db.challenges,
+      )..where((t) => t.id.isNotIn(s.challenges.map((x) => x.id)))).go();
+    }
     await (_db.delete(
       _db.members,
     )..where((t) => t.id.equals(s.member.id).not())).go();
