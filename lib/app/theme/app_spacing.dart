@@ -22,19 +22,23 @@ abstract final class AppSpacing {
   /// Bottom navigation bar and its icon size.
   static const double navBarHeight = 64;
   static const double navIconSize = 24;
+  static const double navUnderlayHeight = 28;
+  static const double navPillGrow = 1.4;
 
-  /// Rewards: points ring, tier ladder nodes, tab bar and progress art.
-  static const double pointsRingSize = 200;
-  static const double pointsRingStroke = 14;
+  /// Rewards: points ring, tier ladder, tabs and challenge art.
+  static const double pointsRingSize = 168;
+  static const double pointsRingStroke = 18;
   static const double earnButtonHeight = 36;
   static const double iconSm = 18;
-  static const double highlightBorder = 3;
-  static const double tierNodeSize = 36;
+  static const double tierBadgeSize = 40;
+  static const double tierRowHeight = 76;
   static const double tierLineStroke = 4;
-  static const double tabBarHeight = 44;
-  static const double tabIndicatorHeight = 3;
-  static const double challengeArtSize = 64;
-  static const double challengeStroke = 7;
+  static const double tabBarHeight = 48;
+  static const double challengeArtSize = 88;
+  static const double challengeStroke = 6;
+  static const double ringSprinkleLength = 5;
+  static const double ringSprinkleStroke = 2.5;
+
   static const double skeletonLineWidth = 100;
   static const double skeletonLineHeight = 14;
 }

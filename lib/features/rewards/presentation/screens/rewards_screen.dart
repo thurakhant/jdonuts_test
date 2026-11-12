@@ -5,20 +5,19 @@ import '../../../../app/motion/app_motion.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
-import '../../../../app/widgets/notification_bell.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../member/application/member_providers.dart';
 import '../../../member/domain/member.dart';
 import '../../application/rewards_providers.dart';
 import '../../domain/reward_tier.dart';
 import '../widgets/challenge_card.dart';
-import '../widgets/history_list.dart';
 import '../widgets/points_ring.dart';
+import '../widgets/rewards_pill.dart';
 import '../widgets/rewards_tab_bar.dart';
 import '../widgets/tier_ladder.dart';
 
-/// Points ring, tier ladder and the Challenges / History tabs, all driven
-/// by the shared member record.
+/// Tier ladder and points ring side by side, then the "Eat more earn more"
+/// and "Gift" tabs. Member and challenges come from the local database.
 class RewardsScreen extends ConsumerStatefulWidget {
   const RewardsScreen({super.key});
 
@@ -42,6 +41,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final member = ref.watch(memberProvider).value;
+    final challenges = ref.watch(challengesProvider).value ?? const [];
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -54,20 +54,21 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          l10n.rewardsTitle,
+                          l10n.rewardsHeading,
                           style: AppTypography.headline,
                         ),
                       ),
-                      NotificationBell(count: member.notificationCount),
+                      RewardsPill(
+                        label: l10n.rewardsPill,
+                        count: challenges.length,
+                      ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Center(child: _ring(member)),
-                  const SizedBox(height: AppSpacing.lg),
-                  _ladder(member),
+                  _summary(member),
                   const SizedBox(height: AppSpacing.lg),
                   RewardsTabBar(
-                    labels: [l10n.tabChallenges, l10n.tabHistory],
+                    labels: [l10n.tabEatMore, l10n.tabGift],
                     selected: _tab,
                     onSelected: _select,
                   ),
@@ -77,12 +78,52 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
                     transitionBuilder: _slideFade,
                     child: KeyedSubtree(
                       key: ValueKey(_tab),
-                      child: _tab == 0 ? const _Challenges() : const _History(),
+                      child: _tab == 0
+                          ? Column(
+                              children: [
+                                for (final (i, c) in challenges.indexed)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: AppSpacing.md,
+                                    ),
+                                    child: ChallengeCard(
+                                      challenge: c,
+                                      index: i,
+                                    ),
+                                  ),
+                              ],
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(AppSpacing.lg),
+                              child: Text(
+                                l10n.giftEmpty,
+                                textAlign: TextAlign.center,
+                                style: AppTypography.body,
+                              ),
+                            ),
                     ),
                   ),
                 ],
               ),
       ),
+    );
+  }
+
+  Widget _summary(Member m) {
+    final total = m.totalPoints + m.pointsToNextTier;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: TierLadder(
+            current: RewardTier.fromName(m.tier),
+            progressToNext: m.totalPoints / total,
+            pointsRemaining: m.pointsToNextTier,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        PointsRing(points: m.totalPoints, target: total),
+      ],
     );
   }
 
@@ -98,61 +139,5 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
         child: child,
       ),
     );
-  }
-
-  Widget _ring(Member m) => PointsRing(
-    points: m.totalPoints,
-    target: m.totalPoints + m.pointsToNextTier,
-    nextTierName: m.nextTier,
-  );
-
-  Widget _ladder(Member m) => TierLadder(
-    current: RewardTier.fromName(m.tier),
-    progressToNext: m.totalPoints / (m.totalPoints + m.pointsToNextTier),
-  );
-}
-
-class _Challenges extends ConsumerWidget {
-  const _Challenges();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    return ref
-        .watch(challengesProvider)
-        .when(
-          loading: () => const SizedBox.shrink(),
-          error: (_, _) => Text(l10n.rewardsLoadError),
-          data: (items) => Column(
-            children: [
-              for (final (i, c) in items.indexed)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                  child: ChallengeCard(
-                    challenge: c,
-                    index: i,
-                    onClaim: () =>
-                        ref.read(challengesProvider.notifier).claim(c.id),
-                  ),
-                ),
-            ],
-          ),
-        );
-  }
-}
-
-class _History extends ConsumerWidget {
-  const _History();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    return ref
-        .watch(historyProvider)
-        .when(
-          loading: () => const SizedBox.shrink(),
-          error: (_, _) => Text(l10n.rewardsLoadError),
-          data: (items) => HistoryList(entries: items),
-        );
   }
 }

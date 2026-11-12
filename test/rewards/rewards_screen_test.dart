@@ -3,18 +3,28 @@ import 'dart:ui' show AccessibilityFeatures;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jdonuts_test/features/rewards/presentation/screens/rewards_screen.dart';
 import 'package:jdonuts_test/features/rewards/presentation/widgets/challenge_painters.dart';
+import 'package:jdonuts_test/features/rewards/presentation/widgets/earn_button.dart';
 import 'package:jdonuts_test/features/rewards/presentation/widgets/points_ring.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../support/test_app.dart';
 
+const _heading = "J' Donuts Rewards";
+
 /// Pumps small steps until the member record has loaded and the screen
 /// shows, so animation checks start from the first frames.
 Future<void> _pumpUntilShown(WidgetTester tester) async {
   await pumpScreen(tester, const RewardsScreen());
-  for (var i = 0; i < 100 && find.text('Rewards').evaluate().isEmpty; i++) {
+  for (var i = 0; i < 100 && find.text(_heading).evaluate().isEmpty; i++) {
     await tester.pump(const Duration(milliseconds: 10));
   }
+}
+
+/// The EARN pulse never stops, so settle with a bounded pump instead of
+/// pumpAndSettle.
+Future<void> _settle(WidgetTester tester) async {
+  await tester.pump(); // starts any animation a rebuild just scheduled
+  await tester.pump(const Duration(seconds: 3));
 }
 
 double _ringFraction(WidgetTester tester) {
@@ -27,25 +37,33 @@ double _ringFraction(WidgetTester tester) {
 }
 
 void main() {
-  testWidgets('renders ring, tier ladder, tabs and challenge cards', (
+  testWidgets('renders heading, ladder, ring, tabs and the three cards', (
     tester,
   ) async {
     await _pumpUntilShown(tester);
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
+    expect(find.text(_heading), findsOneWidget);
     expect(find.text('Rewards'), findsOneWidget);
-    expect(find.text('2'), findsOneWidget); // bell badge
+    expect(find.text('3'), findsOneWidget); // pill badge
+    expect(find.text('Silver'), findsOneWidget);
+    expect(find.text("You're here now"), findsOneWidget);
+    expect(find.text('Gold'), findsOneWidget);
+    expect(find.text('500 pts Remaining to become Gold'), findsOneWidget);
+    expect(find.text('Platinum'), findsOneWidget);
+    expect(find.text("You'll be here soon"), findsOneWidget);
+    expect(find.text('Bronze'), findsNothing);
+    expect(find.text('Total points'), findsOneWidget);
     expect(find.text('680,000'), findsOneWidget);
-    expect(find.text('500 points to Gold'), findsOneWidget);
-    for (final tier in ['Bronze', 'Silver', 'Gold', 'Platinum']) {
-      expect(find.text(tier), findsOneWidget);
+    expect(find.text('Eat more earn more'), findsOneWidget);
+    expect(find.text('Gift'), findsOneWidget);
+    expect(find.text('Eat 4 Coco donuts'), findsNWidgets(2));
+    expect(find.text('Drink 12 cups americano'), findsOneWidget);
+    for (final progress in ['4/4', '1/4', '9/12']) {
+      expect(find.text(progress), findsOneWidget);
     }
-    expect(find.text('Challenges'), findsOneWidget);
-    expect(find.text('History'), findsOneWidget);
-    expect(find.text('Donut dozen'), findsOneWidget);
-    expect(find.text('Coffee break'), findsOneWidget);
-    expect(find.text('8 / 12'), findsOneWidget);
-    expect(find.text('+300 pts'), findsOneWidget);
+    expect(find.text('100 pts'), findsNWidgets(3));
+    expect(find.text('EARN'), findsNWidgets(3));
     expect(_ringFraction(tester), closeTo(680000 / 680500, 0.0001));
   });
 
@@ -60,11 +78,9 @@ void main() {
     expect(_ringFraction(tester), closeTo(680000 / 680500, 0.0001));
   });
 
-  testWidgets('both progress painters are used by the challenge cards', (
-    tester,
-  ) async {
+  testWidgets('donut and coffee painters are both used', (tester) async {
     await _pumpUntilShown(tester);
-    await tester.pumpAndSettle();
+    await _settle(tester);
     final painters = tester
         .widgetList<CustomPaint>(find.byType(CustomPaint))
         .map((p) => p.painter.runtimeType);
@@ -72,41 +88,39 @@ void main() {
     expect(painters, contains(CoffeeCupPainter));
   });
 
-  testWidgets('switching to History swaps the list and moves the indicator', (
+  testWidgets('only the finished challenge has an active EARN button', (
     tester,
   ) async {
     await _pumpUntilShown(tester);
-    await tester.pumpAndSettle();
-    final indicator = find.descendant(
-      of: find.byKey(const ValueKey('tab-indicator')),
-      matching: find.byType(Container),
-    );
-    final before = tester.getCenter(indicator).dx;
-
-    await tester.tap(find.text('History'));
-    await tester.pumpAndSettle();
-
-    expect(tester.getCenter(indicator).dx, greaterThan(before));
-    expect(find.text('Donut dozen'), findsNothing);
-    expect(find.text('Classic Glazed x6'), findsOneWidget);
-    expect(find.text('3 days ago'), findsOneWidget);
-    expect(find.text('1 day ago'), findsOneWidget);
-
-    await tester.tap(find.text('Challenges'));
-    await tester.pumpAndSettle();
-    expect(find.text('Donut dozen'), findsOneWidget);
+    await _settle(tester);
+    final buttons = tester
+        .widgetList<EarnButton>(find.byType(EarnButton))
+        .map((b) => b.enabled)
+        .toList();
+    expect(buttons, [true, false, false]);
   });
 
-  testWidgets('Earn claims a finished challenge', (tester) async {
+  testWidgets('switching to Gift swaps the list and moves the pill', (
+    tester,
+  ) async {
     await _pumpUntilShown(tester);
-    await tester.pumpAndSettle();
-    expect(find.text('Claimed'), findsOneWidget);
-    expect(find.text('Earn'), findsOneWidget);
+    await _settle(tester);
+    final indicator = find.descendant(
+      of: find.byKey(const ValueKey('tab-indicator')),
+      matching: find.byType(DecoratedBox),
+    );
+    final before = tester.getCenter(indicator.first).dx;
 
-    await tester.tap(find.text('Earn'));
-    await tester.pumpAndSettle();
-    expect(find.text('Earn'), findsNothing);
-    expect(find.text('Claimed'), findsNWidgets(2));
+    await tester.tap(find.text('Gift'));
+    await _settle(tester);
+
+    expect(tester.getCenter(indicator.first).dx, greaterThan(before));
+    expect(find.text('Eat 4 Coco donuts'), findsNothing);
+    expect(find.text('Gifts you receive will show up here.'), findsOneWidget);
+
+    await tester.tap(find.text('Eat more earn more'));
+    await _settle(tester);
+    expect(find.text('Eat 4 Coco donuts'), findsNWidgets(2));
   });
 
   testWidgets('Reduce Motion shows the final state at once, no timers', (
@@ -120,7 +134,8 @@ void main() {
 
     expect(find.text('680,000'), findsOneWidget);
     expect(_ringFraction(tester), closeTo(680000 / 680500, 0.0001));
-    expect(find.text('Donut dozen'), findsOneWidget);
+    expect(find.text('Eat 4 Coco donuts'), findsNWidgets(2));
+    // No looping EARN pulse and no running tweens.
     expect(tester.hasRunningAnimations, isFalse);
   });
 }

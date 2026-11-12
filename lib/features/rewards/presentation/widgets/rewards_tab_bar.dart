@@ -5,7 +5,8 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
 
-/// Text tabs with a pink bar that slides under the selected one.
+/// Two pill tabs on a light grey track. The cyan pill slides to the
+/// selected tab.
 class RewardsTabBar extends StatelessWidget {
   const RewardsTabBar({
     required this.labels,
@@ -21,54 +22,69 @@ class RewardsTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final count = labels.length;
-    return SizedBox(
-      height: AppSpacing.tabBarHeight,
-      child: Stack(
-        children: [
-          Row(
-            children: [
-              for (var i = 0; i < count; i++)
-                Expanded(
-                  child: Semantics(
-                    button: true,
-                    selected: i == selected,
-                    child: InkWell(
-                      onTap: () => onSelected(i),
-                      child: Center(
-                        child: Text(
-                          labels[i],
-                          style: AppTypography.title.copyWith(
-                            color: i == selected
-                                ? AppColors.accent
-                                : AppColors.textSecondary,
+    final radius = BorderRadius.circular(AppRadius.pill);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: radius,
+      ),
+      child: SizedBox(
+        height: AppSpacing.tabBarHeight,
+        child: Stack(
+          children: [
+            AnimatedAlign(
+              key: const ValueKey('tab-indicator'),
+              alignment: Alignment(
+                count < 2 ? 0 : -1 + 2 * selected / (count - 1),
+                0,
+              ),
+              duration: AppMotion.effective(
+                context,
+                AppMotion.tabIndicatorSlide,
+              ),
+              curve: AppMotion.emphasized,
+              child: FractionallySizedBox(
+                widthFactor: 1 / count,
+                heightFactor: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: radius,
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                for (var i = 0; i < count; i++)
+                  Expanded(
+                    child: Semantics(
+                      button: true,
+                      selected: i == selected,
+                      child: InkWell(
+                        borderRadius: radius,
+                        onTap: () => onSelected(i),
+                        child: Center(
+                          child: AnimatedDefaultTextStyle(
+                            duration: AppMotion.effective(
+                              context,
+                              AppMotion.tabIndicatorSlide,
+                            ),
+                            style: AppTypography.title.copyWith(
+                              color: i == selected
+                                  ? AppColors.textOnPrimary
+                                  : AppColors.textPrimary,
+                            ),
+                            child: Text(labels[i]),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-            ],
-          ),
-          AnimatedAlign(
-            key: const ValueKey('tab-indicator'),
-            alignment: Alignment(
-              count < 2 ? 0 : -1 + 2 * selected / (count - 1),
-              1,
+              ],
             ),
-            duration: AppMotion.effective(context, AppMotion.tabIndicatorSlide),
-            curve: AppMotion.emphasized,
-            child: FractionallySizedBox(
-              widthFactor: 1 / count,
-              child: Container(
-                height: AppSpacing.tabIndicatorHeight,
-                decoration: BoxDecoration(
-                  color: AppColors.accent,
-                  borderRadius: BorderRadius.circular(AppRadius.pill),
-                ),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

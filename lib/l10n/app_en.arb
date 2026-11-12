@@ -184,9 +184,16 @@
   "backLabel": "Back",
   "decreaseQuantity": "Decrease quantity",
   "increaseQuantity": "Increase quantity",
-  "rewardsTitle": "Rewards",
-  "pointsToTier": "{points} points to {tier}",
-  "@pointsToTier": {
+  "tierSilver": "Silver",
+  "tierGold": "Gold",
+  "tierPlatinum": "Platinum",
+  "rewardsLoadError": "We couldn't load your rewards.",
+  "rewardsHeading": "J' Donuts Rewards",
+  "rewardsPill": "Rewards",
+  "totalPoints": "Total points",
+  "tierHere": "You're here now",
+  "tierRemaining": "{points} pts Remaining to become {tier}",
+  "@tierRemaining": {
     "placeholders": {
       "points": {
         "type": "String"
@@ -196,16 +203,13 @@
       }
     }
   },
-  "pointsTotalLabel": "Your points",
-  "tierBronze": "Bronze",
-  "tierSilver": "Silver",
-  "tierGold": "Gold",
-  "tierPlatinum": "Platinum",
-  "tabChallenges": "Challenges",
-  "tabHistory": "History",
-  "earnButton": "Earn",
-  "claimedLabel": "Claimed",
-  "challengeProgress": "{done} / {goal}",
+  "tierSoon": "You'll be here soon",
+  "tierReached": "Reached",
+  "tabEatMore": "Eat more earn more",
+  "tabGift": "Gift",
+  "giftEmpty": "Gifts you receive will show up here.",
+  "earnButton": "EARN",
+  "challengeProgress": "{done}/{goal}",
   "@challengeProgress": {
     "placeholders": {
       "done": {
@@ -216,21 +220,12 @@
       }
     }
   },
-  "rewardPoints": "+{points} pts",
-  "@rewardPoints": {
+  "pointsShort": "{points} pts",
+  "@pointsShort": {
     "placeholders": {
       "points": {
         "type": "String"
       }
     }
-  },
-  "daysAgo": "{days, plural, =1{1 day ago} other{{days} days ago}}",
-  "@daysAgo": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "rewardsLoadError": "We couldn't load your rewards."
+  }
 }

@@ -318,20 +318,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get increaseQuantity => 'Increase quantity';
 
   @override
-  String get rewardsTitle => 'Rewards';
-
-  @override
-  String pointsToTier(String points, String tier) {
-    return '$points points to $tier';
-  }
-
-  @override
-  String get pointsTotalLabel => 'Your points';
-
-  @override
-  String get tierBronze => 'Bronze';
-
-  @override
   String get tierSilver => 'Silver';
 
   @override
@@ -341,38 +327,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tierPlatinum => 'Platinum';
 
   @override
-  String get tabChallenges => 'Challenges';
+  String get rewardsLoadError => 'We couldn\'t load your rewards.';
 
   @override
-  String get tabHistory => 'History';
+  String get rewardsHeading => 'J\' Donuts Rewards';
 
   @override
-  String get earnButton => 'Earn';
+  String get rewardsPill => 'Rewards';
 
   @override
-  String get claimedLabel => 'Claimed';
+  String get totalPoints => 'Total points';
+
+  @override
+  String get tierHere => 'You\'re here now';
+
+  @override
+  String tierRemaining(String points, String tier) {
+    return '$points pts Remaining to become $tier';
+  }
+
+  @override
+  String get tierSoon => 'You\'ll be here soon';
+
+  @override
+  String get tierReached => 'Reached';
+
+  @override
+  String get tabEatMore => 'Eat more earn more';
+
+  @override
+  String get tabGift => 'Gift';
+
+  @override
+  String get giftEmpty => 'Gifts you receive will show up here.';
+
+  @override
+  String get earnButton => 'EARN';
 
   @override
   String challengeProgress(int done, int goal) {
-    return '$done / $goal';
+    return '$done/$goal';
   }
 
   @override
-  String rewardPoints(String points) {
-    return '+$points pts';
+  String pointsShort(String points) {
+    return '$points pts';
   }
-
-  @override
-  String daysAgo(int days) {
-    String _temp0 = intl.Intl.pluralLogic(
-      days,
-      locale: localeName,
-      other: '$days days ago',
-      one: '1 day ago',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get rewardsLoadError => 'We couldn\'t load your rewards.';
 }

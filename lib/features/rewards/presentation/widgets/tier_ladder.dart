@@ -4,15 +4,17 @@ import '../../../../app/motion/app_motion.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../core/format/mmk.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/reward_tier.dart';
 
-/// Bronze -> Platinum. Nodes pop in one after another while a line fills up
-/// to the member's position between their current and next tier.
+/// Silver -> Gold -> Platinum, top to bottom. Rows appear one after another
+/// while a line fills down to the member's position.
 class TierLadder extends StatefulWidget {
   const TierLadder({
     required this.current,
     required this.progressToNext,
+    required this.pointsRemaining,
     super.key,
   });
 
@@ -20,6 +22,7 @@ class TierLadder extends StatefulWidget {
 
   /// 0..1 of the way from [current] to the next tier.
   final double progressToNext;
+  final int pointsRemaining;
 
   @override
   State<TierLadder> createState() => _TierLadderState();
@@ -30,7 +33,10 @@ class _TierLadderState extends State<TierLadder>
   late final AnimationController _controller = AnimationController(vsync: this);
   bool _started = false;
 
-  static const int _count = 4;
+  static final int _count = RewardTier.values.length;
+
+  /// Rows enter one step apart; the line fills after they are in.
+  static final int _steps = _count + 3;
 
   @override
   void didChangeDependencies() {
@@ -40,8 +46,7 @@ class _TierLadderState extends State<TierLadder>
     if (AppMotion.reduceMotion(context)) {
       _controller.value = 1;
     } else {
-      // Nodes enter one step apart; the line fills after the last one.
-      _controller.duration = AppMotion.tierLadderStep * (_count + 3);
+      _controller.duration = AppMotion.tierLadderStep * _steps;
       _controller.forward();
     }
   }
@@ -52,8 +57,7 @@ class _TierLadderState extends State<TierLadder>
     super.dispose();
   }
 
-  /// Share of the controller timeline taken by [steps] ladder steps.
-  double _at(int steps) => steps / (_count + 3);
+  double _at(int steps) => steps / _steps;
 
   @override
   Widget build(BuildContext context) {
@@ -63,107 +67,128 @@ class _TierLadderState extends State<TierLadder>
     final lineCurve = Interval(_at(2), 1, curve: AppMotion.standard);
     return AnimatedBuilder(
       animation: _controller,
-      builder: (context, _) => Stack(
-        children: [
-          Positioned.fill(
-            top: AppSpacing.tierNodeSize / 2 - AppSpacing.tierLineStroke / 2,
-            bottom: null,
-            child: CustomPaint(
-              size: const Size(double.infinity, AppSpacing.tierLineStroke),
-              painter: TierLinePainter(
-                fill: lineTarget * lineCurve.transform(_controller.value),
-                nodes: _count,
+      builder: (context, _) => SizedBox(
+        height: AppSpacing.tierRowHeight * _count,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: TierLinePainter(
+                  fill: lineTarget * lineCurve.transform(_controller.value),
+                  rows: _count,
+                ),
               ),
             ),
-          ),
-          Row(
-            children: [
-              for (final tier in RewardTier.values)
-                Expanded(
-                  child: _node(
-                    tier,
-                    tier.label(l10n),
-                    Interval(
-                      _at(tier.index),
-                      _at(tier.index + 2),
-                      curve: AppMotion.pop,
-                    ).transform(_controller.value),
+            Column(
+              children: [
+                for (final tier in RewardTier.values)
+                  SizedBox(
+                    height: AppSpacing.tierRowHeight,
+                    child: _row(
+                      l10n,
+                      tier,
+                      Interval(
+                        _at(tier.index),
+                        _at(tier.index + 2),
+                        curve: AppMotion.standard,
+                      ).transform(_controller.value),
+                    ),
                   ),
-                ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _node(RewardTier tier, String label, double scale) {
-    final reached = tier.index <= widget.current.index;
+  String _sub(AppLocalizations l10n, RewardTier tier) {
+    if (tier == widget.current) return l10n.tierHere;
+    if (tier.index < widget.current.index) return l10n.tierReached;
+    if (tier.index == widget.current.index + 1) {
+      return l10n.tierRemaining(
+        formatMmk(widget.pointsRemaining),
+        tier.label(l10n),
+      );
+    }
+    return l10n.tierSoon;
+  }
+
+  Widget _row(AppLocalizations l10n, RewardTier tier, double t) {
     final isCurrent = tier == widget.current;
-    return Column(
-      children: [
-        Transform.scale(
-          scale: scale,
-          child: Container(
-            width: AppSpacing.tierNodeSize,
-            height: AppSpacing.tierNodeSize,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: reached ? tier.color : AppColors.surfaceMuted,
-              border: isCurrent
-                  ? Border.all(
-                      color: AppColors.accent,
-                      width: AppSpacing.highlightBorder,
-                    )
-                  : null,
+    return Opacity(
+      opacity: t,
+      child: Transform.translate(
+        offset: Offset(0, (1 - t) * AppSpacing.md),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: AppSpacing.tierBadgeSize,
+              height: AppSpacing.tierBadgeSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isCurrent ? AppColors.backgroundPink : null,
+              ),
+              child: Icon(
+                Icons.shield,
+                color: tier.color,
+                size: AppSpacing.tierBadgeSize - AppSpacing.sm,
+              ),
             ),
-            child: reached
-                ? const Icon(
-                    Icons.check,
-                    size: AppSpacing.iconSm,
-                    color: AppColors.textPrimary,
-                  )
-                : null,
-          ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    tier.label(l10n),
+                    style: AppTypography.title.copyWith(
+                      color: isCurrent
+                          ? AppColors.accent
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(_sub(l10n, tier), style: AppTypography.caption),
+                ],
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          label,
-          style: AppTypography.caption.copyWith(
-            color: isCurrent ? AppColors.textPrimary : AppColors.textSecondary,
-            fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w400,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
 
-/// Track plus a pink fill, running between the first and last node centres.
+/// Vertical track plus a pink fill between the badge centres.
 class TierLinePainter extends CustomPainter {
-  const TierLinePainter({required this.fill, required this.nodes});
+  const TierLinePainter({required this.fill, required this.rows});
 
   final double fill;
-  final int nodes;
+  final int rows;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final slot = size.width / nodes;
-    final start = Offset(slot / 2, size.height / 2);
-    final end = Offset(size.width - slot / 2, size.height / 2);
+    const half = AppSpacing.tierBadgeSize / 2;
+    final x = half;
+    final top = Offset(x, AppSpacing.tierBadgeSize);
+    final bottom = Offset(
+      x,
+      AppSpacing.tierRowHeight * (rows - 1) + AppSpacing.sm,
+    );
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = AppSpacing.tierLineStroke
       ..strokeCap = StrokeCap.round;
-    canvas.drawLine(start, end, paint..color = AppColors.skeletonBase);
+    canvas.drawLine(top, bottom, paint..color = AppColors.skeletonBase);
     canvas.drawLine(
-      start,
-      Offset.lerp(start, end, fill.clamp(0.0, 1.0))!,
+      top,
+      Offset.lerp(top, bottom, fill.clamp(0.0, 1.0))!,
       paint..color = AppColors.accent,
     );
   }
 
   @override
   bool shouldRepaint(TierLinePainter old) =>
-      old.fill != fill || old.nodes != nodes;
+      old.fill != fill || old.rows != rows;
 }

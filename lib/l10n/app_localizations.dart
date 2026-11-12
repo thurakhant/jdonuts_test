@@ -640,30 +640,6 @@ abstract class AppLocalizations {
   /// **'Increase quantity'**
   String get increaseQuantity;
 
-  /// No description provided for @rewardsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Rewards'**
-  String get rewardsTitle;
-
-  /// No description provided for @pointsToTier.
-  ///
-  /// In en, this message translates to:
-  /// **'{points} points to {tier}'**
-  String pointsToTier(String points, String tier);
-
-  /// No description provided for @pointsTotalLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Your points'**
-  String get pointsTotalLabel;
-
-  /// No description provided for @tierBronze.
-  ///
-  /// In en, this message translates to:
-  /// **'Bronze'**
-  String get tierBronze;
-
   /// No description provided for @tierSilver.
   ///
   /// In en, this message translates to:
@@ -682,53 +658,89 @@ abstract class AppLocalizations {
   /// **'Platinum'**
   String get tierPlatinum;
 
-  /// No description provided for @tabChallenges.
-  ///
-  /// In en, this message translates to:
-  /// **'Challenges'**
-  String get tabChallenges;
-
-  /// No description provided for @tabHistory.
-  ///
-  /// In en, this message translates to:
-  /// **'History'**
-  String get tabHistory;
-
-  /// No description provided for @earnButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Earn'**
-  String get earnButton;
-
-  /// No description provided for @claimedLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Claimed'**
-  String get claimedLabel;
-
-  /// No description provided for @challengeProgress.
-  ///
-  /// In en, this message translates to:
-  /// **'{done} / {goal}'**
-  String challengeProgress(int done, int goal);
-
-  /// No description provided for @rewardPoints.
-  ///
-  /// In en, this message translates to:
-  /// **'+{points} pts'**
-  String rewardPoints(String points);
-
-  /// No description provided for @daysAgo.
-  ///
-  /// In en, this message translates to:
-  /// **'{days, plural, =1{1 day ago} other{{days} days ago}}'**
-  String daysAgo(int days);
-
   /// No description provided for @rewardsLoadError.
   ///
   /// In en, this message translates to:
   /// **'We couldn\'t load your rewards.'**
   String get rewardsLoadError;
+
+  /// No description provided for @rewardsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'J\' Donuts Rewards'**
+  String get rewardsHeading;
+
+  /// No description provided for @rewardsPill.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get rewardsPill;
+
+  /// No description provided for @totalPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Total points'**
+  String get totalPoints;
+
+  /// No description provided for @tierHere.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re here now'**
+  String get tierHere;
+
+  /// No description provided for @tierRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} pts Remaining to become {tier}'**
+  String tierRemaining(String points, String tier);
+
+  /// No description provided for @tierSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be here soon'**
+  String get tierSoon;
+
+  /// No description provided for @tierReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Reached'**
+  String get tierReached;
+
+  /// No description provided for @tabEatMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Eat more earn more'**
+  String get tabEatMore;
+
+  /// No description provided for @tabGift.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift'**
+  String get tabGift;
+
+  /// No description provided for @giftEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts you receive will show up here.'**
+  String get giftEmpty;
+
+  /// No description provided for @earnButton.
+  ///
+  /// In en, this message translates to:
+  /// **'EARN'**
+  String get earnButton;
+
+  /// No description provided for @challengeProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done}/{goal}'**
+  String challengeProgress(int done, int goal);
+
+  /// No description provided for @pointsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} pts'**
+  String pointsShort(String points);
 }
 
 class _AppLocalizationsDelegate

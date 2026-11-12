@@ -4,14 +4,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
-import '../../domain/challenge.dart';
-
-/// Picks the painter for a challenge's [ChallengeStyle].
-CustomPainter painterFor(ChallengeStyle style, double progress) =>
-    switch (style) {
-      ChallengeStyle.quarterDonut => QuarterDonutPainter(progress: progress),
-      ChallengeStyle.coffeeCup => CoffeeCupPainter(progress: progress),
-    };
 
 Paint _stroke(Color color) => Paint()
   ..style = PaintingStyle.stroke
@@ -19,43 +11,47 @@ Paint _stroke(Color color) => Paint()
   ..strokeCap = StrokeCap.round
   ..color = color;
 
-/// A quarter of a donut ring (top-left quadrant) that fills clockwise.
+/// Four quarter arcs around a donut picture; the first [progress] fraction
+/// of the circle is drawn in pink, the rest in grey.
 class QuarterDonutPainter extends CustomPainter {
   const QuarterDonutPainter({required this.progress});
 
   final double progress;
 
+  /// Small gap left between quarters, in radians.
+  static const double _gap = 0.16;
+
   @override
   void paint(Canvas canvas, Size size) {
-    // A circle twice the box, centred on the box's bottom-right corner, so
-    // its top-left quadrant is what shows.
-    final rect = Rect.fromCircle(
-      center: size.bottomRight(Offset.zero),
-      radius: size.width - AppSpacing.challengeStroke,
-    );
+    final rect = (Offset.zero & size).deflate(AppSpacing.challengeStroke / 2);
     const quarter = math.pi / 2;
-    canvas.drawArc(
-      rect,
-      math.pi,
-      quarter,
-      false,
-      _stroke(AppColors.backgroundPink),
-    );
-    canvas.drawArc(
-      rect,
-      math.pi,
-      quarter * progress,
-      false,
-      _stroke(AppColors.accent),
-    );
+    for (var i = 0; i < 4; i++) {
+      final start = -math.pi / 2 + i * quarter + _gap / 2;
+      final filled = (progress * 4 - i).clamp(0.0, 1.0);
+      canvas.drawArc(
+        rect,
+        start,
+        quarter - _gap,
+        false,
+        _stroke(AppColors.skeletonBase),
+      );
+      if (filled > 0) {
+        canvas.drawArc(
+          rect,
+          start,
+          (quarter - _gap) * filled,
+          false,
+          _stroke(AppColors.accent),
+        );
+      }
+    }
   }
 
   @override
   bool shouldRepaint(QuarterDonutPainter old) => old.progress != progress;
 }
 
-/// A coffee cup: the bowl is an arc whose stroke fills left to right, with a
-/// handle and a saucer line.
+/// An orange arc over the top of a coffee cup that fills left to right.
 class CoffeeCupPainter extends CustomPainter {
   const CoffeeCupPainter({required this.progress});
 
@@ -63,43 +59,47 @@ class CoffeeCupPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    const inset = AppSpacing.challengeStroke;
-    final bowl = Rect.fromLTWH(
-      inset,
-      -size.height * 0.25,
-      size.width * 0.7,
-      size.height * 1.05,
-    );
-    canvas.drawArc(bowl, 0, math.pi, false, _stroke(AppColors.backgroundPink));
+    final rect = (Offset.zero & size).deflate(AppSpacing.challengeStroke / 2);
     canvas.drawArc(
-      bowl,
+      rect,
       math.pi,
-      -math.pi * progress,
-      false,
-      _stroke(AppColors.accent),
-    );
-    // Handle on the right of the bowl.
-    final handle = Rect.fromCenter(
-      center: Offset(bowl.right, size.height * 0.32),
-      width: size.width * 0.3,
-      height: size.height * 0.3,
-    );
-    canvas.drawArc(
-      handle,
-      -math.pi / 2,
       math.pi,
       false,
-      _stroke(AppColors.backgroundPink),
+      _stroke(AppColors.skeletonBase),
     );
-    // Saucer.
-    final y = size.height - inset / 2;
-    canvas.drawLine(
-      Offset(inset, y),
-      Offset(bowl.right, y),
-      _stroke(AppColors.tierSilver),
+    canvas.drawArc(
+      rect,
+      math.pi,
+      math.pi * progress,
+      false,
+      _stroke(AppColors.highlight),
     );
   }
 
   @override
   bool shouldRepaint(CoffeeCupPainter old) => old.progress != progress;
 }
+
+/// Clips to a pie slice starting at 12 o'clock and running clockwise.
+class SectorClipper extends CustomClipper<Path> {
+  const SectorClipper(this.sweep);
+
+  final double sweep;
+
+  @override
+  Path getClip(Size size) => Path()
+    ..moveTo(size.width / 2, size.height / 2)
+    ..arcTo(Offset.zero & size, -math.pi / 2, sweep, false)
+    ..close();
+
+  @override
+  bool shouldReclip(SectorClipper old) => old.sweep != sweep;
+}
+
+/// Luminance matrix that turns a picture grey.
+const List<double> greyscaleMatrix = [
+  0.2126, 0.7152, 0.0722, 0, 0, //
+  0.2126, 0.7152, 0.0722, 0, 0,
+  0.2126, 0.7152, 0.0722, 0, 0,
+  0, 0, 0, 1, 0,
+];

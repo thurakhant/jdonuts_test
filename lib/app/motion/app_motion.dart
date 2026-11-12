@@ -25,6 +25,7 @@ abstract final class AppMotion {
   static const Duration heroFlight = Duration(milliseconds: 400);
   static const Duration bannerAutoAdvance = Duration(seconds: 4);
   static const Duration bannerSlide = Duration(milliseconds: 500);
+  static const Duration earnPulse = Duration(milliseconds: 1100);
   static const Duration resendCountdown = Duration(minutes: 5);
   static const Duration resendTick = Duration(seconds: 1);
   static const Duration quantityTick = Duration(milliseconds: 180);
@@ -37,6 +38,8 @@ abstract final class AppMotion {
   static const Offset driftSlide = Offset(0, 0.35);
   static const Offset tabSwitchSlide = Offset(0.08, 0);
   static const Offset sharedAxisSlide = Offset(0.12, 0);
+
+  static const double earnPulseScale = 1.06;
 
   // Curves
   static const Curve standard = Curves.easeOutCubic;
