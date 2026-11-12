@@ -24,7 +24,20 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         children: [
           Expanded(child: Text(title, style: AppTypography.title)),
-          const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              shape: BoxShape.circle,
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(AppSpacing.xs + 2),
+              child: Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -33,24 +46,31 @@ class SectionHeader extends StatelessWidget {
 
 /// Grey placeholder cards in the shape of product tiles.
 class ProductRowSkeleton extends StatelessWidget {
-  const ProductRowSkeleton({super.key});
+  const ProductRowSkeleton({
+    this.width = AppSpacing.productTileSize,
+    this.imageHeight = AppSpacing.productImageHeight,
+    super.key,
+  });
+
+  final double width;
+  final double imageHeight;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: AppSpacing.productRowHeight,
+      height: imageHeight + AppSpacing.productLabelHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenEdge),
         itemCount: 3,
         separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.md),
-        itemBuilder: (_, _) => const Column(
+        itemBuilder: (_, _) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SkeletonBox(
-              width: AppSpacing.productTileSize,
-              height: AppSpacing.productTileSize,
+              width: width,
+              height: imageHeight,
               radius: AppRadius.lg,
             ),
             SizedBox(height: AppSpacing.sm),

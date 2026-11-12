@@ -8,7 +8,7 @@ import '../providers/registration_flow_provider.dart';
 import '../providers/registration_flow_state.dart';
 
 const double _ringSize = 40;
-const double _ringStroke = 4;
+const double _ringStroke = 10;
 
 /// Progress ring for the register flow. Animates from the previous step's
 /// value to this one; with [complete] it morphs into a pink check circle.
@@ -76,7 +76,7 @@ class _RingFace extends StatelessWidget {
             child: CircularProgressIndicator(
               value: progress,
               strokeWidth: _ringStroke,
-              color: AppColors.accent,
+              color: AppColors.navBarPink,
               backgroundColor: AppColors.ringTrack,
               semanticsLabel: percentLabel,
             ),

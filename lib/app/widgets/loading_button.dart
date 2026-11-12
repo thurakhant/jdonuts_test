@@ -10,7 +10,7 @@ class LoadingButton extends StatefulWidget {
   const LoadingButton({
     required this.label,
     required this.onPressed,
-    this.color = AppColors.primary,
+    this.color = AppColors.navBarBlue,
     super.key,
   });
 
@@ -62,6 +62,14 @@ class _LoadingButtonState extends State<LoadingButton> {
             disabledBackgroundColor: _busy
                 ? widget.color
                 : widget.color.withValues(alpha: 0.4),
+            // Flat capsule, as in the design screens.
+            elevation: 0,
+            shadowColor: const Color(0x00000000),
+            textStyle: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.4,
+            ),
           ),
           child: _busy
               ? const SizedBox.square(

@@ -87,11 +87,23 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
             keyboardType: TextInputType.phone,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onChanged: _onChanged,
+            style: AppTypography.title,
             decoration: InputDecoration(
-              prefixText: '${l10n.phonePrefixMm}  ',
-              prefixStyle: AppTypography.title.copyWith(
-                color: AppColors.textSecondary,
+              // prefixIcon instead of prefixText so the country code stays
+              // visible while the field is empty, as in the design screens.
+              prefixIcon: Padding(
+                padding: const EdgeInsets.only(
+                  left: AppSpacing.lg,
+                  right: AppSpacing.lg,
+                ),
+                child: Text(
+                  l10n.phonePrefixMm,
+                  style: AppTypography.title.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ),
+              prefixIconConstraints: const BoxConstraints(),
               errorText: _fieldError(l10n),
               errorMaxLines: 2,
             ),

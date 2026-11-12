@@ -21,16 +21,38 @@ class ProductSectionView extends ConsumerWidget {
   final ProductSection section;
   final String title;
 
+  /// Card width, panel height and framing per section, as in the design
+  /// screens: Seasonal wide landscape, Popular portrait, Order again square.
+  (double, double, bool) get _dims => switch (section) {
+    ProductSection.seasonal => (
+      AppSpacing.productTileSize,
+      AppSpacing.productImageHeight,
+      false,
+    ),
+    ProductSection.popular => (
+      AppSpacing.productCardNarrow,
+      AppSpacing.productImagePortrait,
+      true,
+    ),
+    ProductSection.orderAgain => (
+      AppSpacing.productCardNarrow,
+      AppSpacing.productImageSquare,
+      true,
+    ),
+  };
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final products = ref.watch(productsBySectionProvider(section));
+    final (width, imageHeight, framed) = _dims;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHeader(title),
         products.when(
-          loading: () => const ProductRowSkeleton(),
+          loading: () =>
+              ProductRowSkeleton(width: width, imageHeight: imageHeight),
           error: (error, _) => SectionMessage(
             message: '${l10n.sectionError} ${dataErrorMessage(l10n, error)}',
             onRetry: () {
@@ -40,7 +62,12 @@ class ProductSectionView extends ConsumerWidget {
           ),
           data: (items) => items.isEmpty
               ? SectionMessage(message: l10n.sectionEmpty)
-              : _Row(items),
+              : _Row(
+                  items,
+                  width: width,
+                  imageHeight: imageHeight,
+                  framed: framed,
+                ),
         ),
       ],
     );
@@ -48,20 +75,33 @@ class ProductSectionView extends ConsumerWidget {
 }
 
 class _Row extends StatelessWidget {
-  const _Row(this.items);
+  const _Row(
+    this.items, {
+    required this.width,
+    required this.imageHeight,
+    required this.framed,
+  });
 
   final List<Product> items;
+  final double width;
+  final double imageHeight;
+  final bool framed;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: AppSpacing.productRowHeight,
+      height: imageHeight + AppSpacing.productLabelHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenEdge),
         itemCount: items.length,
         separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.md),
-        itemBuilder: (_, i) => ProductCard(product: items[i]),
+        itemBuilder: (_, i) => ProductCard(
+          product: items[i],
+          width: width,
+          imageHeight: imageHeight,
+          framed: framed,
+        ),
       ),
     );
   }

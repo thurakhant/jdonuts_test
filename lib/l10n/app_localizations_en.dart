@@ -94,7 +94,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rewardTab => 'Reward';
 
   @override
-  String get scanTab => 'Scan';
+  String get donutsTab => 'J\'Donuts';
 
   @override
   String get ordersTab => 'Orders';
@@ -250,7 +250,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String shopsNearYou(int count) {
-    return 'There are $count J\'Donut shops near you 😊';
+    return 'There are $count J\'Donut shops near you. 😋';
   }
 
   @override
@@ -292,9 +292,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whatsThis => 'What\'s this?';
 
   @override
-  String addToCartButton(String total) {
-    return 'ADD TO CART | $total MMK';
-  }
+  String get addToCartLabel => 'ADD TO CART';
 
   @override
   String addedToCart(int count, String name) {
@@ -356,6 +354,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get earnButton => 'EARN';
+
+  @override
+  String get claimedButton => 'CLAIMED';
 
   @override
   String challengeProgress(int done, int goal) {

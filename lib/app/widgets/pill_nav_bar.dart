@@ -18,9 +18,10 @@ class PillNavItem {
   final String label;
 }
 
-/// Floating cyan bar with white icons. Only the selected tab shows its
-/// label, inside a pink pill that slides between tabs. A pink band peeks
-/// out behind the bar at the bottom edge.
+/// Cyan bar stuck to the screen bottom, white icons; only the selected tab
+/// shows its label, inside a pink pill that slides between tabs. A square
+/// pink band runs edge-to-edge behind the bar's lower part, so it shows
+/// only in the side gaps the inset bar leaves.
 class PillNavBar extends StatelessWidget {
   const PillNavBar({
     required this.items,
@@ -35,40 +36,53 @@ class PillNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height =
-        AppSpacing.navBarHeight +
-        AppSpacing.md +
-        AppSpacing.navUnderlayHeight / 2;
-    return SafeArea(
-      top: false,
-      child: SizedBox(
-        height: height,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            const Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: AppSpacing.navUnderlayHeight,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: AppColors.accent,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(AppRadius.xl),
-                  ),
+    // Both layers sit flush on the physical bottom edge, as in the mock:
+    // the square pink band runs edge-to-edge behind the bar's lower part
+    // and shows only beside the inset cyan bar, never under it.
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    return SizedBox(
+      height: AppSpacing.navBarHeight + bottomInset,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        // The cyan box ends just below the screen edge so its outline has
+        // no visible bottom stroke; don't clip that overhang.
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: AppSpacing.navUnderlayHeight + bottomInset,
+            child: const ColoredBox(color: AppColors.navBarPink),
+          ),
+          Positioned(
+            left: AppSpacing.lg,
+            right: AppSpacing.lg,
+            top: 0,
+            bottom: -2,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: AppColors.navBarBlue,
+                border: Border.all(color: AppColors.textOnPrimary, width: 2),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(AppRadius.navBarTop),
                 ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x1F000000),
+                    blurRadius: 14,
+                    offset: Offset(0, -2),
+                  ),
+                ],
               ),
-            ),
-            Positioned(
-              left: AppSpacing.md,
-              right: AppSpacing.md,
-              bottom: AppSpacing.navUnderlayHeight / 2,
-              height: AppSpacing.navBarHeight,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(AppRadius.xl),
+              child: Padding(
+                // Half the gesture inset: the row stays clear of the system
+                // gesture area but sits visually centered in the bar, as in
+                // the design screens.
+                padding: EdgeInsets.only(
+                  left: AppSpacing.md,
+                  right: AppSpacing.md,
+                  bottom: bottomInset / 2,
                 ),
                 child: _Slots(
                   items: items,
@@ -77,8 +91,8 @@ class PillNavBar extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -129,13 +143,17 @@ class _Slots extends StatelessWidget {
               Positioned(
                 left: pillLeft,
                 width: pillWidth,
-                top: AppSpacing.xs,
-                bottom: AppSpacing.xs,
-                child: const DecoratedBox(
-                  key: ValueKey('nav-pill'),
+                top: AppSpacing.navPillInset,
+                bottom: AppSpacing.navPillInset,
+                child: DecoratedBox(
+                  key: const ValueKey('nav-pill'),
                   decoration: BoxDecoration(
-                    color: AppColors.accent,
-                    borderRadius: BorderRadius.all(
+                    color: AppColors.navBarPink,
+                    border: Border.all(
+                      color: AppColors.textOnPrimary,
+                      width: 1.5,
+                    ),
+                    borderRadius: const BorderRadius.all(
                       Radius.circular(AppRadius.pill),
                     ),
                   ),
@@ -184,9 +202,11 @@ class _Tab extends StatelessWidget {
       selected: selected,
       label: item.label,
       excludeSemantics: true,
-      child: InkResponse(
+      child: GestureDetector(
+        // No ink ripple: the bar is a flat colored sheet in the mock, and
+        // the sliding pill already answers the tap.
         onTap: onTap,
-        highlightShape: BoxShape.rectangle,
+        behavior: HitTestBehavior.opaque,
         child: Center(
           child: ClipRect(
             child: Row(

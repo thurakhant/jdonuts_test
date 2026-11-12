@@ -28,12 +28,10 @@ void main() {
     expect(find.text('Mistletoe Romance box'), findsOneWidget);
     expect(find.text('Coconut Donut'), findsOneWidget);
     expect(find.text('Iced Americano'), findsOneWidget);
-    expect(find.text('50% off'), findsOneWidget);
+    // Once on the Hot deals banner badge, once on the discounted product.
+    expect(find.text('50% off'), findsNWidgets(2));
     expect(find.text('20% off'), findsOneWidget);
-    expect(
-      find.text("There are 4 J'Donut shops near you 😊"),
-      findsOneWidget,
-    );
+    expect(find.text("There are 4 J'Donut shops near you. 😋"), findsOneWidget);
     expect(find.text("Myaynigone J'Donut"), findsOneWidget);
     expect(find.text(_offline), findsNothing);
   });
@@ -63,7 +61,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(_offline), findsOneWidget);
-    expect(find.text('Coconut Donut'), findsOneWidget); // saved data still shown
+    expect(
+      find.text('Coconut Donut'),
+      findsOneWidget,
+    ); // saved data still shown
   });
 
   testWidgets('reconnecting triggers a background refresh', (tester) async {

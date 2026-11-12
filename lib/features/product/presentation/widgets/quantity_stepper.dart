@@ -6,7 +6,8 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../l10n/app_localizations.dart';
 
-/// Minus / count / plus. The count never drops below 1.
+/// Minus / count / plus in a light-grey capsule with a thin white outline,
+/// as in the design screens. The count never drops below 1.
 class QuantityStepper extends StatelessWidget {
   const QuantityStepper({
     required this.quantity,
@@ -20,32 +21,45 @@ class QuantityStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _RoundButton(
-          icon: Icons.remove,
-          tooltip: l10n.decreaseQuantity,
-          onPressed: quantity > 1 ? () => onChanged(quantity - 1) : null,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+        border: Border.all(color: AppColors.surface, width: 2),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.xs,
         ),
-        SizedBox(
-          width: 48,
-          child: AnimatedSwitcher(
-            duration: AppMotion.quantityTick,
-            child: Text(
-              '$quantity',
-              key: ValueKey(quantity),
-              textAlign: TextAlign.center,
-              style: AppTypography.headline,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _RoundButton(
+              icon: Icons.remove,
+              tooltip: l10n.decreaseQuantity,
+              onPressed: quantity > 1 ? () => onChanged(quantity - 1) : null,
             ),
-          ),
+            SizedBox(
+              width: 48,
+              child: AnimatedSwitcher(
+                duration: AppMotion.quantityTick,
+                child: Text(
+                  '$quantity',
+                  key: ValueKey(quantity),
+                  textAlign: TextAlign.center,
+                  style: AppTypography.headline,
+                ),
+              ),
+            ),
+            _RoundButton(
+              icon: Icons.add,
+              tooltip: l10n.increaseQuantity,
+              onPressed: () => onChanged(quantity + 1),
+            ),
+          ],
         ),
-        _RoundButton(
-          icon: Icons.add,
-          tooltip: l10n.increaseQuantity,
-          onPressed: () => onChanged(quantity + 1),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -68,9 +82,10 @@ class _RoundButton extends StatelessWidget {
       onPressed: onPressed,
       icon: Icon(icon),
       style: IconButton.styleFrom(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.navBarBlue,
         foregroundColor: AppColors.textOnPrimary,
-        disabledBackgroundColor: AppColors.surfaceMuted,
+        disabledBackgroundColor: AppColors.navBarBlue.withValues(alpha: 0.35),
+        disabledForegroundColor: AppColors.textOnPrimary,
         minimumSize: const Size.square(AppSpacing.xl + AppSpacing.sm),
       ),
     );

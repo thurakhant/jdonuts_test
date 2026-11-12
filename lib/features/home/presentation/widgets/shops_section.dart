@@ -13,6 +13,9 @@ import '../../application/home_providers.dart';
 import '../../domain/shop.dart';
 import 'section_states.dart';
 
+/// Shops panel at the bottom of Home: sky-blue landscape backdrop with the
+/// "shops near you" headline, an EXPLORE NOW pill and a horizontal card
+/// carousel, as in the design screens.
 class ShopsSection extends ConsumerWidget {
   const ShopsSection({super.key});
 
@@ -20,36 +23,125 @@ class ShopsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final shops = ref.watch(shopsProvider);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return shops.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.all(AppSpacing.screenEdge),
+        child: SkeletonBox(height: 220, radius: AppRadius.lg),
+      ),
+      error: (error, _) => SectionMessage(
+        message: '${l10n.sectionError} ${dataErrorMessage(l10n, error)}',
+        onRetry: () {
+          ref.invalidate(catalogReadyProvider);
+          ref.invalidate(shopsProvider);
+        },
+      ),
+      data: (items) => items.isEmpty
+          ? SectionMessage(message: l10n.sectionEmpty)
+          : _ShopsPanel(items),
+    );
+  }
+}
+
+class _ShopsPanel extends StatelessWidget {
+  const _ShopsPanel(this.shops);
+
+  final List<Shop> shops;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Stack(
       children: [
-        shops.maybeWhen(
-          data: (items) => SectionHeader(l10n.shopsNearYou(items.length)),
-          orElse: () => const Padding(
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.screenEdge,
-              AppSpacing.lg,
-              AppSpacing.screenEdge,
-              AppSpacing.sm,
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/shops_backdrop.png',
+            fit: BoxFit.cover,
+            alignment: Alignment.bottomCenter,
+            // Until the illustration asset lands, a flat sky-to-meadow
+            // gradient stands in so the layout reads the same.
+            errorBuilder: (_, _, _) => const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.0, 0.55, 0.78, 1.0],
+                  colors: [
+                    AppColors.primary,
+                    Color(0xFFA9DFF2),
+                    Color(0xFFB4E08A),
+                    Color(0xFF8CCB62),
+                  ],
+                ),
+              ),
             ),
-            child: SkeletonBox(width: 220, height: 18, radius: AppRadius.sm),
           ),
         ),
-        shops.when(
-          loading: () => const Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenEdge),
-            child: SkeletonBox(height: 160, radius: AppRadius.lg),
-          ),
-          error: (error, _) => SectionMessage(
-            message: '${l10n.sectionError} ${dataErrorMessage(l10n, error)}',
-            onRetry: () {
-              ref.invalidate(catalogReadyProvider);
-              ref.invalidate(shopsProvider);
-            },
-          ),
-          data: (items) => items.isEmpty
-              ? SectionMessage(message: l10n.sectionEmpty)
-              : Column(children: [for (final s in items) _ShopCard(s)]),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenEdge,
+                AppSpacing.xl,
+                AppSpacing.screenEdge,
+                0,
+              ),
+              child: Text(
+                l10n.shopsNearYou(shops.length),
+                style: AppTypography.headline.copyWith(
+                  color: AppColors.textOnPrimary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenEdge,
+              ),
+              child: DecoratedBox(
+                decoration: const BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(AppRadius.pill),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
+                  ),
+                  child: Text(
+                    l10n.exploreNow.toUpperCase(),
+                    style: AppTypography.caption.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            SizedBox(
+              height: 272,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.screenEdge,
+                ),
+                itemCount: shops.length,
+                separatorBuilder: (_, _) =>
+                    const SizedBox(width: AppSpacing.md),
+                itemBuilder: (_, i) => _ShopCard(shops[i]),
+              ),
+            ),
+            // Keeps the meadow visible under the nav bar the shell draws
+            // over this panel.
+            SizedBox(
+              height: AppSpacing.xl + MediaQuery.paddingOf(context).bottom,
+            ),
+          ],
         ),
       ],
     );
@@ -64,47 +156,44 @@ class _ShopCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.screenEdge,
-        0,
-        AppSpacing.screenEdge,
-        AppSpacing.md,
-      ),
+    return SizedBox(
+      width: 280,
       child: DecoratedBox(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppRadius.lg),
+          borderRadius: BorderRadius.all(Radius.circular(AppRadius.lg)),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadius.lg),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              JdImage(shop.imageUrl, height: 140, width: double.infinity),
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(shop.name, style: AppTypography.title),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(shop.address, style: AppTypography.caption),
-                    const SizedBox(height: AppSpacing.sm),
-                    Row(
-                      children: [
-                        Text(
-                          l10n.exploreNow,
-                          style: AppTypography.caption.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(l10n.orderOnline, style: AppTypography.caption),
-                      ],
-                    ),
-                  ],
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                child: JdImage(
+                  shop.imageUrl,
+                  height: 150,
+                  width: double.infinity,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(shop.name, style: AppTypography.title, maxLines: 1),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                shop.address,
+                style: AppTypography.caption.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              // Order Online sits right under the address, as in the design.
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                l10n.orderOnline,
+                style: AppTypography.caption.copyWith(
+                  color: AppColors.accent,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],

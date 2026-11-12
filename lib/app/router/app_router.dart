@@ -76,8 +76,8 @@ final List<RouteBase> _routes = [
       ),
       _branch(AppRoutes.rewards, (_) => const RewardsScreen()),
       _branch(
-        AppRoutes.scan,
-        (c) => PlaceholderScreen(title: AppLocalizations.of(c)!.scanTab),
+        AppRoutes.donuts,
+        (c) => PlaceholderScreen(title: AppLocalizations.of(c)!.donutsTab),
       ),
       _branch(
         AppRoutes.orders,

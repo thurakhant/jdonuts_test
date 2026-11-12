@@ -4,8 +4,9 @@ import 'package:material_ui/material_ui.dart';
 import '../../l10n/app_localizations.dart';
 import 'crown_icon.dart';
 import 'pill_nav_bar.dart';
+import 'donut_icon.dart';
 
-/// Scaffold around the bottom-nav branches (Home, Reward, Scan, Orders,
+/// Scaffold around the bottom-nav branches (Home, Reward, J'Donuts, Orders,
 /// Settings) with the sliding-pill bar.
 class AppShell extends StatelessWidget {
   const AppShell({
@@ -23,6 +24,9 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      // The page draws behind the bar, so on Home the shops landscape runs
+      // under it instead of stopping at a background strip.
+      extendBody: true,
       body: navigationShell,
       bottomNavigationBar: !showNavBar
           ? null
@@ -37,8 +41,9 @@ class AppShell extends StatelessWidget {
                   label: l10n.rewardTab,
                 ),
                 PillNavItem(
-                  icon: Icons.radio_button_checked,
-                  label: l10n.scanTab,
+                  iconBuilder: (color, size) =>
+                      DonutIcon(color: color, size: size),
+                  label: l10n.donutsTab,
                 ),
                 PillNavItem(
                   icon: Icons.account_balance_wallet_outlined,

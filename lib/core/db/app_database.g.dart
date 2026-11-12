@@ -654,6 +654,15 @@ class $BannersTable extends Banners with TableInfo<$BannersTable, BannerRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _badgeMeta = const VerificationMeta('badge');
+  @override
+  late final GeneratedColumn<String> badge = GeneratedColumn<String>(
+    'badge',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _sortOrderMeta = const VerificationMeta(
     'sortOrder',
   );
@@ -667,7 +676,7 @@ class $BannersTable extends Banners with TableInfo<$BannersTable, BannerRow> {
     defaultValue: const Constant(0),
   );
   @override
-  List<GeneratedColumn> get $columns => [id, title, imageUrl, sortOrder];
+  List<GeneratedColumn> get $columns => [id, title, imageUrl, badge, sortOrder];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -701,6 +710,12 @@ class $BannersTable extends Banners with TableInfo<$BannersTable, BannerRow> {
     } else if (isInserting) {
       context.missing(_imageUrlMeta);
     }
+    if (data.containsKey('badge')) {
+      context.handle(
+        _badgeMeta,
+        badge.isAcceptableOrUnknown(data['badge']!, _badgeMeta),
+      );
+    }
     if (data.containsKey('sort_order')) {
       context.handle(
         _sortOrderMeta,
@@ -728,6 +743,10 @@ class $BannersTable extends Banners with TableInfo<$BannersTable, BannerRow> {
         DriftSqlType.string,
         data['${effectivePrefix}image_url'],
       )!,
+      badge: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}badge'],
+      ),
       sortOrder: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
@@ -745,11 +764,15 @@ class BannerRow extends DataClass implements Insertable<BannerRow> {
   final String id;
   final String title;
   final String imageUrl;
+
+  /// Short pill label over the title ("New shop"); not every banner has one.
+  final String? badge;
   final int sortOrder;
   const BannerRow({
     required this.id,
     required this.title,
     required this.imageUrl,
+    this.badge,
     required this.sortOrder,
   });
   @override
@@ -758,6 +781,9 @@ class BannerRow extends DataClass implements Insertable<BannerRow> {
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     map['image_url'] = Variable<String>(imageUrl);
+    if (!nullToAbsent || badge != null) {
+      map['badge'] = Variable<String>(badge);
+    }
     map['sort_order'] = Variable<int>(sortOrder);
     return map;
   }
@@ -767,6 +793,9 @@ class BannerRow extends DataClass implements Insertable<BannerRow> {
       id: Value(id),
       title: Value(title),
       imageUrl: Value(imageUrl),
+      badge: badge == null && nullToAbsent
+          ? const Value.absent()
+          : Value(badge),
       sortOrder: Value(sortOrder),
     );
   }
@@ -780,6 +809,7 @@ class BannerRow extends DataClass implements Insertable<BannerRow> {
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       imageUrl: serializer.fromJson<String>(json['imageUrl']),
+      badge: serializer.fromJson<String?>(json['badge']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
     );
   }
@@ -790,6 +820,7 @@ class BannerRow extends DataClass implements Insertable<BannerRow> {
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'imageUrl': serializer.toJson<String>(imageUrl),
+      'badge': serializer.toJson<String?>(badge),
       'sortOrder': serializer.toJson<int>(sortOrder),
     };
   }
@@ -798,11 +829,13 @@ class BannerRow extends DataClass implements Insertable<BannerRow> {
     String? id,
     String? title,
     String? imageUrl,
+    Value<String?> badge = const Value.absent(),
     int? sortOrder,
   }) => BannerRow(
     id: id ?? this.id,
     title: title ?? this.title,
     imageUrl: imageUrl ?? this.imageUrl,
+    badge: badge.present ? badge.value : this.badge,
     sortOrder: sortOrder ?? this.sortOrder,
   );
   BannerRow copyWithCompanion(BannersCompanion data) {
@@ -810,6 +843,7 @@ class BannerRow extends DataClass implements Insertable<BannerRow> {
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
       imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
+      badge: data.badge.present ? data.badge.value : this.badge,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
     );
   }
@@ -820,13 +854,14 @@ class BannerRow extends DataClass implements Insertable<BannerRow> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('imageUrl: $imageUrl, ')
+          ..write('badge: $badge, ')
           ..write('sortOrder: $sortOrder')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, imageUrl, sortOrder);
+  int get hashCode => Object.hash(id, title, imageUrl, badge, sortOrder);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -834,6 +869,7 @@ class BannerRow extends DataClass implements Insertable<BannerRow> {
           other.id == this.id &&
           other.title == this.title &&
           other.imageUrl == this.imageUrl &&
+          other.badge == this.badge &&
           other.sortOrder == this.sortOrder);
 }
 
@@ -841,12 +877,14 @@ class BannersCompanion extends UpdateCompanion<BannerRow> {
   final Value<String> id;
   final Value<String> title;
   final Value<String> imageUrl;
+  final Value<String?> badge;
   final Value<int> sortOrder;
   final Value<int> rowid;
   const BannersCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.imageUrl = const Value.absent(),
+    this.badge = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -854,6 +892,7 @@ class BannersCompanion extends UpdateCompanion<BannerRow> {
     required String id,
     required String title,
     required String imageUrl,
+    this.badge = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -863,6 +902,7 @@ class BannersCompanion extends UpdateCompanion<BannerRow> {
     Expression<String>? id,
     Expression<String>? title,
     Expression<String>? imageUrl,
+    Expression<String>? badge,
     Expression<int>? sortOrder,
     Expression<int>? rowid,
   }) {
@@ -870,6 +910,7 @@ class BannersCompanion extends UpdateCompanion<BannerRow> {
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (imageUrl != null) 'image_url': imageUrl,
+      if (badge != null) 'badge': badge,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (rowid != null) 'rowid': rowid,
     });
@@ -879,6 +920,7 @@ class BannersCompanion extends UpdateCompanion<BannerRow> {
     Value<String>? id,
     Value<String>? title,
     Value<String>? imageUrl,
+    Value<String?>? badge,
     Value<int>? sortOrder,
     Value<int>? rowid,
   }) {
@@ -886,6 +928,7 @@ class BannersCompanion extends UpdateCompanion<BannerRow> {
       id: id ?? this.id,
       title: title ?? this.title,
       imageUrl: imageUrl ?? this.imageUrl,
+      badge: badge ?? this.badge,
       sortOrder: sortOrder ?? this.sortOrder,
       rowid: rowid ?? this.rowid,
     );
@@ -903,6 +946,9 @@ class BannersCompanion extends UpdateCompanion<BannerRow> {
     if (imageUrl.present) {
       map['image_url'] = Variable<String>(imageUrl.value);
     }
+    if (badge.present) {
+      map['badge'] = Variable<String>(badge.value);
+    }
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
@@ -918,6 +964,7 @@ class BannersCompanion extends UpdateCompanion<BannerRow> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('imageUrl: $imageUrl, ')
+          ..write('badge: $badge, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -2551,34 +2598,32 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   ];
 }
 
-typedef $$ProductsTableCreateCompanionBuilder =
-    ProductsCompanion Function({
-      required String id,
-      required String code,
-      required String name,
-      required int priceMmk,
-      Value<bool> isNew,
-      Value<int?> discountPercent,
-      required String imageUrl,
-      required String description,
-      required String section,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
-typedef $$ProductsTableUpdateCompanionBuilder =
-    ProductsCompanion Function({
-      Value<String> id,
-      Value<String> code,
-      Value<String> name,
-      Value<int> priceMmk,
-      Value<bool> isNew,
-      Value<int?> discountPercent,
-      Value<String> imageUrl,
-      Value<String> description,
-      Value<String> section,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
+typedef $$ProductsTableCreateCompanionBuilder = ProductsCompanion Function({
+  required String id,
+  required String code,
+  required String name,
+  required int priceMmk,
+  Value<bool> isNew,
+  Value<int?> discountPercent,
+  required String imageUrl,
+  required String description,
+  required String section,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
+typedef $$ProductsTableUpdateCompanionBuilder = ProductsCompanion Function({
+  Value<String> id,
+  Value<String> code,
+  Value<String> name,
+  Value<int> priceMmk,
+  Value<bool> isNew,
+  Value<int?> discountPercent,
+  Value<String> imageUrl,
+  Value<String> description,
+  Value<String> section,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
 
 class $$ProductsTableFilterComposer
     extends Composer<_$AppDatabase, $ProductsTable> {
@@ -2856,22 +2901,22 @@ typedef $$ProductsTableProcessedTableManager =
       ProductRow,
       PrefetchHooks Function()
     >;
-typedef $$BannersTableCreateCompanionBuilder =
-    BannersCompanion Function({
-      required String id,
-      required String title,
-      required String imageUrl,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
-typedef $$BannersTableUpdateCompanionBuilder =
-    BannersCompanion Function({
-      Value<String> id,
-      Value<String> title,
-      Value<String> imageUrl,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
+typedef $$BannersTableCreateCompanionBuilder = BannersCompanion Function({
+  required String id,
+  required String title,
+  required String imageUrl,
+  Value<String?> badge,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
+typedef $$BannersTableUpdateCompanionBuilder = BannersCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> imageUrl,
+  Value<String?> badge,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
 
 class $$BannersTableFilterComposer
     extends Composer<_$AppDatabase, $BannersTable> {
@@ -2894,6 +2939,11 @@ class $$BannersTableFilterComposer
 
   ColumnFilters<String> get imageUrl => $composableBuilder(
     column: $table.imageUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get badge => $composableBuilder(
+    column: $table.badge,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2927,6 +2977,11 @@ class $$BannersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get badge => $composableBuilder(
+    column: $table.badge,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
     builder: (column) => ColumnOrderings(column),
@@ -2950,6 +3005,9 @@ class $$BannersTableAnnotationComposer
 
   GeneratedColumn<String> get imageUrl =>
       $composableBuilder(column: $table.imageUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get badge =>
+      $composableBuilder(column: $table.badge, builder: (column) => column);
 
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
@@ -2986,12 +3044,14 @@ class $$BannersTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String> imageUrl = const Value.absent(),
+                Value<String?> badge = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => BannersCompanion(
                 id: id,
                 title: title,
                 imageUrl: imageUrl,
+                badge: badge,
                 sortOrder: sortOrder,
                 rowid: rowid,
               ),
@@ -3000,12 +3060,14 @@ class $$BannersTableTableManager
                 required String id,
                 required String title,
                 required String imageUrl,
+                Value<String?> badge = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => BannersCompanion.insert(
                 id: id,
                 title: title,
                 imageUrl: imageUrl,
+                badge: badge,
                 sortOrder: sortOrder,
                 rowid: rowid,
               ),
@@ -3040,24 +3102,22 @@ typedef $$BannersTableProcessedTableManager =
       BannerRow,
       PrefetchHooks Function()
     >;
-typedef $$ShopsTableCreateCompanionBuilder =
-    ShopsCompanion Function({
-      required String id,
-      required String name,
-      required String address,
-      required String imageUrl,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
-typedef $$ShopsTableUpdateCompanionBuilder =
-    ShopsCompanion Function({
-      Value<String> id,
-      Value<String> name,
-      Value<String> address,
-      Value<String> imageUrl,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
+typedef $$ShopsTableCreateCompanionBuilder = ShopsCompanion Function({
+  required String id,
+  required String name,
+  required String address,
+  required String imageUrl,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
+typedef $$ShopsTableUpdateCompanionBuilder = ShopsCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String> address,
+  Value<String> imageUrl,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
 
 class $$ShopsTableFilterComposer extends Composer<_$AppDatabase, $ShopsTable> {
   $$ShopsTableFilterComposer({
@@ -3242,30 +3302,28 @@ typedef $$ShopsTableProcessedTableManager =
       ShopRow,
       PrefetchHooks Function()
     >;
-typedef $$MembersTableCreateCompanionBuilder =
-    MembersCompanion Function({
-      required String id,
-      required String name,
-      required String avatarAsset,
-      required String tier,
-      required int totalPoints,
-      required int pointsToNextTier,
-      required String nextTier,
-      Value<int> notificationCount,
-      Value<int> rowid,
-    });
-typedef $$MembersTableUpdateCompanionBuilder =
-    MembersCompanion Function({
-      Value<String> id,
-      Value<String> name,
-      Value<String> avatarAsset,
-      Value<String> tier,
-      Value<int> totalPoints,
-      Value<int> pointsToNextTier,
-      Value<String> nextTier,
-      Value<int> notificationCount,
-      Value<int> rowid,
-    });
+typedef $$MembersTableCreateCompanionBuilder = MembersCompanion Function({
+  required String id,
+  required String name,
+  required String avatarAsset,
+  required String tier,
+  required int totalPoints,
+  required int pointsToNextTier,
+  required String nextTier,
+  Value<int> notificationCount,
+  Value<int> rowid,
+});
+typedef $$MembersTableUpdateCompanionBuilder = MembersCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String> avatarAsset,
+  Value<String> tier,
+  Value<int> totalPoints,
+  Value<int> pointsToNextTier,
+  Value<String> nextTier,
+  Value<int> notificationCount,
+  Value<int> rowid,
+});
 
 class $$MembersTableFilterComposer
     extends Composer<_$AppDatabase, $MembersTable> {
@@ -3510,30 +3568,28 @@ typedef $$MembersTableProcessedTableManager =
       MemberRow,
       PrefetchHooks Function()
     >;
-typedef $$ChallengesTableCreateCompanionBuilder =
-    ChallengesCompanion Function({
-      required String id,
-      required String title,
-      required String imageAsset,
-      required String style,
-      required int goal,
-      required int progress,
-      required int rewardPoints,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
-typedef $$ChallengesTableUpdateCompanionBuilder =
-    ChallengesCompanion Function({
-      Value<String> id,
-      Value<String> title,
-      Value<String> imageAsset,
-      Value<String> style,
-      Value<int> goal,
-      Value<int> progress,
-      Value<int> rewardPoints,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
+typedef $$ChallengesTableCreateCompanionBuilder = ChallengesCompanion Function({
+  required String id,
+  required String title,
+  required String imageAsset,
+  required String style,
+  required int goal,
+  required int progress,
+  required int rewardPoints,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
+typedef $$ChallengesTableUpdateCompanionBuilder = ChallengesCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> imageAsset,
+  Value<String> style,
+  Value<int> goal,
+  Value<int> progress,
+  Value<int> rewardPoints,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
 
 class $$ChallengesTableFilterComposer
     extends Composer<_$AppDatabase, $ChallengesTable> {
@@ -3780,18 +3836,16 @@ typedef $$ChallengesTableProcessedTableManager =
       ChallengeRow,
       PrefetchHooks Function()
     >;
-typedef $$KeyValuesTableCreateCompanionBuilder =
-    KeyValuesCompanion Function({
-      required String key,
-      required String value,
-      Value<int> rowid,
-    });
-typedef $$KeyValuesTableUpdateCompanionBuilder =
-    KeyValuesCompanion Function({
-      Value<String> key,
-      Value<String> value,
-      Value<int> rowid,
-    });
+typedef $$KeyValuesTableCreateCompanionBuilder = KeyValuesCompanion Function({
+  required String key,
+  required String value,
+  Value<int> rowid,
+});
+typedef $$KeyValuesTableUpdateCompanionBuilder = KeyValuesCompanion Function({
+  Value<String> key,
+  Value<String> value,
+  Value<int> rowid,
+});
 
 class $$KeyValuesTableFilterComposer
     extends Composer<_$AppDatabase, $KeyValuesTable> {
@@ -3878,22 +3932,16 @@ class $$KeyValuesTableTableManager
               $$KeyValuesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$KeyValuesTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> key = const Value.absent(),
-                Value<String> value = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => KeyValuesCompanion(key: key, value: value, rowid: rowid),
-          createCompanionCallback:
-              ({
-                required String key,
-                required String value,
-                Value<int> rowid = const Value.absent(),
-              }) => KeyValuesCompanion.insert(
-                key: key,
-                value: value,
-                rowid: rowid,
-              ),
+          updateCompanionCallback: ({
+            Value<String> key = const Value.absent(),
+            Value<String> value = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) => KeyValuesCompanion(key: key, value: value, rowid: rowid),
+          createCompanionCallback: ({
+            required String key,
+            required String value,
+            Value<int> rowid = const Value.absent(),
+          }) => KeyValuesCompanion.insert(key: key, value: value, rowid: rowid),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (

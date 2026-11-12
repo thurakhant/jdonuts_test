@@ -17,7 +17,12 @@ class DriftHomeRepository implements HomeRepository {
     return query.watch().map(
       (rows) => [
         for (final r in rows)
-          PromoBanner(id: r.id, title: r.title, imageUrl: r.imageUrl),
+          PromoBanner(
+            id: r.id,
+            title: r.title,
+            imageUrl: r.imageUrl,
+            badge: r.badge,
+          ),
       ],
     );
   }

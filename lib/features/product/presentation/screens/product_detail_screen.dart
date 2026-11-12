@@ -27,7 +27,7 @@ class ProductDetailScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final product = ref.watch(productByIdProvider(productId));
     return Scaffold(
-      backgroundColor: AppColors.backgroundPink,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(

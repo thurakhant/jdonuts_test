@@ -28,6 +28,7 @@ Result<CatalogSnapshot> parseCatalog(String source) {
               id: b['id'] as String,
               title: b['title'] as String,
               imageUrl: b['imageUrl'] as String,
+              badge: b['badge'] as String?,
             ),
         ],
         shops: [

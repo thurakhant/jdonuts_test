@@ -5,8 +5,8 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
 
-/// Two pill tabs on a light grey track. The cyan pill slides to the
-/// selected tab.
+/// Two compact pills side by side: the selected one is sky blue, the other
+/// sits on a light grey pill with a white outline.
 class RewardsTabBar extends StatelessWidget {
   const RewardsTabBar({
     required this.labels,
@@ -21,69 +21,76 @@ class RewardsTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final count = labels.length;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (var i = 0; i < labels.length; i++) ...[
+          if (i > 0) const SizedBox(width: AppSpacing.xs),
+          _TabPill(
+            key: i == selected ? const ValueKey('tab-indicator') : null,
+            label: labels[i],
+            selected: i == selected,
+            onTap: () => onSelected(i),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _TabPill extends StatelessWidget {
+  const _TabPill({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    super.key,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
     final radius = BorderRadius.circular(AppRadius.pill);
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceMuted,
-        borderRadius: radius,
-      ),
-      child: SizedBox(
-        height: AppSpacing.tabBarHeight,
-        child: Stack(
-          children: [
-            AnimatedAlign(
-              key: const ValueKey('tab-indicator'),
-              alignment: Alignment(
-                count < 2 ? 0 : -1 + 2 * selected / (count - 1),
-                0,
-              ),
+    // The pill itself is slim; the transparent margin keeps the tap target
+    // at the 48px accessibility minimum.
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppSpacing.tabBarHeight),
+          child: Center(
+            widthFactor: 1,
+            child: AnimatedContainer(
               duration: AppMotion.effective(
                 context,
                 AppMotion.tabIndicatorSlide,
               ),
-              curve: AppMotion.emphasized,
-              child: FractionallySizedBox(
-                widthFactor: 1 / count,
-                heightFactor: 1,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: radius,
-                  ),
+              curve: AppMotion.standard,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.xs + 2,
+              ),
+              decoration: BoxDecoration(
+                color: selected ? AppColors.navBarBlue : AppColors.surfaceMuted,
+                borderRadius: radius,
+                border: Border.all(color: AppColors.surface, width: 2),
+              ),
+              child: Text(
+                label,
+                style: AppTypography.body.copyWith(
+                  color: selected
+                      ? AppColors.textOnPrimary
+                      : AppColors.textPrimary,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
             ),
-            Row(
-              children: [
-                for (var i = 0; i < count; i++)
-                  Expanded(
-                    child: Semantics(
-                      button: true,
-                      selected: i == selected,
-                      child: InkWell(
-                        borderRadius: radius,
-                        onTap: () => onSelected(i),
-                        child: Center(
-                          child: AnimatedDefaultTextStyle(
-                            duration: AppMotion.effective(
-                              context,
-                              AppMotion.tabIndicatorSlide,
-                            ),
-                            style: AppTypography.title.copyWith(
-                              color: i == selected
-                                  ? AppColors.textOnPrimary
-                                  : AppColors.textPrimary,
-                            ),
-                            child: Text(labels[i]),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );

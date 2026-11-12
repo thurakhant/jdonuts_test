@@ -10,7 +10,7 @@ abstract final class AppRoutes {
 
   static const String home = '/home';
   static const String rewards = '/rewards';
-  static const String scan = '/scan';
+  static const String donuts = '/donuts';
   static const String orders = '/orders';
   static const String settings = '/settings';
 

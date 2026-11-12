@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../app/motion/app_motion.dart';
@@ -9,13 +10,15 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../app/widgets/entrance.dart';
 import '../../../../core/format/mmk.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../application/rewards_providers.dart';
 import '../../domain/challenge.dart';
 import 'challenge_painters.dart';
 import 'earn_button.dart';
 
 /// One challenge: the product picture with progress painted over it, the
-/// title, "done/goal", and an EARN button with the points reward.
-class ChallengeCard extends StatelessWidget {
+/// title, "done/goal", and an EARN button with the points reward. The
+/// artwork and the button read the same state: progress and claim status.
+class ChallengeCard extends ConsumerWidget {
   const ChallengeCard({
     required this.challenge,
     required this.index,
@@ -26,9 +29,10 @@ class ChallengeCard extends StatelessWidget {
   final int index;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final c = challenge;
+    final claimed = ref.watch(claimedChallengesProvider).contains(c.id);
     return StaggeredEntrance(
       index: index,
       step: AppMotion.cardStagger,
@@ -54,11 +58,17 @@ class ChallengeCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.sm),
                   Row(
                     children: [
-                      EarnButton(enabled: c.isComplete),
+                      EarnButton(
+                        enabled: c.isComplete && !claimed,
+                        claimed: claimed,
+                        onPressed: () => ref
+                            .read(claimedChallengesProvider.notifier)
+                            .claim(c.id),
+                      ),
                       const SizedBox(width: AppSpacing.sm),
                       Text(
                         l10n.pointsShort(formatMmk(c.rewardPoints)),
-                        style: AppTypography.title,
+                        style: AppTypography.body,
                       ),
                     ],
                   ),
@@ -82,8 +92,10 @@ class _Art extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = challenge;
     const size = AppSpacing.challengeArtSize;
+    // A finished challenge starts fully coloured, so it never flashes grey
+    // when the list is rebuilt (for example after switching tabs).
     return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: c.fraction),
+      tween: Tween(begin: c.isComplete ? c.fraction : 0, end: c.fraction),
       duration: AppMotion.effective(context, AppMotion.progressRing),
       curve: AppMotion.standard,
       builder: (_, value, _) => SizedBox.square(
@@ -96,30 +108,18 @@ class _Art extends StatelessWidget {
     );
   }
 
-  /// Grey picture with the finished quarters coloured in on top.
+  /// Greyscale picture with the finished quarters coloured in on top; the
+  /// progress lives on the doughnut itself, with no ring around it.
   Widget _donut(Challenge c, double progress) {
-    const inset = AppSpacing.challengeStroke + AppSpacing.xs;
     final image = ClipOval(child: Image.asset(c.imageAsset, fit: BoxFit.cover));
     return Stack(
       fit: StackFit.expand,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(inset),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              ColorFiltered(
-                colorFilter: const ColorFilter.matrix(greyscaleMatrix),
-                child: image,
-              ),
-              ClipPath(
-                clipper: SectorClipper(2 * math.pi * progress),
-                child: image,
-              ),
-            ],
-          ),
+        ColorFiltered(
+          colorFilter: const ColorFilter.matrix(greyscaleMatrix),
+          child: image,
         ),
-        CustomPaint(painter: QuarterDonutPainter(progress: progress)),
+        ClipPath(clipper: SectorClipper(2 * math.pi * progress), child: image),
       ],
     );
   }

@@ -28,49 +28,67 @@ class OnboardingScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     void sheet() => showPlaceholderSheet(context);
     return Scaffold(
-      backgroundColor: AppColors.backgroundPink,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.screenEdge),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Expanded(child: OnboardingCollage()),
-              Text(
-                l10n.onboardingTitle,
-                style: AppTypography.display,
-                textAlign: TextAlign.center,
+      backgroundColor: AppColors.blushPink,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // No top SafeArea: the artwork circles bleed off the screen edges
+          // and behind the status bar, as in the design screens.
+          const Expanded(child: OnboardingCollage()),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.screenEdge,
+                0,
+                AppSpacing.screenEdge,
+                AppSpacing.screenEdge,
               ),
-              const SizedBox(height: AppSpacing.lg),
-              LoadingButton(
-                label: l10n.letsGetStarted,
-                onPressed: () async => _start(context, ref, AuthMode.register),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              LinkedText(
-                template: '${l10n.alreadyHaveAccount} ${kLinkMarkers[0]}',
-                links: [
-                  LinkSpec(
-                    l10n.logIn,
-                    () => _start(context, ref, AuthMode.login),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l10n.onboardingTitle,
+                    style: AppTypography.display,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  LoadingButton(
+                    label: l10n.letsGetStarted,
+                    onPressed: () async =>
+                        _start(context, ref, AuthMode.register),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  LinkedText(
+                    template: '${l10n.alreadyHaveAccount} ${kLinkMarkers[0]}',
+                    links: [
+                      LinkSpec(
+                        l10n.logIn,
+                        () => _start(context, ref, AuthMode.login),
+                      ),
+                    ],
+                    style: AppTypography.body,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  const SocialButtons(),
+                  const SizedBox(height: AppSpacing.md),
+                  LinkedText(
+                    template: l10n.legalNotice(
+                      kLinkMarkers[0],
+                      kLinkMarkers[1],
+                    ),
+                    links: [
+                      LinkSpec(l10n.termsOfUse, sheet),
+                      LinkSpec(l10n.privacyPolicy, sheet),
+                    ],
+                    linkWeight: FontWeight.w500,
+                    style: AppTypography.caption,
                   ),
                 ],
-                style: AppTypography.body,
               ),
-              const SizedBox(height: AppSpacing.md),
-              const SocialButtons(),
-              const SizedBox(height: AppSpacing.md),
-              LinkedText(
-                template: l10n.legalNotice(kLinkMarkers[0], kLinkMarkers[1]),
-                links: [
-                  LinkSpec(l10n.termsOfUse, sheet),
-                  LinkSpec(l10n.privacyPolicy, sheet),
-                ],
-                style: AppTypography.caption,
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

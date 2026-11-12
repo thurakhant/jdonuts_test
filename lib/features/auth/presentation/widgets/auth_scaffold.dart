@@ -10,7 +10,7 @@ import 'linked_text.dart';
 import 'placeholder_sheet.dart';
 import 'step_ring.dart';
 
-/// Shared frame for Phone, OTP, Name and DOB: back circle top-left,
+/// Shared frame for Phone, OTP, Name and DOB: back button top-left,
 /// progress ring top-right, title, body and a bottom action.
 class AuthScaffold extends StatelessWidget {
   const AuthScaffold({
@@ -31,28 +31,38 @@ class AuthScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPink,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.screenEdge),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const _BackCircle(),
-                  StepRing(step: step, complete: complete),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              Text(title, style: AppTypography.display),
-              const SizedBox(height: AppSpacing.lg),
-              Expanded(child: SingleChildScrollView(child: body)),
-              action,
-              const SizedBox(height: AppSpacing.md),
-              const _LegalFooter(),
-            ],
+      backgroundColor: AppColors.surface,
+      body: Container(
+        // Pale pink fading to white, as in the design screens.
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.blushPink, AppColors.surface],
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.screenEdge),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const _BackButton(),
+                    StepRing(step: step, complete: complete),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text(title, style: AppTypography.display),
+                const SizedBox(height: AppSpacing.lg),
+                Expanded(child: SingleChildScrollView(child: body)),
+                action,
+                const SizedBox(height: AppSpacing.lg),
+                const _LegalFooter(),
+              ],
+            ),
           ),
         ),
       ),
@@ -74,19 +84,22 @@ class _LegalFooter extends StatelessWidget {
         LinkSpec(l10n.termsOfUse, sheet),
         LinkSpec(l10n.privacyPolicy, sheet),
       ],
+      linkWeight: FontWeight.w500,
       style: AppTypography.caption,
     );
   }
 }
 
-class _BackCircle extends StatelessWidget {
-  const _BackCircle();
+class _BackButton extends StatelessWidget {
+  const _BackButton();
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.surface,
-      shape: const CircleBorder(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+      ),
       child: IconButton(
         tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),

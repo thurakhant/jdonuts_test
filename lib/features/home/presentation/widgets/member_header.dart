@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../app/motion/app_motion.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
@@ -42,16 +41,21 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final total = member.totalPoints + member.pointsToNextTier;
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.screenEdge),
+      // No right padding: the bell capsule sits flush against the screen
+      // edge, as in the design screens.
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.screenEdge,
+        AppSpacing.screenEdge,
+        0,
+        AppSpacing.screenEdge,
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              ClipOval(
-                child: JdImage(member.avatarAsset, width: 48, height: 48),
-              ),
+              _RingedAvatar(asset: member.avatarAsset),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -65,32 +69,32 @@ class _Header extends StatelessWidget {
                   ],
                 ),
               ),
-              NotificationBell(count: member.notificationCount),
+              NotificationBell(
+                count: member.notificationCount,
+                flushRight: true,
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              l10n.pointsLeftToTier(
-                formatMmk(member.pointsToNextTier),
-                member.nextTier,
-              ),
-              style: AppTypography.caption,
+          // White capsule, as in the design screens (no progress bar there).
+          DecoratedBox(
+            decoration: const BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.all(Radius.circular(AppRadius.pill)),
             ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          TweenAnimationBuilder<double>(
-            tween: Tween(end: member.totalPoints / total),
-            duration: AppMotion.progressRing,
-            curve: AppMotion.standard,
-            builder: (_, value, _) => ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadius.pill),
-              child: LinearProgressIndicator(
-                value: value,
-                minHeight: 4,
-                color: AppColors.accent,
-                backgroundColor: AppColors.backgroundPink,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
+              child: Text(
+                l10n.pointsLeftToTier(
+                  formatMmk(member.pointsToNextTier),
+                  member.nextTier,
+                ),
+                style: AppTypography.caption.copyWith(
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
           ),
@@ -98,4 +102,50 @@ class _Header extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Round avatar with the partial orange ring from the design screens.
+class _RingedAvatar extends StatelessWidget {
+  const _RingedAvatar({required this.asset});
+
+  final String asset;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 56,
+      height: 56,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned.fill(
+            child: ExcludeSemantics(child: CustomPaint(painter: _ArcPainter())),
+          ),
+          ClipOval(child: JdImage(asset, width: 48, height: 48)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ArcPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    canvas.drawArc(
+      rect.deflate(1.5),
+      // Open on the lower-left, as in the mock.
+      -2.0,
+      4.4,
+      false,
+      Paint()
+        ..color = AppColors.highlight
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3
+        ..strokeCap = StrokeCap.round,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_ArcPainter oldDelegate) => false;
 }

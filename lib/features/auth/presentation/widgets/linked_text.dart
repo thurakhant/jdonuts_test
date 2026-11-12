@@ -21,6 +21,7 @@ class LinkedText extends StatefulWidget {
     required this.links,
     this.style,
     this.textAlign = TextAlign.center,
+    this.linkWeight = FontWeight.w700,
     super.key,
   });
 
@@ -28,6 +29,9 @@ class LinkedText extends StatefulWidget {
   final List<LinkSpec> links;
   final TextStyle? style;
   final TextAlign textAlign;
+
+  /// Legal footnotes use a lighter weight than inline actions like "Log In".
+  final FontWeight linkWeight;
 
   @override
   State<LinkedText> createState() => _LinkedTextState();
@@ -65,9 +69,9 @@ class _LinkedTextState extends State<LinkedText> {
         TextSpan(
           text: link.label,
           recognizer: tap,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.accent,
-            fontWeight: FontWeight.w700,
+            fontWeight: widget.linkWeight,
           ),
         ),
       );

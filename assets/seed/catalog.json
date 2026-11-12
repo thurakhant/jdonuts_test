@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "data": {
     "products": [
       {
@@ -117,17 +117,20 @@
       {
         "id": "b-central",
         "title": "We are now at Central Boulevard",
-        "imageUrl": "assets/images/banner_central_boulevard.png"
+        "imageUrl": "assets/images/banner_central_boulevard.png",
+        "badge": "New shop"
       },
       {
         "id": "b-hot",
         "title": "Hot deals",
-        "imageUrl": "assets/images/banner_hot_deals.png"
+        "imageUrl": "assets/images/banner_hot_deals.png",
+        "badge": "50% off"
       },
       {
         "id": "b-new-shop",
         "title": "New shop",
-        "imageUrl": "assets/images/banner_new_shop.png"
+        "imageUrl": "assets/images/banner_new_shop.png",
+        "badge": "Grand opening"
       }
     ],
     "shops": [
@@ -160,7 +163,7 @@
       {
         "id": "c-coco-full",
         "title": "Eat 4 Coco donuts",
-        "imageAsset": "assets/images/product_coconut.png",
+        "imageAsset": "assets/images/product_strawberry_sprinkle.png",
         "style": "quarterDonut",
         "goal": 4,
         "progress": 4,
@@ -169,7 +172,7 @@
       {
         "id": "c-coco-start",
         "title": "Eat 4 Coco donuts",
-        "imageAsset": "assets/images/product_coconut.png",
+        "imageAsset": "assets/images/product_strawberry_sprinkle.png",
         "style": "quarterDonut",
         "goal": 4,
         "progress": 1,

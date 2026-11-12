@@ -11,9 +11,26 @@ abstract final class AppColors {
   static const Color highlight = Color(
     0xFFF7941D,
   ); // orange badges (New, % off)
+  static const Color rewardsOrange = Color(0xFFEF863C); // Rewards header tab
+
+  // Home header panel (peach) and its shield watermark.
+  static const Color headerPeach = Color(0xFFFBEADB);
+  static const Color headerShield = Color(0xFFF2DABF);
+  static const Color headerStar = Color(0xFFCBB49C);
+
+  // Banner card backgrounds cycle through these.
+  static const Color bannerPurple = Color(0xFF6C5DD3);
+
+  // Bottom navigation, sampled from the design screens: softer than the
+  // brand cyan and pink used elsewhere.
+  static const Color navBarBlue = Color(0xFF7ACCE8);
+  static const Color navBarPink = Color(0xFFE0639E);
+
+  // Onboarding page blush, sampled from the design screens.
+  static const Color blushPink = Color(0xFFF9EEF2);
 
   // Surfaces
-  static const Color background = Color(0xFFFFF7F9);
+  static const Color background = Color(0xFFF4F5F7);
   static const Color backgroundPink = Color(0xFFFCE4EC); // soft pink wash
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceMuted = Color(0xFFF5F5F7);
@@ -34,7 +51,7 @@ abstract final class AppColors {
 
   // Decorative
   static const Color donutPink = Color(0xFFF48FB1);
-  static const Color ringTrack = Color(0xFFBDE9F6); // pale cyan ring track
+  static const Color ringTrack = Color(0xFFB1DDF6); // pale blue ring track
   static const Color skeletonBase = Color(0xFFEDEDF0);
   static const Color skeletonShine = Color(0xFFF8F8FA);
 }

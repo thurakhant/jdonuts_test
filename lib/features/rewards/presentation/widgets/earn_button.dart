@@ -5,13 +5,21 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../l10n/app_localizations.dart';
 
-/// EARN pill. Cyan and gently pulsing when the challenge is complete, grey
-/// otherwise. Pressing only gives touch feedback. The pulse stays off under
-/// Reduce Motion.
+/// EARN pill. Cyan and gently pulsing while the reward is ready to claim,
+/// grey otherwise; after a claim it reads CLAIMED and stays disabled. The
+/// pulse stays off under Reduce Motion.
 class EarnButton extends StatefulWidget {
-  const EarnButton({required this.enabled, super.key});
+  const EarnButton({
+    required this.enabled,
+    required this.onPressed,
+    this.claimed = false,
+    super.key,
+  });
 
+  /// Ready to claim: complete and not yet claimed.
   final bool enabled;
+  final bool claimed;
+  final VoidCallback onPressed;
 
   @override
   State<EarnButton> createState() => _EarnButtonState();
@@ -63,17 +71,25 @@ class _EarnButtonState extends State<EarnButton>
     return ScaleTransition(
       scale: _scale,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: enabled ? widget.onPressed : null,
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(0, AppSpacing.earnButtonHeight),
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          backgroundColor: enabled ? AppColors.primary : AppColors.skeletonBase,
+          backgroundColor: enabled
+              ? AppColors.navBarBlue
+              : AppColors.skeletonBase,
           foregroundColor: enabled
               ? AppColors.textOnPrimary
               : AppColors.textSecondary,
+          disabledBackgroundColor: AppColors.skeletonBase,
+          disabledForegroundColor: AppColors.textSecondary,
           elevation: 0,
         ),
-        child: Text(AppLocalizations.of(context)!.earnButton),
+        child: Text(
+          widget.claimed
+              ? AppLocalizations.of(context)!.claimedButton
+              : AppLocalizations.of(context)!.earnButton,
+        ),
       ),
     );
   }

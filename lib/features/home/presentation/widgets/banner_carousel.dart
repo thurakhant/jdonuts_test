@@ -8,6 +8,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
 import '../../../../app/widgets/jd_image.dart';
+import '../../../../app/widgets/orange_badge.dart';
 import '../../../../app/widgets/skeleton.dart';
 import '../../application/home_providers.dart';
 import '../../domain/promo_banner.dart';
@@ -15,7 +16,7 @@ import '../../domain/promo_banner.dart';
 class BannerCarousel extends ConsumerWidget {
   const BannerCarousel({super.key});
 
-  static const double height = 150;
+  static const double height = 215;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,7 +44,8 @@ class _Pager extends StatefulWidget {
 }
 
 class _PagerState extends State<_Pager> {
-  final _controller = PageController(viewportFraction: 0.9);
+  // Narrow enough that a slice of the next card shows, as in the design.
+  final _controller = PageController(viewportFraction: 0.78);
   Timer? _timer;
   int _page = 0;
 
@@ -78,9 +80,10 @@ class _PagerState extends State<_Pager> {
           height: BannerCarousel.height,
           child: PageView.builder(
             controller: _controller,
+            padEnds: false,
             itemCount: widget.banners.length,
             onPageChanged: (i) => setState(() => _page = i),
-            itemBuilder: (_, i) => _BannerTile(widget.banners[i]),
+            itemBuilder: (_, i) => _BannerTile(widget.banners[i], index: i),
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -90,37 +93,160 @@ class _PagerState extends State<_Pager> {
   }
 }
 
+/// Composed promo card from the design screens: colored background with dash
+/// doodles, badge pill, centered white title, and the photo inset at the
+/// bottom with a small round shop logo overlapping its top edge.
 class _BannerTile extends StatelessWidget {
-  const _BannerTile(this.banner);
+  const _BannerTile(this.banner, {required this.index});
 
   final PromoBanner banner;
+  final int index;
+
+  static const _palette = [
+    AppColors.bannerPurple,
+    AppColors.primary,
+    AppColors.accent,
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final badge = banner.badge;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            JdImage(banner.imageUrl),
-            Positioned(
-              left: AppSpacing.md,
-              bottom: AppSpacing.sm,
-              child: Text(
-                banner.title,
-                style: AppTypography.caption.copyWith(
-                  color: AppColors.textOnPrimary,
-                  fontWeight: FontWeight.w700,
-                ),
+        // Square bottom-left corner, as in the design screens.
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(AppRadius.lg),
+          topRight: Radius.circular(AppRadius.lg),
+          bottomRight: Radius.circular(AppRadius.lg),
+        ),
+        child: ColoredBox(
+          color: _palette[index % _palette.length],
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              ExcludeSemantics(
+                child: CustomPaint(painter: _DoodlePainter(seed: index)),
               ),
-            ),
-          ],
+              Column(
+                children: [
+                  const SizedBox(height: AppSpacing.sm),
+                  if (badge != null) OrangeBadge(badge),
+                  const SizedBox(height: AppSpacing.xs),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xl + AppSpacing.md,
+                    ),
+                    child: Text(
+                      banner.title,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.headline.copyWith(
+                        color: AppColors.textOnPrimary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 21,
+                        height: 1.25,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xxl,
+                      ),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned.fill(
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(AppRadius.md),
+                              ),
+                              child: JdImage(
+                                banner.imageUrl,
+                                width: double.infinity,
+                              ),
+                            ),
+                          ),
+                          const Positioned(
+                            top: -14,
+                            left: 0,
+                            right: 0,
+                            child: Center(child: _LogoChip()),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+/// Small white circle with the shop mark, overlapping the photo's top edge.
+class _LogoChip extends StatelessWidget {
+  const _LogoChip();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        shape: BoxShape.circle,
+      ),
+      child: const Icon(Icons.storefront, size: 16, color: AppColors.accent),
+    );
+  }
+}
+
+/// Rounded dash doodles behind the banner text, like the mock's sprinkles.
+/// Deterministic per banner so pages don't shimmer.
+class _DoodlePainter extends CustomPainter {
+  const _DoodlePainter({required this.seed});
+
+  final int seed;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.textOnPrimary.withValues(alpha: 0.18)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.round;
+    for (var i = 0; i < 16; i++) {
+      final n = (seed * 7 + i * 13) % 17;
+      final x = size.width * ((n * 5 + i * 23) % 97) / 97;
+      final y = size.height * ((n * 11 + i * 41) % 89) / 89;
+      final angle = (n % 4) * 0.7 - 1.0;
+      final length = 11.0 + (n % 3) * 7;
+      if (i.isEven) {
+        // Long straight dash.
+        final d = Offset.fromDirection(angle, length);
+        canvas.drawLine(Offset(x, y) - d, Offset(x, y) + d, paint);
+      } else {
+        // Gently curved dash, like the mock's macaroni strokes.
+        canvas.drawArc(
+          Rect.fromCircle(center: Offset(x, y), radius: length),
+          angle,
+          1.1,
+          false,
+          paint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DoodlePainter oldDelegate) => oldDelegate.seed != seed;
 }
 
 class _Dots extends StatelessWidget {

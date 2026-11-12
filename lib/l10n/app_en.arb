@@ -50,7 +50,7 @@
   "letsExplore": "LET'S EXPLORE",
   "homeTab": "Home",
   "rewardTab": "Reward",
-  "scanTab": "Scan",
+  "donutsTab": "J'Donuts",
   "ordersTab": "Orders",
   "settingsTab": "Settings",
   "logOut": "Log out",
@@ -140,7 +140,7 @@
     }
   },
   "productNew": "New",
-  "shopsNearYou": "There are {count} J'Donut shops near you 😊",
+  "shopsNearYou": "There are {count} J'Donut shops near you. 😋",
   "@shopsNearYou": {
     "placeholders": {
       "count": {
@@ -166,14 +166,7 @@
     }
   },
   "whatsThis": "What's this?",
-  "addToCartButton": "ADD TO CART | {total} MMK",
-  "@addToCartButton": {
-    "placeholders": {
-      "total": {
-        "type": "String"
-      }
-    }
-  },
+  "addToCartLabel": "ADD TO CART",
   "addedToCart": "Added {count} x {name} to your cart",
   "@addedToCart": {
     "placeholders": {
@@ -213,6 +206,7 @@
   "tabGift": "Gift",
   "giftEmpty": "Gifts you receive will show up here.",
   "earnButton": "EARN",
+  "claimedButton": "CLAIMED",
   "challengeProgress": "{done}/{goal}",
   "@challengeProgress": {
     "placeholders": {

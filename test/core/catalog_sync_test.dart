@@ -17,7 +17,7 @@ AssetCatalogSource _source(String text) =>
     AssetCatalogSource(load: () async => text);
 
 String _withVersion(int version) =>
-    _seed.replaceFirst('"version": 1', '"version": $version');
+    _seed.replaceFirst(RegExp(r'"version": \d+'), '"version": $version');
 
 /// The seed as an app-version-1 payload: same version, no challenges section.
 String _withoutChallenges() {
@@ -39,7 +39,7 @@ void main() {
 
   test('the bundled seed parses', () {
     final snapshot = parseCatalog(_seed).valueOrNull!;
-    expect(snapshot.version, 1);
+    expect(snapshot.version, 2);
     expect(snapshot.products.length, 10);
     expect(snapshot.banners.length, 3);
     expect(snapshot.shops.length, 4);
@@ -57,7 +57,7 @@ void main() {
     expect(source.fetches, 1);
     expect(await count(), 10);
     expect((await db.select(db.challenges).get()).length, 3);
-    expect(await storedVersion(), '1');
+    expect(await storedVersion(), '2');
   });
 
   test('refresh with the same version is idempotent', () async {
@@ -85,7 +85,7 @@ void main() {
       database: db,
       source: _source(_withoutChallenges()),
     ).seedIfNeeded();
-    expect(await storedVersion(), '1');
+    expect(await storedVersion(), '2');
     expect((await db.select(db.challenges).get()).length, 0);
 
     // After the upgrade, startup seeding fills the challenges table even

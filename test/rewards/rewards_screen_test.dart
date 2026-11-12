@@ -64,7 +64,7 @@ void main() {
     }
     expect(find.text('100 pts'), findsNWidgets(3));
     expect(find.text('EARN'), findsNWidgets(3));
-    expect(_ringFraction(tester), closeTo(680000 / 680500, 0.0001));
+    expect(_ringFraction(tester), closeTo(PointsRing.glazeFraction, 0.0001));
   });
 
   testWidgets('points count up from zero to 680,000', (tester) async {
@@ -72,19 +72,24 @@ void main() {
     expect(find.text('680,000'), findsNothing);
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('680,000'), findsNothing);
-    expect(_ringFraction(tester), lessThan(680000 / 680500));
+    expect(_ringFraction(tester), lessThan(PointsRing.glazeFraction));
     await tester.pump(const Duration(seconds: 2));
     expect(find.text('680,000'), findsOneWidget);
-    expect(_ringFraction(tester), closeTo(680000 / 680500, 0.0001));
+    expect(_ringFraction(tester), closeTo(PointsRing.glazeFraction, 0.0001));
   });
 
-  testWidgets('donut and coffee painters are both used', (tester) async {
+  testWidgets('donut progress clips the image and coffee uses its arc', (
+    tester,
+  ) async {
     await _pumpUntilShown(tester);
     await _settle(tester);
+    final clippers = tester
+        .widgetList<ClipPath>(find.byType(ClipPath))
+        .map((c) => c.clipper.runtimeType);
+    expect(clippers, contains(SectorClipper));
     final painters = tester
         .widgetList<CustomPaint>(find.byType(CustomPaint))
         .map((p) => p.painter.runtimeType);
-    expect(painters, contains(QuarterDonutPainter));
     expect(painters, contains(CoffeeCupPainter));
   });
 
@@ -123,6 +128,57 @@ void main() {
     expect(find.text('Eat 4 Coco donuts'), findsNWidgets(2));
   });
 
+  testWidgets('claiming once marks the card claimed and survives tab switch', (
+    tester,
+  ) async {
+    await _pumpUntilShown(tester);
+    await _settle(tester);
+
+    await tester.tap(find.text('EARN').first);
+    await _settle(tester);
+    expect(find.text('CLAIMED'), findsOneWidget);
+    expect(find.text('EARN'), findsNWidgets(2));
+    final claimed = tester.widget<EarnButton>(find.byType(EarnButton).first);
+    expect(claimed.enabled, isFalse);
+
+    // A second tap on the claimed button does nothing.
+    await tester.tap(find.text('CLAIMED'));
+    await _settle(tester);
+    expect(find.text('CLAIMED'), findsOneWidget);
+
+    await tester.tap(find.text('Gift'));
+    await _settle(tester);
+    await tester.tap(find.text('Eat more earn more'));
+    await _settle(tester);
+    expect(find.text('CLAIMED'), findsOneWidget);
+    expect(
+      tester
+          .widgetList<EarnButton>(find.byType(EarnButton))
+          .map((b) => b.enabled),
+      [false, false, false],
+    );
+  });
+
+  testWidgets('a finished donut is fully coloured on the first frame back', (
+    tester,
+  ) async {
+    await _pumpUntilShown(tester);
+    await _settle(tester);
+    await tester.tap(find.text('Gift'));
+    await _settle(tester);
+    await tester.tap(find.text('Eat more earn more'));
+    await tester.pump(); // first frame of the rebuilt list
+
+    final sweeps = tester
+        .widgetList<ClipPath>(find.byType(ClipPath))
+        .map((c) => c.clipper)
+        .whereType<SectorClipper>()
+        .map((c) => c.sweep)
+        .toList();
+    // 4/4 is a full circle at once; 1/4 still animates in from empty.
+    expect(sweeps.first, closeTo(2 * 3.141592653589793, 0.0001));
+  });
+
   testWidgets('Reduce Motion shows the final state at once, no timers', (
     tester,
   ) async {
@@ -133,7 +189,7 @@ void main() {
     await tester.pump();
 
     expect(find.text('680,000'), findsOneWidget);
-    expect(_ringFraction(tester), closeTo(680000 / 680500, 0.0001));
+    expect(_ringFraction(tester), closeTo(PointsRing.glazeFraction, 0.0001));
     expect(find.text('Eat 4 Coco donuts'), findsNWidgets(2));
     // No looping EARN pulse and no running tweens.
     expect(tester.hasRunningAnimations, isFalse);

@@ -10,10 +10,7 @@ class CrownIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size.square(size),
-      painter: _CrownPainter(color),
-    );
+    return CustomPaint(size: Size.square(size), painter: _CrownPainter(color));
   }
 }
 
@@ -54,6 +51,5 @@ class _CrownPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_CrownPainter oldDelegate) =>
-      oldDelegate.color != color;
+  bool shouldRepaint(_CrownPainter oldDelegate) => oldDelegate.color != color;
 }

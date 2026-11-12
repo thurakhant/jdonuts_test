@@ -27,6 +27,9 @@ class Banners extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
   TextColumn get imageUrl => text()();
+
+  /// Short pill label over the title ("New shop"); not every banner has one.
+  TextColumn get badge => text().nullable()();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
 
   @override

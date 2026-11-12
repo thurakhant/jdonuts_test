@@ -21,7 +21,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// Bump when a table changes and add a step to [_migrateTo].
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -41,6 +41,9 @@ class AppDatabase extends _$AppDatabase {
       case 2:
         // v2: rewards challenges. Filled by the next catalog refresh.
         await m.createTable(challenges);
+      case 3:
+        // v3: banner badge pill. Filled by the next catalog refresh.
+        await m.addColumn(banners, banners.badge);
       default:
         break;
     }

@@ -250,11 +250,11 @@ abstract class AppLocalizations {
   /// **'Reward'**
   String get rewardTab;
 
-  /// No description provided for @scanTab.
+  /// No description provided for @donutsTab.
   ///
   /// In en, this message translates to:
-  /// **'Scan'**
-  String get scanTab;
+  /// **'J\'Donuts'**
+  String get donutsTab;
 
   /// No description provided for @ordersTab.
   ///
@@ -523,7 +523,7 @@ abstract class AppLocalizations {
   /// No description provided for @shopsNearYou.
   ///
   /// In en, this message translates to:
-  /// **'There are {count} J\'Donut shops near you 😊'**
+  /// **'There are {count} J\'Donut shops near you. 😋'**
   String shopsNearYou(int count);
 
   /// No description provided for @orderOnline.
@@ -592,11 +592,11 @@ abstract class AppLocalizations {
   /// **'What\'s this?'**
   String get whatsThis;
 
-  /// No description provided for @addToCartButton.
+  /// No description provided for @addToCartLabel.
   ///
   /// In en, this message translates to:
-  /// **'ADD TO CART | {total} MMK'**
-  String addToCartButton(String total);
+  /// **'ADD TO CART'**
+  String get addToCartLabel;
 
   /// No description provided for @addedToCart.
   ///
@@ -711,6 +711,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'EARN'**
   String get earnButton;
+
+  /// No description provided for @claimedButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CLAIMED'**
+  String get claimedButton;
 
   /// No description provided for @challengeProgress.
   ///

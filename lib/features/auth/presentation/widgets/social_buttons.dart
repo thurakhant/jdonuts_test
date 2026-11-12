@@ -1,39 +1,99 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'placeholder_sheet.dart';
 
-/// Google / Apple / Facebook icon buttons; each opens the placeholder sheet.
+/// Standalone Google / Apple / Facebook brand marks, as in the design
+/// screens (no button chrome); each opens the placeholder sheet and keeps
+/// the full 48dp tap area.
 class SocialButtons extends StatelessWidget {
   const SocialButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final items = [
-      (Icons.g_mobiledata, l10n.continueWithGoogle),
-      (Icons.apple, l10n.continueWithApple),
-      (Icons.facebook, l10n.continueWithFacebook),
+    final items = <(Widget, String)>[
+      (const _GoogleMark(size: 26), l10n.continueWithGoogle),
+      (
+        const Icon(Icons.apple, size: 30, color: Color(0xFF000000)),
+        l10n.continueWithApple,
+      ),
+      (
+        const Icon(Icons.facebook, size: 28, color: Color(0xFF1877F2)),
+        l10n.continueWithFacebook,
+      ),
     ];
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        for (final (icon, label) in items)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-            child: Material(
-              color: AppColors.surface,
-              shape: const CircleBorder(),
+    // FittedBox keeps the row from overflowing on very narrow screens; at
+    // normal phone widths it renders at full size.
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          for (final (icon, label) in items)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               child: IconButton(
                 tooltip: label,
-                icon: Icon(icon, color: AppColors.textPrimary),
+                icon: icon,
                 onPressed: () => showPlaceholderSheet(context, title: label),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
+}
+
+/// The multicolour Google "G", drawn with four arcs and the blue bar.
+class _GoogleMark extends StatelessWidget {
+  const _GoogleMark({required this.size});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(size: Size.square(size), painter: const _GPainter());
+  }
+}
+
+class _GPainter extends CustomPainter {
+  const _GPainter();
+
+  static const _red = Color(0xFFEA4335);
+  static const _yellow = Color(0xFFFBBC05);
+  static const _green = Color(0xFF34A853);
+  static const _blue = Color(0xFF4285F4);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final s = size.shortestSide;
+    final strokeWidth = s * 0.19;
+    final rect = (Offset.zero & size).deflate(strokeWidth / 2 + s * 0.04);
+    Paint paintFor(Color c) => Paint()
+      ..color = c
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+
+    const deg = 3.14159 / 180;
+    canvas.drawArc(rect, 200 * deg, 105 * deg, false, paintFor(_red));
+    canvas.drawArc(rect, 110 * deg, 92 * deg, false, paintFor(_yellow));
+    canvas.drawArc(rect, 45 * deg, 67 * deg, false, paintFor(_green));
+    canvas.drawArc(rect, 0 * deg, 46 * deg, false, paintFor(_blue));
+    // The bar into the center.
+    final c = Offset(s / 2, s / 2);
+    canvas.drawRect(
+      Rect.fromLTRB(
+        c.dx + s * 0.04,
+        c.dy - strokeWidth / 2,
+        rect.right + strokeWidth / 2,
+        c.dy + strokeWidth / 2,
+      ),
+      Paint()..color = _blue,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_GPainter oldDelegate) => false;
 }

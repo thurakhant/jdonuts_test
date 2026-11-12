@@ -16,11 +16,12 @@ void main() {
 
     expect(find.text('JD022123'), findsOneWidget);
     expect(find.text('Coconut Donut'), findsOneWidget);
-    expect(find.text('3,200 MMK'), findsOneWidget);
+    // Card price and button total both read 3,200 MMK at quantity 1.
+    expect(find.text('3,200 MMK'), findsNWidgets(2));
     expect(find.text('New'), findsOneWidget);
     expect(find.text("What's this?"), findsOneWidget);
     expect(find.textContaining('Enjoy our scrumptious donuts'), findsOneWidget);
-    expect(find.text('ADD TO CART | 3,200 MMK'), findsOneWidget);
+    expect(find.text('ADD TO CART'), findsOneWidget);
   });
 
   testWidgets('New badge is hidden for products that are not new', (
@@ -37,28 +38,28 @@ void main() {
 
     await tester.tap(plus);
     await tester.pumpAndSettle();
-    expect(find.text('ADD TO CART | 6,400 MMK'), findsOneWidget);
+    expect(find.text('6,400 MMK'), findsOneWidget);
 
     await tester.tap(plus);
     await tester.pumpAndSettle();
-    expect(find.text('ADD TO CART | 9,600 MMK'), findsOneWidget);
+    expect(find.text('9,600 MMK'), findsOneWidget);
 
     await tester.tap(minus);
     await tester.pump();
     await tester.tap(minus);
     await tester.pumpAndSettle();
-    expect(find.text('ADD TO CART | 3,200 MMK'), findsOneWidget);
+    expect(find.text('3,200 MMK'), findsNWidgets(2));
 
     await tester.tap(minus); // already at 1: no change
     await tester.pumpAndSettle();
-    expect(find.text('ADD TO CART | 3,200 MMK'), findsOneWidget);
+    expect(find.text('3,200 MMK'), findsNWidgets(2));
   });
 
   testWidgets('Add to cart gives feedback only', (tester) async {
     await _open(tester, 'p-coconut');
     await tester.tap(find.byTooltip('Increase quantity'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('ADD TO CART | 6,400 MMK'));
+    await tester.tap(find.text('ADD TO CART'));
     await tester.pump();
     expect(find.text('Added 2 x Coconut Donut to your cart'), findsOneWidget);
   });

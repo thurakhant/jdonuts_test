@@ -79,6 +79,7 @@ class CatalogSync {
             id: s.banners[i].id,
             title: s.banners[i].title,
             imageUrl: s.banners[i].imageUrl,
+            badge: Value(s.banners[i].badge),
             sortOrder: Value(i),
           ),
       ]);

@@ -45,7 +45,7 @@ abstract final class AppTheme {
         hintStyle: AppTypography.body.copyWith(color: AppColors.textSecondary),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
+          vertical: AppSpacing.md + AppSpacing.xs,
         ),
         border: _fieldBorder(AppColors.surface),
         enabledBorder: _fieldBorder(AppColors.surface),

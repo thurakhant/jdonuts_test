@@ -10,6 +10,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../product/domain/product.dart';
 import '../../application/home_providers.dart';
 import '../widgets/banner_carousel.dart';
+import '../widgets/header_shield.dart';
 import '../widgets/member_header.dart';
 import '../widgets/offline_banner.dart';
 import '../widgets/product_section.dart';
@@ -26,17 +27,22 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
+        // The peach header panel paints behind the status bar itself.
+        top: false,
+        bottom: false,
         child: Column(
           children: [
-            if (offline) const OfflineBanner(),
+            if (offline) const SafeArea(bottom: false, child: OfflineBanner()),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () => _refresh(context, ref),
                 child: ListView(
+                  // Zero padding: the shops landscape owns the bottom inset
+                  // so it runs under the nav bar, as in the design screens.
+                  padding: EdgeInsets.zero,
                   children: [
                     for (final (i, section) in _sections(l10n).indexed)
                       StaggeredEntrance(index: i, child: section),
-                    const SizedBox(height: AppSpacing.xl),
                   ],
                 ),
               ),
@@ -48,8 +54,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   List<Widget> _sections(AppLocalizations l10n) => [
-    const MemberHeader(),
-    const BannerCarousel(),
+    const _HeaderPanel(),
     ProductSectionView(
       section: ProductSection.seasonal,
       title: l10n.seasonalSpecials,
@@ -73,5 +78,45 @@ class HomeScreen extends ConsumerWidget {
     if (!result.isSuccess) {
       messenger.showSnackBar(SnackBar(content: Text(message)));
     }
+  }
+}
+
+/// Peach panel behind the member header and banners, with the soft shield
+/// watermark on the right, as in the design screens.
+class _HeaderPanel extends StatelessWidget {
+  const _HeaderPanel();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: AppColors.headerPeach,
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(AppRadius.navBarTop),
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(
+          bottom: Radius.circular(AppRadius.navBarTop),
+        ),
+        child: Stack(
+          children: [
+            const Positioned(
+              top: 40,
+              right: -36,
+              child: HeaderShield(size: 230),
+            ),
+            Column(
+              children: [
+                SizedBox(height: MediaQuery.paddingOf(context).top),
+                const MemberHeader(),
+                const BannerCarousel(),
+                const SizedBox(height: AppSpacing.lg),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

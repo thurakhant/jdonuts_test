@@ -9,22 +9,24 @@ import '../../../../app/theme/app_typography.dart';
 import '../../../../core/format/mmk.dart';
 import '../../../../l10n/app_localizations.dart';
 
-/// Donut-frosting ring: a pink arc with sprinkles sweeps to
-/// [points] / [target] while the number counts up in the white centre.
+/// Donut-frosting ring: a thick pink glaze arc with sprinkles sweeps in
+/// while the number counts up in the white centre.
 class PointsRing extends StatelessWidget {
-  const PointsRing({required this.points, required this.target, super.key});
+  const PointsRing({required this.points, super.key});
 
   final int points;
 
-  /// Points at which the next tier starts (the ring is full there).
-  final int target;
+  /// Share of the donut that is glazed. This matches the design's artwork;
+  /// it is not a progress value, since the points total has no defined
+  /// target to measure against.
+  static const double glazeFraction = 0.78;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final sweep = AppMotion.effective(context, AppMotion.pointsRingSweep);
     final count = AppMotion.effective(context, AppMotion.pointsCountUp);
-    final fraction = target == 0 ? 0.0 : (points / target).clamp(0.0, 1.0);
+    const fraction = glazeFraction;
     final pink = AppTypography.title.copyWith(color: AppColors.accent);
     return Semantics(
       label: '${formatMmk(points)} ${l10n.totalPoints}',
@@ -72,8 +74,8 @@ class PointsRing extends StatelessWidget {
   }
 }
 
-/// A pale grey track, a thick pink "frosting" arc from 12 o'clock and tiny
-/// white sprinkles scattered along the arc.
+/// A thick frosting donut: a pale grey unfinished section, a fat pink
+/// glaze arc with rounded ends, a soft sheen and white sprinkles.
 class PointsRingPainter extends CustomPainter {
   const PointsRingPainter({required this.fraction});
 
@@ -104,6 +106,18 @@ class PointsRingPainter extends CustomPainter {
       sweep,
       false,
       paint..color = AppColors.accent,
+    );
+    // A lighter band toward the inner edge reads as the icing's sheen.
+    canvas.drawArc(
+      arcRect.shift(const Offset(-2, -3)),
+      -math.pi / 2 + 0.08,
+      math.max(0, sweep - 0.16),
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = stroke * 0.45
+        ..strokeCap = StrokeCap.round
+        ..color = const Color(0x2EFFFFFF),
     );
     _sprinkles(canvas, arcRect, sweep);
   }
