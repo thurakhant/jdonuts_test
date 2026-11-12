@@ -132,10 +132,46 @@ void main() {
     expect(repo.delay, const Duration(seconds: 1));
   });
 
-  test('sign-up accepts only the fake code, without signing in', () async {
-    final repo = make();
-    expect(repo.acceptsSignUpCode('123456'), isTrue);
-    expect(repo.acceptsSignUpCode('000000'), isFalse);
-    expect(await sessions.read(), isNull);
+  group('sign-up code', () {
+    test('a registered number cannot request a sign-up code', () async {
+      final repo = await registered();
+      expect(
+        (await repo.requestSignUpCode(phone)).failureOrNull,
+        isA<PhoneAlreadyRegistered>(),
+      );
+    });
+
+    test('accepts only the fake code, without signing in', () async {
+      final repo = make();
+      await repo.requestSignUpCode(phone);
+
+      final wrong = await repo.verifySignUpCode(phone: phone, code: '000000');
+      expect(wrong.failureOrNull, isA<WrongOtp>());
+      final right = await repo.verifySignUpCode(phone: phone, code: '123456');
+      expect(right.isSuccess, isTrue);
+      expect(await sessions.read(), isNull);
+    });
+
+    test('three wrong codes lock it until a resend', () async {
+      final repo = make();
+      await repo.requestSignUpCode(phone);
+      for (var i = 0; i < 3; i++) {
+        await repo.verifySignUpCode(phone: phone, code: '000000');
+      }
+      final locked = await repo.verifySignUpCode(phone: phone, code: '123456');
+      expect(locked.failureOrNull, isA<OtpLocked>());
+
+      expect((await repo.resendOtp(phone)).isSuccess, isTrue);
+      final after = await repo.verifySignUpCode(phone: phone, code: '123456');
+      expect(after.isSuccess, isTrue);
+    });
+
+    test('a code for a number that never asked for one is rejected', () async {
+      final result = await make().verifySignUpCode(
+        phone: phone,
+        code: '123456',
+      );
+      expect(result.failureOrNull, isA<UnknownNumber>());
+    });
   });
 }

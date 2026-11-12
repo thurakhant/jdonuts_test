@@ -17,11 +17,20 @@ abstract interface class AuthRepository {
   /// Sends an OTP for login. Fails with `UnknownNumber` if not registered.
   Future<Result<void>> requestOtp(String phone);
 
-  /// Sign-up only: whether [code] is the code that was sent. There is no
-  /// account yet, so this neither signs in nor counts attempts.
-  bool acceptsSignUpCode(String code);
+  /// Sign-up: sends a code to a new number. Fails with
+  /// `PhoneAlreadyRegistered` if the number already has an account.
+  Future<Result<void>> requestSignUpCode(String phone);
 
-  /// Sends a new OTP and clears the wrong-attempt counter and lock.
+  /// Sign-up: checks the code sent by [requestSignUpCode], with the same
+  /// limits as [verifyOtp] (`WrongOtp`, then `OtpLocked`). Success means the
+  /// number is verified; it does not sign in.
+  Future<Result<void>> verifySignUpCode({
+    required String phone,
+    required String code,
+  });
+
+  /// Sends a new OTP (login or sign-up) and clears the wrong-attempt
+  /// counter and lock.
   Future<Result<void>> resendOtp(String phone);
 
   /// Checks the code. Fails with `WrongOtp` (with attempts left) and, after

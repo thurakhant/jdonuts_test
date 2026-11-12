@@ -31,6 +31,9 @@ class FakeAuthRepository implements AuthRepository {
   List<AuthUser>? _users;
   final Map<String, int> _wrongAttempts = {};
 
+  /// New numbers that asked for a sign-up code.
+  final Set<String> _pendingSignUps = {};
+
   Future<List<AuthUser>> _loadUsers() async =>
       _users ??= List.of(await _userStore.readAll());
 
@@ -77,6 +80,7 @@ class FakeAuthRepository implements AuthRepository {
       await _userStore.writeAll(updated);
       _users = updated;
       _wrongAttempts.remove(phone);
+      _pendingSignUps.remove(phone);
       return const Success(null);
     });
   }
@@ -93,10 +97,43 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<Result<void>> requestSignUpCode(String phone) async {
+    await _latency();
+    return _guarded(() async {
+      if (await _find(phone) != null) {
+        return const FailureResult(PhoneAlreadyRegistered());
+      }
+      _pendingSignUps.add(phone);
+      return const Success(null);
+    });
+  }
+
+  @override
+  Future<Result<void>> verifySignUpCode({
+    required String phone,
+    required String code,
+  }) async {
+    await _latency();
+    if (!_pendingSignUps.contains(phone)) {
+      return const FailureResult(UnknownNumber());
+    }
+    return switch (_codeProblem(phone, code)) {
+      final problem? => FailureResult(problem),
+      null => const Success(null),
+    };
+  }
+
+  @override
   Future<Result<void>> resendOtp(String phone) async {
-    final result = await requestOtp(phone);
-    if (result.isSuccess) _wrongAttempts.remove(phone);
-    return result;
+    await _latency();
+    return _guarded(() async {
+      final known = await _find(phone) != null;
+      if (!known && !_pendingSignUps.contains(phone)) {
+        return const FailureResult(UnknownNumber());
+      }
+      _wrongAttempts.remove(phone);
+      return const Success(null);
+    });
   }
 
   @override
@@ -105,31 +142,33 @@ class FakeAuthRepository implements AuthRepository {
     required String code,
   }) async {
     await _latency();
-    return _guarded(() => _checkOtp(phone, code));
+    return _guarded(() async {
+      final user = await _find(phone);
+      if (user == null) return const FailureResult(UnknownNumber());
+      if (_codeProblem(phone, code) case final problem?) {
+        return FailureResult(problem);
+      }
+      await _sessionStore.write(AuthSession.fromUser(user));
+      return Success(user);
+    });
   }
 
-  Future<Result<AuthUser>> _checkOtp(String phone, String code) async {
-    final user = await _find(phone);
-    if (user == null) return const FailureResult(UnknownNumber());
+  /// Lock, shape and the fake code, shared by login and sign-up. Counts a
+  /// wrong code; a right one clears the count.
+  Failure? _codeProblem(String phone, String code) {
     final used = _wrongAttempts[phone] ?? 0;
-    if (used >= kMaxOtpAttempts) return const FailureResult(OtpLocked());
-    final shape = validateOtp(code);
-    if (shape case FailureResult(:final failure)) {
-      return FailureResult(failure);
+    if (used >= kMaxOtpAttempts) return const OtpLocked();
+    if (validateOtp(code) case FailureResult(:final failure)) return failure;
+    if (code == kFakeOtp) {
+      _wrongAttempts.remove(phone);
+      return null;
     }
-    if (code != kFakeOtp) {
-      final now = used + 1;
-      _wrongAttempts[phone] = now;
-      if (now >= kMaxOtpAttempts) return const FailureResult(OtpLocked());
-      return FailureResult(WrongOtp(attemptsLeft: kMaxOtpAttempts - now));
-    }
-    _wrongAttempts.remove(phone);
-    await _sessionStore.write(AuthSession.fromUser(user));
-    return Success(user);
+    final now = used + 1;
+    _wrongAttempts[phone] = now;
+    return now >= kMaxOtpAttempts
+        ? const OtpLocked()
+        : WrongOtp(attemptsLeft: kMaxOtpAttempts - now);
   }
-
-  @override
-  bool acceptsSignUpCode(String code) => code == kFakeOtp;
 
   @override
   Future<Result<void>> signOut() async {

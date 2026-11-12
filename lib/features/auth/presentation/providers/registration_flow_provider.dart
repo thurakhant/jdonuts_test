@@ -5,7 +5,6 @@ import '../../../../core/result.dart';
 import '../../application/auth_providers.dart';
 import '../../domain/auth_repository.dart';
 import '../../domain/validators/date_of_birth_validator.dart';
-import '../../domain/validators/otp_validator.dart';
 import '../../domain/validators/phone_validator.dart';
 import 'registration_flow_state.dart';
 
@@ -35,37 +34,28 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
     state = state.copyWith(month: month, day: day, year: year);
   }
 
-  /// Phone step. Login asks for an OTP (fails for unknown numbers).
-  /// Register must not hit a registered number: the repository answers
-  /// `requestOtp` with success only for known users, so success means taken.
+  /// Phone step: login asks for an OTP (fails for unknown numbers); sign-up
+  /// asks for a sign-up code (fails for registered numbers).
   Future<Failure?> submitPhone() async {
     final phone = validateMyanmarPhone(state.phoneInput);
     if (phone case FailureResult(:final failure)) return failure;
     final e164 = phone.valueOrNull!;
-    // Wrong-code attempts belong to a number: only a different number
-    // starts fresh, so Back and the same number stay locked until Resend.
+    // The repository counts wrong codes per number, so Back and the same
+    // number stay locked until Resend; a different number starts fresh.
     state = e164 == state.phone
         ? state
-        : state.copyWith(
-            phone: e164,
-            registerOtpMisses: 0,
-            otpLocked: false,
-            accountCreated: false,
-          );
-    final sent = await _repo.requestOtp(e164);
-    if (state.isRegister) {
-      return switch (sent.failureOrNull) {
-        null => state.accountCreated ? null : const PhoneAlreadyRegistered(),
-        UnknownNumber() => null,
-        final other => other,
-      };
-    }
-    return sent.failureOrNull;
+        : state.copyWith(phone: e164, otpLocked: false, accountCreated: false);
+    if (!state.isRegister) return (await _repo.requestOtp(e164)).failureOrNull;
+    final sent = await _repo.requestSignUpCode(e164);
+    return switch (sent.failureOrNull) {
+      // This flow already saved the account and is only retrying sign-in.
+      PhoneAlreadyRegistered() when state.accountCreated => null,
+      final failure => failure,
+    };
   }
 
-  /// OTP step. Login verifies (and signs in) through the repository.
-  /// Register has no user yet, so the code is checked here with the same
-  /// limits and verified through the repository after creating the account.
+  /// OTP step. Login verifies and signs in; sign-up verifies the number, and
+  /// the code signs in once the account exists (DOB step).
   Future<Failure?> verifyOtp(String code) async {
     final failure = await _check(code);
     if (failure is OtpLocked && !state.otpLocked) {
@@ -76,18 +66,12 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
 
   Future<Failure?> _check(String code) async {
     if (!state.isRegister) return _verifyLogin(code);
-    final shape = validateOtp(code);
-    if (shape case FailureResult(:final failure)) return failure;
-    if (state.registerOtpMisses >= kMaxOtpAttempts) return const OtpLocked();
-    if (_repo.acceptsSignUpCode(code)) {
-      state = state.copyWith(otpCode: code);
-      return null;
-    }
-    final misses = state.registerOtpMisses + 1;
-    state = state.copyWith(registerOtpMisses: misses);
-    return misses >= kMaxOtpAttempts
-        ? const OtpLocked()
-        : WrongOtp(attemptsLeft: kMaxOtpAttempts - misses);
+    final result = await _repo.verifySignUpCode(
+      phone: state.phone!,
+      code: code,
+    );
+    if (result.isSuccess) state = state.copyWith(otpCode: code);
+    return result.failureOrNull;
   }
 
   Future<Failure?> _verifyLogin(String code) async {
@@ -100,10 +84,6 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
 
   /// Sends a new code and clears the wrong-attempt counter and lock.
   Future<Failure?> resendOtp() async {
-    if (state.isRegister) {
-      state = state.copyWith(registerOtpMisses: 0, otpLocked: false);
-      return null;
-    }
     final failure = (await _repo.resendOtp(state.phone!)).failureOrNull;
     if (failure == null) state = state.copyWith(otpLocked: false);
     return failure;

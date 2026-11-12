@@ -26,7 +26,6 @@ class RegistrationFlowState {
     this.phoneInput = '',
     this.phone,
     this.otpCode,
-    this.registerOtpMisses = 0,
     this.otpLocked = false,
     this.accountCreated = false,
     this.firstName = '',
@@ -47,10 +46,6 @@ class RegistrationFlowState {
 
   /// The accepted code, kept so registration can sign in at the end.
   final String? otpCode;
-
-  /// Wrong codes so far in register mode, where the repository cannot yet
-  /// check the code because the user does not exist.
-  final int registerOtpMisses;
 
   /// True once three wrong codes locked entry; survives leaving the OTP
   /// screen so coming back still shows the boxes disabled.
@@ -74,7 +69,6 @@ class RegistrationFlowState {
     String? phoneInput,
     String? phone,
     String? otpCode,
-    int? registerOtpMisses,
     bool? otpLocked,
     bool? accountCreated,
     String? firstName,
@@ -89,7 +83,6 @@ class RegistrationFlowState {
       phoneInput: phoneInput ?? this.phoneInput,
       phone: phone ?? this.phone,
       otpCode: otpCode ?? this.otpCode,
-      registerOtpMisses: registerOtpMisses ?? this.registerOtpMisses,
       otpLocked: otpLocked ?? this.otpLocked,
       accountCreated: accountCreated ?? this.accountCreated,
       firstName: firstName ?? this.firstName,
