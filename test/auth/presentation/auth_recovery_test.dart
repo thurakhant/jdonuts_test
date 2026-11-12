@@ -43,6 +43,40 @@ class FailingResendRepository extends FakeAuthRepository {
 }
 
 void main() {
+  test('after the account is saved, going back and re-entering the code '
+      'still verifies it', () async {
+    final sessions = FailingSessionStore()..failWrite = true;
+    final container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(
+          FakeAuthRepository(
+            sessionStore: sessions,
+            userStore: InMemoryUserStore(),
+            delay: Duration.zero,
+          ),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+    final flow = container.read(registrationFlowProvider.notifier);
+    flow
+      ..start(AuthMode.register)
+      ..setPhoneInput('09254135592');
+    await flow.submitPhone();
+    await flow.verifyOtp('123456');
+    flow
+      ..setName(first: 'Mya')
+      ..setDob(month: 5, day: '1', year: '1990');
+    expect(await flow.completeRegistration(), isA<StorageFailure>());
+
+    // Back to Phone, Continue, then the OTP again.
+    sessions.failWrite = false;
+    expect(await flow.submitPhone(), isNull);
+    expect(await flow.verifyOtp('123456'), isNull);
+    expect(await flow.verifyOtp('000000'), isA<WrongOtp>());
+    expect(await flow.completeRegistration(), isNull);
+  });
+
   test(
     'registration retries session save without creating the account twice',
     () async {

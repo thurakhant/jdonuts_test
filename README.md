@@ -184,7 +184,8 @@ motion throughout.
 
 ## Tests
 
-146 tests in 28 files, plus one on-device integration test, all passing, named after the behaviour they check:
+147 tests in 28 files, plus one on-device integration test, all passing,
+named after the behaviour they check:
 
 - **Unit:** every validator rule, the fake auth repository (lockout, resend,
   sessions, storage failures), registration retry, catalog import/refresh,

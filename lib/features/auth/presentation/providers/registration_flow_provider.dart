@@ -66,10 +66,11 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
 
   Future<Failure?> _check(String code) async {
     if (!state.isRegister) return _verifyLogin(code);
-    final result = await _repo.verifySignUpCode(
-      phone: state.phone!,
-      code: code,
-    );
+    // Once this flow has saved the account, the number is no longer a
+    // pending sign-up, so the code is checked as for an existing account.
+    final result = state.accountCreated
+        ? await _repo.verifyOtp(phone: state.phone!, code: code)
+        : await _repo.verifySignUpCode(phone: state.phone!, code: code);
     if (result.isSuccess) state = state.copyWith(otpCode: code);
     return result.failureOrNull;
   }
