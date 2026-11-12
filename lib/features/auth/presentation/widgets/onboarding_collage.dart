@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../app/motion/app_motion.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/widgets/entrance.dart';
 
 /// Where each donut circle sits: alignment in the box, diameter as a
 /// fraction of the box width, and the asset.
@@ -12,7 +14,7 @@ const List<(Alignment, double, String)> _circles = [
   (Alignment(0.9, 0.55), 0.32, 'assets/images/product_strawberry_sprinkle.png'),
 ];
 
-/// Static collage of donut photos in circles for the Onboarding top half.
+/// Collage of donut photos in circles for the Onboarding top half; the circles drift up into place.
 class OnboardingCollage extends StatelessWidget {
   const OnboardingCollage({super.key});
 
@@ -21,10 +23,15 @@ class OnboardingCollage extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, box) => Stack(
         children: [
-          for (final (align, fraction, asset) in _circles)
+          for (final (i, (align, fraction, asset)) in _circles.indexed)
             Align(
               alignment: align,
-              child: _Circle(asset: asset, size: box.maxWidth * fraction),
+              child: StaggeredEntrance(
+                index: i,
+                duration: AppMotion.onboardingDrift,
+                slide: AppMotion.driftSlide,
+                child: _Circle(asset: asset, size: box.maxWidth * fraction),
+              ),
             ),
         ],
       ),

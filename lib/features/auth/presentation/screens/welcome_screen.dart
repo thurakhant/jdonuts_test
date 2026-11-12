@@ -3,9 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../app/motion/app_motion.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_typography.dart';
+import '../../../../app/widgets/entrance.dart';
 import '../../../../app/widgets/loading_button.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../providers/registration_flow_provider.dart';
@@ -42,15 +44,21 @@ class WelcomeScreen extends ConsumerWidget {
             children: [
               const Expanded(child: _TileGrid()),
               const SizedBox(height: AppSpacing.lg),
-              Text(
-                l10n.welcomeTitle,
-                style: AppTypography.display,
-                textAlign: TextAlign.center,
+              StaggeredEntrance(
+                index: _tiles.length,
+                child: Text(
+                  l10n.welcomeTitle,
+                  style: AppTypography.display,
+                  textAlign: TextAlign.center,
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              LoadingButton(
-                label: l10n.letsExplore,
-                onPressed: () => _explore(context, ref),
+              StaggeredEntrance(
+                index: _tiles.length + 1,
+                child: LoadingButton(
+                  label: l10n.letsExplore,
+                  onPressed: () => _explore(context, ref),
+                ),
               ),
             ],
           ),
@@ -71,11 +79,15 @@ class _TileGrid extends StatelessWidget {
       crossAxisSpacing: AppSpacing.sm,
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        for (final asset in _tiles)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            child: ExcludeSemantics(
-              child: Image.asset(asset, fit: BoxFit.cover, cacheWidth: 300),
+        for (final (i, asset) in _tiles.indexed)
+          StaggeredEntrance(
+            index: i,
+            slide: AppMotion.driftSlide,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              child: ExcludeSemantics(
+                child: Image.asset(asset, fit: BoxFit.cover, cacheWidth: 300),
+              ),
             ),
           ),
       ],
