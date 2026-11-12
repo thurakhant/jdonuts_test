@@ -24,12 +24,11 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
 
   void setStep(AuthStep step) => state = state.copyWith(step: step);
 
-  void setPhoneInput(String value) =>
-      state = state.copyWith(
-        phoneInput: value,
-        registerOtpMisses: 0,
-        otpLocked: state.isRegister ? false : state.otpLocked,
-      );
+  void setPhoneInput(String value) => state = state.copyWith(
+    phoneInput: value,
+    registerOtpMisses: 0,
+    otpLocked: state.isRegister ? false : state.otpLocked,
+  );
 
   void setName({String? first, String? last}) =>
       state = state.copyWith(firstName: first, lastName: last);

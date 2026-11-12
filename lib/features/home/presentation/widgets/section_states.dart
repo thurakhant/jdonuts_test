@@ -48,9 +48,17 @@ class ProductRowSkeleton extends StatelessWidget {
         itemBuilder: (_, _) => const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SkeletonBox(width: AppSpacing.productTileSize, height: AppSpacing.productTileSize, radius: AppRadius.lg),
+            SkeletonBox(
+              width: AppSpacing.productTileSize,
+              height: AppSpacing.productTileSize,
+              radius: AppRadius.lg,
+            ),
             SizedBox(height: AppSpacing.sm),
-            SkeletonBox(width: AppSpacing.skeletonLineWidth, height: AppSpacing.skeletonLineHeight, radius: AppRadius.sm),
+            SkeletonBox(
+              width: AppSpacing.skeletonLineWidth,
+              height: AppSpacing.skeletonLineHeight,
+              radius: AppRadius.sm,
+            ),
           ],
         ),
       ),
