@@ -129,21 +129,24 @@ void main() {
     expect(buttons, [true, false, false]);
   });
 
-  testWidgets('switching to Gift swaps the list and moves the pill', (
+  testWidgets('switching to Gift slides the pill and swaps the list', (
     tester,
   ) async {
     await _pumpUntilShown(tester);
     await _settle(tester);
-    final indicator = find.descendant(
-      of: find.byKey(const ValueKey('tab-indicator')),
-      matching: find.byType(DecoratedBox),
-    );
-    final before = tester.getCenter(indicator.first).dx;
+    final indicator = find.byKey(const ValueKey('tab-indicator'));
+    final start = tester.getCenter(indicator).dx;
+    final target = tester.getCenter(find.text('Gift')).dx;
 
     await tester.tap(find.text('Gift'));
-    await _settle(tester);
+    await tester.pump(); // starts the slide
+    await tester.pump(const Duration(milliseconds: 120));
+    final midway = tester.getCenter(indicator).dx;
+    expect(midway, greaterThan(start));
+    expect(midway, lessThan(target - 1));
 
-    expect(tester.getCenter(indicator.first).dx, greaterThan(before));
+    await _settle(tester);
+    expect(tester.getCenter(indicator).dx, closeTo(target, 1));
     expect(find.text('Eat 4 Coco donuts'), findsNothing);
     expect(find.text('Gifts you receive will show up here.'), findsOneWidget);
 
