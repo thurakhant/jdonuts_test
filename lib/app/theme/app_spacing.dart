@@ -18,6 +18,10 @@ abstract final class AppSpacing {
   /// Horizontal product rows on Home: tile width and total row height.
   static const double productTileSize = 140;
   static const double productRowHeight = 200;
+
+  /// Bottom navigation bar and its icon size.
+  static const double navBarHeight = 64;
+  static const double navIconSize = 24;
   static const double skeletonLineWidth = 100;
   static const double skeletonLineHeight = 14;
 }

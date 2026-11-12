@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jdonuts_test/app/widgets/pill_nav_bar.dart';
 
 import 'test_app.dart';
 
@@ -72,7 +73,7 @@ void main() {
   testWidgets('correct code in login mode signs in to Home', (tester) async {
     await _openOtp(tester);
     await _enterCode(tester, '123456');
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(PillNavBar), findsOneWidget);
     expect(find.text('Verify your number'), findsNothing);
   });
 

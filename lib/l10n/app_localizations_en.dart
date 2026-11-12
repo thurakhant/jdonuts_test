@@ -97,6 +97,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rewardTab => 'Reward';
 
   @override
+  String get scanTab => 'Scan';
+
+  @override
+  String get ordersTab => 'Orders';
+
+  @override
   String get settingsTab => 'Settings';
 
   @override

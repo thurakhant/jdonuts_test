@@ -13,6 +13,7 @@ import '../../features/auth/presentation/screens/welcome_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/product/presentation/screens/product_detail_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
+import '../../l10n/app_localizations.dart';
 import '../widgets/app_shell.dart';
 import '../widgets/placeholder_screen.dart';
 import 'app_routes.dart';
@@ -60,10 +61,13 @@ final List<RouteBase> _routes = [
         AppRoutes.rewards,
         (_) => const PlaceholderScreen(title: 'Rewards'),
       ),
-      _branch(AppRoutes.scan, (_) => const PlaceholderScreen(title: 'Scan')),
+      _branch(
+        AppRoutes.scan,
+        (c) => PlaceholderScreen(title: AppLocalizations.of(c)!.scanTab),
+      ),
       _branch(
         AppRoutes.orders,
-        (_) => const PlaceholderScreen(title: 'Orders'),
+        (c) => PlaceholderScreen(title: AppLocalizations.of(c)!.ordersTab),
       ),
       _branch(AppRoutes.settings, (_) => const SettingsScreen()),
     ],

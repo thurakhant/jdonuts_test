@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jdonuts_test/app/widgets/pill_nav_bar.dart';
 
 import 'test_app.dart';
 
@@ -71,6 +72,6 @@ void main() {
     expect(find.text("LET'S EXPLORE"), findsOneWidget);
 
     await tapButton(tester, "LET'S EXPLORE");
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(PillNavBar), findsOneWidget);
   });
 }

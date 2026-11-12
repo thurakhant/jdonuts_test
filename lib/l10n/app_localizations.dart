@@ -256,6 +256,18 @@ abstract class AppLocalizations {
   /// **'Reward'**
   String get rewardTab;
 
+  /// No description provided for @scanTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get scanTab;
+
+  /// No description provided for @ordersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get ordersTab;
+
   /// No description provided for @settingsTab.
   ///
   /// In en, this message translates to:

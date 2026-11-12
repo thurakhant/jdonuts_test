@@ -29,6 +29,14 @@ abstract final class AppMotion {
   static const Duration resendTick = Duration(seconds: 1);
   static const Duration quantityTick = Duration(milliseconds: 180);
 
+  static const Duration entrance = Duration(milliseconds: 450);
+  static const Duration badgePopDelay = Duration(milliseconds: 250);
+
+  // Distances (fraction of the child's own size)
+  static const Offset entranceSlide = Offset(0, 0.12);
+  static const Offset driftSlide = Offset(0, 0.35);
+  static const Offset sharedAxisSlide = Offset(0.12, 0);
+
   // Curves
   static const Curve standard = Curves.easeOutCubic;
   static const Curve emphasized = Curves.easeInOutCubicEmphasized;
