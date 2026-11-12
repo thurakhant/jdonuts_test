@@ -32,7 +32,16 @@ class _StaggeredEntranceState extends State<StaggeredEntrance>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(vsync: this);
   late final Duration _delay = widget.step * widget.index;
+  late final Animation<double> _curved = CurvedAnimation(
+    parent: _controller,
+    curve: Interval(_begin, 1, curve: widget.curve),
+  );
   bool _started = false;
+
+  double get _begin {
+    final total = (_delay + widget.duration).inMicroseconds;
+    return total == 0 ? 0.0 : _delay.inMicroseconds / total;
+  }
 
   @override
   void didChangeDependencies() {
@@ -55,16 +64,10 @@ class _StaggeredEntranceState extends State<StaggeredEntrance>
 
   @override
   Widget build(BuildContext context) {
-    final total = (_delay + widget.duration).inMicroseconds;
-    final begin = total == 0 ? 0.0 : _delay.inMicroseconds / total;
-    final curved = CurvedAnimation(
-      parent: _controller,
-      curve: Interval(begin, 1, curve: widget.curve),
-    );
     return FadeTransition(
-      opacity: curved,
+      opacity: _curved,
       child: SlideTransition(
-        position: Tween(begin: widget.slide, end: Offset.zero).animate(curved),
+        position: Tween(begin: widget.slide, end: Offset.zero).animate(_curved),
         child: widget.child,
       ),
     );
@@ -90,7 +93,15 @@ class PopIn extends StatefulWidget {
 
 class _PopInState extends State<PopIn> with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(vsync: this);
+  late final Animation<double> _scale = CurvedAnimation(
+    parent: _controller,
+    curve: Interval(_begin, 1, curve: AppMotion.pop),
+  );
   bool _started = false;
+
+  double get _begin =>
+      widget.delay.inMicroseconds /
+      (widget.delay + widget.duration).inMicroseconds;
 
   @override
   void didChangeDependencies() {
@@ -113,14 +124,6 @@ class _PopInState extends State<PopIn> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final total = (widget.delay + widget.duration).inMicroseconds;
-    final begin = widget.delay.inMicroseconds / total;
-    return ScaleTransition(
-      scale: CurvedAnimation(
-        parent: _controller,
-        curve: Interval(begin, 1, curve: AppMotion.pop),
-      ),
-      child: widget.child,
-    );
+    return ScaleTransition(scale: _scale, child: widget.child);
   }
 }
