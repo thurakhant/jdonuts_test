@@ -10,7 +10,7 @@ import '../../domain/validators/phone_validator.dart';
 import 'registration_flow_state.dart';
 
 /// Holds everything entered across Phone, OTP, Name and DOB, and runs the
-/// calls to the auth repository. Methods return a [Failure] or null.
+/// calls to the auth repository. Submit methods return a [Failure] or null.
 class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
   @override
   RegistrationFlowState build() => const RegistrationFlowState();
@@ -56,7 +56,7 @@ class RegistrationFlowNotifier extends Notifier<RegistrationFlowState> {
 
   /// OTP step. Login verifies (and signs in) through the repository.
   /// Register has no user yet, so the code is checked here with the same
-  /// limits and verified for real once the account exists.
+  /// limits and verified through the repository after creating the account.
   Future<Failure?> verifyOtp(String code) async {
     final failure = await _check(code);
     if (failure is OtpLocked && !state.otpLocked) {

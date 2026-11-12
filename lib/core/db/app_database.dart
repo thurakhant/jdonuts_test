@@ -35,7 +35,7 @@ class AppDatabase extends _$AppDatabase {
     },
   );
 
-  /// One method per schema version.
+  /// One migration case per schema version.
   Future<void> _migrateTo(Migrator m, int version) async {
     switch (version) {
       case 2:
