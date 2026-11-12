@@ -44,6 +44,15 @@ class FakeAuthRepository implements AuthRepository {
 
   Future<void> _latency() => Future<void>.delayed(delay);
 
+  /// Storage errors become a typed [StorageFailure] instead of escaping.
+  Future<Result<T>> _guarded<T>(Future<Result<T>> Function() call) async {
+    try {
+      return await call();
+    } on Exception {
+      return const FailureResult(StorageFailure());
+    }
+  }
+
   @override
   Future<Result<void>> register({
     required String phone,
@@ -52,31 +61,35 @@ class FakeAuthRepository implements AuthRepository {
     required DateTime dateOfBirth,
   }) async {
     await _latency();
-    if (await _find(phone) != null) {
-      return const FailureResult(PhoneAlreadyRegistered());
-    }
-    final users = await _loadUsers();
-    users.add(
-      AuthUser(
+    return _guarded(() async {
+      if (await _find(phone) != null) {
+        return const FailureResult(PhoneAlreadyRegistered());
+      }
+      final user = AuthUser(
         id: 'user-${phone.replaceAll('+', '')}',
         phone: phone,
         firstName: firstName,
         lastName: lastName,
         dateOfBirth: dateOfBirth,
-      ),
-    );
-    await _userStore.writeAll(users);
-    _wrongAttempts.remove(phone);
-    return const Success(null);
+      );
+      // Save first; memory changes only once the save has worked.
+      final updated = [...await _loadUsers(), user];
+      await _userStore.writeAll(updated);
+      _users = updated;
+      _wrongAttempts.remove(phone);
+      return const Success(null);
+    });
   }
 
   @override
   Future<Result<void>> requestOtp(String phone) async {
     await _latency();
-    if (await _find(phone) == null) {
-      return const FailureResult(UnknownNumber());
-    }
-    return const Success(null);
+    return _guarded(() async {
+      if (await _find(phone) == null) {
+        return const FailureResult(UnknownNumber());
+      }
+      return const Success(null);
+    });
   }
 
   @override
@@ -92,6 +105,10 @@ class FakeAuthRepository implements AuthRepository {
     required String code,
   }) async {
     await _latency();
+    return _guarded(() => _checkOtp(phone, code));
+  }
+
+  Future<Result<AuthUser>> _checkOtp(String phone, String code) async {
     final user = await _find(phone);
     if (user == null) return const FailureResult(UnknownNumber());
     final used = _wrongAttempts[phone] ?? 0;

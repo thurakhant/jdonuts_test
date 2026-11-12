@@ -22,7 +22,8 @@ class SecureSessionStore implements SessionStore {
     try {
       return AuthSession.fromJson(jsonDecode(raw) as Map<String, Object?>);
     } on Object {
-      // Corrupt data: treat as signed out.
+      // A damaged session is removed, and the user simply signs in again.
+      await clear();
       return null;
     }
   }
@@ -51,8 +52,12 @@ class SecureUserStore implements UserStore {
         for (final item in jsonDecode(raw) as List<Object?>)
           AuthUser.fromJson((item! as Map).cast<String, Object?>()),
       ];
-    } on Object {
-      return [];
+    } on Object catch (error) {
+      // Not "no users": the repository turns this into a StorageFailure,
+      // and nothing is written over the saved data.
+      throw FormatException(
+        'Saved users are unreadable (${error.runtimeType})',
+      );
     }
   }
 

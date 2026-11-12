@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -106,8 +105,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logOut => 'Log out';
 
   @override
-  String get placeholderSheetBody =>
-      'This is a placeholder. No real integration in this demo.';
+  String get placeholderSheetBody => 'This is a placeholder. No real integration in this demo.';
 
   @override
   String get placeholderSheetTitle => 'Coming soon';
@@ -152,8 +150,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get errorOtpLocked =>
-      'Too many wrong codes. Tap Resend to get a new one.';
+  String get errorOtpLocked => 'Too many wrong codes. Tap Resend to get a new one.';
 
   @override
   String get errorGeneric => 'Something went wrong. Please try again.';
@@ -269,16 +266,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
-  String get errorCatalogMalformed =>
-      'The saved menu data looks broken. Please try again.';
+  String get errorCatalogMalformed => 'The saved menu data looks broken. Please try again.';
 
   @override
-  String get errorCatalogUnavailable =>
-      'We couldn\'t read the menu data. Please try again.';
+  String get errorCatalogUnavailable => 'We couldn\'t read the menu data. Please try again.';
 
   @override
-  String get errorStorage =>
-      'We couldn\'t open your saved data. Please try again.';
+  String get errorStorage => 'We couldn\'t open your saved data. Please try again.';
 
   @override
   String get refreshFailed => 'Couldn\'t refresh. Showing saved data.';
