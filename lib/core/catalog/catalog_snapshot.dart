@@ -22,5 +22,8 @@ class CatalogSnapshot {
   final List<PromoBanner> banners;
   final List<Shop> shops;
   final Member member;
-  final List<Challenge> challenges;
+
+  /// Null when the payload has no challenges section (older payloads):
+  /// saved challenges are kept. An empty list clears them.
+  final List<Challenge>? challenges;
 }

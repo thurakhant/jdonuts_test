@@ -41,11 +41,10 @@ Result<CatalogSnapshot> parseCatalog(String source) {
             ),
         ],
         member: _member(data['member'] as Map<String, dynamic>),
-        // Older payloads predate the challenges section; absent means none.
-        challenges: [
-          for (final c in _list(data['challenges'] ?? const <Object>[]))
-            _challenge(c),
-        ],
+        // Older payloads have no challenges section: null keeps saved ones.
+        challenges: data['challenges'] == null
+            ? null
+            : [for (final c in _list(data['challenges'])) _challenge(c)],
       ),
     );
   } on Object catch (error) {

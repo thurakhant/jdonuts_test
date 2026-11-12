@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../db/app_database.dart';
 import '../failure.dart';
 import '../result.dart';
+import '../../features/rewards/domain/challenge.dart';
 import 'catalog_snapshot.dart';
 import 'catalog_source.dart';
 
@@ -57,6 +58,7 @@ class CatalogSync {
   }
 
   Future<void> _write(CatalogSnapshot s) async {
+    final challenges = s.challenges ?? const <Challenge>[];
     await _db.batch((b) {
       b.insertAllOnConflictUpdate(_db.products, [
         for (final p in s.products)
@@ -108,15 +110,15 @@ class CatalogSync {
         ),
       ]);
       b.insertAllOnConflictUpdate(_db.challenges, [
-        for (var i = 0; i < s.challenges.length; i++)
+        for (var i = 0; i < challenges.length; i++)
           ChallengesCompanion.insert(
-            id: s.challenges[i].id,
-            title: s.challenges[i].title,
-            imageAsset: s.challenges[i].imageAsset,
-            style: s.challenges[i].style.name,
-            goal: s.challenges[i].goal,
-            progress: s.challenges[i].progress,
-            rewardPoints: s.challenges[i].rewardPoints,
+            id: challenges[i].id,
+            title: challenges[i].title,
+            imageAsset: challenges[i].imageAsset,
+            style: challenges[i].style.name,
+            goal: challenges[i].goal,
+            progress: challenges[i].progress,
+            rewardPoints: challenges[i].rewardPoints,
             sortOrder: Value(i),
           ),
       ]);
@@ -141,12 +143,11 @@ class CatalogSync {
     await (_db.delete(
       _db.shops,
     )..where((t) => t.id.isNotIn(s.shops.map((x) => x.id)))).go();
-    // An empty list means the source has no challenges section (older
-    // payload), so the saved rows are kept rather than wiped.
-    if (s.challenges.isNotEmpty) {
+    // No challenges section (older payload): keep the saved rows.
+    if (s.challenges case final challenges?) {
       await (_db.delete(
         _db.challenges,
-      )..where((t) => t.id.isNotIn(s.challenges.map((x) => x.id)))).go();
+      )..where((t) => t.id.isNotIn(challenges.map((x) => x.id)))).go();
     }
     await (_db.delete(
       _db.members,

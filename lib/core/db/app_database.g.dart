@@ -2649,34 +2649,32 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   ];
 }
 
-typedef $$ProductsTableCreateCompanionBuilder =
-    ProductsCompanion Function({
-      required String id,
-      required String code,
-      required String name,
-      required int priceMmk,
-      Value<bool> isNew,
-      Value<int?> discountPercent,
-      required String imageUrl,
-      required String description,
-      required String section,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
-typedef $$ProductsTableUpdateCompanionBuilder =
-    ProductsCompanion Function({
-      Value<String> id,
-      Value<String> code,
-      Value<String> name,
-      Value<int> priceMmk,
-      Value<bool> isNew,
-      Value<int?> discountPercent,
-      Value<String> imageUrl,
-      Value<String> description,
-      Value<String> section,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
+typedef $$ProductsTableCreateCompanionBuilder = ProductsCompanion Function({
+  required String id,
+  required String code,
+  required String name,
+  required int priceMmk,
+  Value<bool> isNew,
+  Value<int?> discountPercent,
+  required String imageUrl,
+  required String description,
+  required String section,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
+typedef $$ProductsTableUpdateCompanionBuilder = ProductsCompanion Function({
+  Value<String> id,
+  Value<String> code,
+  Value<String> name,
+  Value<int> priceMmk,
+  Value<bool> isNew,
+  Value<int?> discountPercent,
+  Value<String> imageUrl,
+  Value<String> description,
+  Value<String> section,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
 
 class $$ProductsTableFilterComposer
     extends Composer<_$AppDatabase, $ProductsTable> {
@@ -2954,24 +2952,22 @@ typedef $$ProductsTableProcessedTableManager =
       ProductRow,
       PrefetchHooks Function()
     >;
-typedef $$BannersTableCreateCompanionBuilder =
-    BannersCompanion Function({
-      required String id,
-      required String title,
-      required String imageUrl,
-      Value<String?> badge,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
-typedef $$BannersTableUpdateCompanionBuilder =
-    BannersCompanion Function({
-      Value<String> id,
-      Value<String> title,
-      Value<String> imageUrl,
-      Value<String?> badge,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
+typedef $$BannersTableCreateCompanionBuilder = BannersCompanion Function({
+  required String id,
+  required String title,
+  required String imageUrl,
+  Value<String?> badge,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
+typedef $$BannersTableUpdateCompanionBuilder = BannersCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> imageUrl,
+  Value<String?> badge,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
 
 class $$BannersTableFilterComposer
     extends Composer<_$AppDatabase, $BannersTable> {
@@ -3157,24 +3153,22 @@ typedef $$BannersTableProcessedTableManager =
       BannerRow,
       PrefetchHooks Function()
     >;
-typedef $$ShopsTableCreateCompanionBuilder =
-    ShopsCompanion Function({
-      required String id,
-      required String name,
-      required String address,
-      required String imageUrl,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
-typedef $$ShopsTableUpdateCompanionBuilder =
-    ShopsCompanion Function({
-      Value<String> id,
-      Value<String> name,
-      Value<String> address,
-      Value<String> imageUrl,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
+typedef $$ShopsTableCreateCompanionBuilder = ShopsCompanion Function({
+  required String id,
+  required String name,
+  required String address,
+  required String imageUrl,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
+typedef $$ShopsTableUpdateCompanionBuilder = ShopsCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String> address,
+  Value<String> imageUrl,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
 
 class $$ShopsTableFilterComposer extends Composer<_$AppDatabase, $ShopsTable> {
   $$ShopsTableFilterComposer({
@@ -3359,32 +3353,30 @@ typedef $$ShopsTableProcessedTableManager =
       ShopRow,
       PrefetchHooks Function()
     >;
-typedef $$MembersTableCreateCompanionBuilder =
-    MembersCompanion Function({
-      required String id,
-      required String name,
-      required String avatarAsset,
-      required String tier,
-      required int totalPoints,
-      required int pointsToNextTier,
-      required String nextTier,
-      Value<int> notificationCount,
-      Value<double> tierProgress,
-      Value<int> rowid,
-    });
-typedef $$MembersTableUpdateCompanionBuilder =
-    MembersCompanion Function({
-      Value<String> id,
-      Value<String> name,
-      Value<String> avatarAsset,
-      Value<String> tier,
-      Value<int> totalPoints,
-      Value<int> pointsToNextTier,
-      Value<String> nextTier,
-      Value<int> notificationCount,
-      Value<double> tierProgress,
-      Value<int> rowid,
-    });
+typedef $$MembersTableCreateCompanionBuilder = MembersCompanion Function({
+  required String id,
+  required String name,
+  required String avatarAsset,
+  required String tier,
+  required int totalPoints,
+  required int pointsToNextTier,
+  required String nextTier,
+  Value<int> notificationCount,
+  Value<double> tierProgress,
+  Value<int> rowid,
+});
+typedef $$MembersTableUpdateCompanionBuilder = MembersCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<String> avatarAsset,
+  Value<String> tier,
+  Value<int> totalPoints,
+  Value<int> pointsToNextTier,
+  Value<String> nextTier,
+  Value<int> notificationCount,
+  Value<double> tierProgress,
+  Value<int> rowid,
+});
 
 class $$MembersTableFilterComposer
     extends Composer<_$AppDatabase, $MembersTable> {
@@ -3648,30 +3640,28 @@ typedef $$MembersTableProcessedTableManager =
       MemberRow,
       PrefetchHooks Function()
     >;
-typedef $$ChallengesTableCreateCompanionBuilder =
-    ChallengesCompanion Function({
-      required String id,
-      required String title,
-      required String imageAsset,
-      required String style,
-      required int goal,
-      required int progress,
-      required int rewardPoints,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
-typedef $$ChallengesTableUpdateCompanionBuilder =
-    ChallengesCompanion Function({
-      Value<String> id,
-      Value<String> title,
-      Value<String> imageAsset,
-      Value<String> style,
-      Value<int> goal,
-      Value<int> progress,
-      Value<int> rewardPoints,
-      Value<int> sortOrder,
-      Value<int> rowid,
-    });
+typedef $$ChallengesTableCreateCompanionBuilder = ChallengesCompanion Function({
+  required String id,
+  required String title,
+  required String imageAsset,
+  required String style,
+  required int goal,
+  required int progress,
+  required int rewardPoints,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
+typedef $$ChallengesTableUpdateCompanionBuilder = ChallengesCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String> imageAsset,
+  Value<String> style,
+  Value<int> goal,
+  Value<int> progress,
+  Value<int> rewardPoints,
+  Value<int> sortOrder,
+  Value<int> rowid,
+});
 
 class $$ChallengesTableFilterComposer
     extends Composer<_$AppDatabase, $ChallengesTable> {
@@ -3918,18 +3908,16 @@ typedef $$ChallengesTableProcessedTableManager =
       ChallengeRow,
       PrefetchHooks Function()
     >;
-typedef $$KeyValuesTableCreateCompanionBuilder =
-    KeyValuesCompanion Function({
-      required String key,
-      required String value,
-      Value<int> rowid,
-    });
-typedef $$KeyValuesTableUpdateCompanionBuilder =
-    KeyValuesCompanion Function({
-      Value<String> key,
-      Value<String> value,
-      Value<int> rowid,
-    });
+typedef $$KeyValuesTableCreateCompanionBuilder = KeyValuesCompanion Function({
+  required String key,
+  required String value,
+  Value<int> rowid,
+});
+typedef $$KeyValuesTableUpdateCompanionBuilder = KeyValuesCompanion Function({
+  Value<String> key,
+  Value<String> value,
+  Value<int> rowid,
+});
 
 class $$KeyValuesTableFilterComposer
     extends Composer<_$AppDatabase, $KeyValuesTable> {
@@ -4016,22 +4004,16 @@ class $$KeyValuesTableTableManager
               $$KeyValuesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$KeyValuesTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> key = const Value.absent(),
-                Value<String> value = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => KeyValuesCompanion(key: key, value: value, rowid: rowid),
-          createCompanionCallback:
-              ({
-                required String key,
-                required String value,
-                Value<int> rowid = const Value.absent(),
-              }) => KeyValuesCompanion.insert(
-                key: key,
-                value: value,
-                rowid: rowid,
-              ),
+          updateCompanionCallback: ({
+            Value<String> key = const Value.absent(),
+            Value<String> value = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) => KeyValuesCompanion(key: key, value: value, rowid: rowid),
+          createCompanionCallback: ({
+            required String key,
+            required String value,
+            Value<int> rowid = const Value.absent(),
+          }) => KeyValuesCompanion.insert(key: key, value: value, rowid: rowid),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (

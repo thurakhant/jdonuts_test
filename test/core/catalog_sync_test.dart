@@ -44,7 +44,7 @@ void main() {
     expect(snapshot.banners.length, 3);
     expect(snapshot.shops.length, 4);
     expect(snapshot.member.tier, 'Silver');
-    expect(snapshot.challenges.map((c) => c.progress), [4, 1, 9]);
+    expect(snapshot.challenges!.map((c) => c.progress), [4, 1, 9]);
   });
 
   test('first launch imports once and records the version', () async {
@@ -106,6 +106,23 @@ void main() {
     expect(result.isSuccess, isTrue);
     expect((await db.select(db.challenges).get()).length, 3);
   });
+
+  test(
+    'a payload with an empty challenges list clears the saved ones',
+    () async {
+      await CatalogSync(database: db, source: _source(_seed)).seedIfNeeded();
+      final root = jsonDecode(_seed) as Map<String, dynamic>;
+      (root['data'] as Map<String, dynamic>)['challenges'] = <Object>[];
+
+      final result = await CatalogSync(
+        database: db,
+        source: _source(jsonEncode(root)),
+      ).refresh();
+
+      expect(result.isSuccess, isTrue);
+      expect(await db.select(db.challenges).get(), isEmpty);
+    },
+  );
 
   test('malformed seed returns a typed failure and imports nothing', () async {
     final sync = CatalogSync(database: db, source: _source('{"version": 1}'));
