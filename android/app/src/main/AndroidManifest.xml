@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Needed in release too: the reachability probe and image cache open
+         sockets. Debug builds inject it for the VM service, which hid the
+         missing declaration. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="jdonuts_test"
+        android:label="J'Donuts"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
