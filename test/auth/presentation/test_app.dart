@@ -22,6 +22,7 @@ Future<InMemorySessionStore> pumpApp(
   WidgetTester tester, {
   bool signedIn = false,
   bool userRegistered = true,
+  Duration latency = Duration.zero,
 }) async {
   tester.view.physicalSize = const Size(800, 1800);
   tester.view.devicePixelRatio = 2;
@@ -42,7 +43,7 @@ Future<InMemorySessionStore> pumpApp(
           (ref) => FakeAuthRepository(
             sessionStore: sessions,
             userStore: users,
-            delay: Duration.zero,
+            delay: latency,
           ),
         ),
       ],
